@@ -1,5 +1,5 @@
 import pandas as pd 
-df = pd.read_csv('Llama_2/experiments/ICL_DEMO/ICL_demo_data.csv')
+df = pd.read_csv('ICL_demo_data.csv')
 # print(df)
 
 def concat_questions(data):
@@ -26,4 +26,4 @@ for name, group in df.groupby('Type'):
 new_df = pd.DataFrame(output_data, columns=['Type', 'Sentence'])
 
 # Save the new dataframe to a new csv file
-new_df.to_csv('Llama_2/experiments/ICL_DEMO/processed_data.csv', index=False)
+new_df.to_csv('../processed_data.csv', index=False)
