@@ -26,4 +26,4 @@ for name, group in df.groupby('Type'):
 new_df = pd.DataFrame(output_data, columns=['Type', 'Sentence'])
 
 # Save the new dataframe to a new csv file
-new_df.to_csv('../processed_data.csv', index=False)
+new_df.to_csv('../processed_data.csv', index=False) 
