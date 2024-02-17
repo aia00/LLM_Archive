@@ -14,6 +14,8 @@ from curriculum import Curriculum
 from schema import schema
 from models import build_model
 
+import numpy as np
+
 import wandb
 
 torch.backends.cudnn.benchmark = True
@@ -52,16 +54,18 @@ def train(model, args):
     n_dims = model.n_dims
     bsize = args.training.batch_size
     data_sampler = get_data_sampler(args.training.data, n_dims=n_dims)
-    task_sampler = get_task_sampler(
-        args.training.task,
-        n_dims,
-        bsize,
-        num_tasks=args.training.num_tasks,
-        **args.training.task_kwargs,
-    )
+    # task_sampler = get_task_sampler(
+    #     args.training.task,
+    #     n_dims,
+    #     bsize,
+    #     num_tasks=args.training.num_tasks,
+    #     **args.training.task_kwargs,
+    # )
     pbar = tqdm(range(starting_step, args.training.train_steps))
 
     num_training_examples = args.training.num_training_examples
+
+    task_choices = ['linear_regression', "quadratic_regression", "linear_classification"]
 
     for i in pbar:
         data_sampler_args = {}
@@ -81,11 +85,22 @@ def train(model, args):
             curriculum.n_dims_truncated,
             **data_sampler_args,
         )
+        if args.training.task == "multiple_task_without_label":
+            task_type = np.random.choice(task_choices)
+        else:
+            task_type = args.training.task
+        task_sampler = get_task_sampler(
+                task_type,
+                n_dims,
+                bsize,
+                num_tasks=args.training.num_tasks,
+                **args.training.task_kwargs, )
         task = task_sampler(**task_sampler_args)
         ys = task.evaluate(xs)
 
         loss_func = task.get_training_metric()
 
+        # loss1, loss2
         loss, output = train_step(model, xs.cuda(), ys.cuda(), optimizer, loss_func)
 
         point_wise_tags = list(range(curriculum.n_points))

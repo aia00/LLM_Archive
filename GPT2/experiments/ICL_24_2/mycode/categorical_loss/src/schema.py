@@ -40,6 +40,7 @@ TASK_LIST = [
     "linear_classification",
     "relu_2nn_regression",
     "decision_tree",
+    "multiple_task_without_label"
 ]
 
 training_schema = {

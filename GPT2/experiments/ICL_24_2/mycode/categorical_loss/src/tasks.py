@@ -53,6 +53,7 @@ def get_task_sampler(
     task_name, n_dims, batch_size, pool_dict=None, num_tasks=None, **kwargs
 ):
     task_names_to_classes = {
+        # "multiple_task": MultipleTask,
         "linear_regression": LinearRegression,
         "sparse_linear_regression": SparseLinearRegression,
         "linear_classification": LinearClassification,
@@ -71,6 +72,28 @@ def get_task_sampler(
     else:
         print("Unknown task")
         raise NotImplementedError
+
+
+# class MultipleTask(Task):
+#     def __init__(self, n_dims, batch_size, pool_dict=None, seeds=None, scale=1):
+
+#         """scale: a constant by which to scale the randomly sampled weights."""
+#         super(LinearRegression, self).__init__(n_dims, batch_size, pool_dict, seeds)
+#         self.scale = scale
+
+#         if pool_dict is None and seeds is None:
+#             self.w_b = torch.randn(self.b_size, self.n_dims, 1)
+#         elif seeds is not None:
+#             self.w_b = torch.zeros(self.b_size, self.n_dims, 1)
+#             generator = torch.Generator()
+#             assert len(seeds) == self.b_size
+#             for i, seed in enumerate(seeds):
+#                 generator.manual_seed(seed)
+#                 self.w_b[i] = torch.randn(self.n_dims, 1, generator=generator)
+#         else:
+#             assert "w" in pool_dict
+#             indices = torch.randperm(len(pool_dict["w"]))[:batch_size]
+#             self.w_b = pool_dict["w"][indices]
 
 
 class LinearRegression(Task):
