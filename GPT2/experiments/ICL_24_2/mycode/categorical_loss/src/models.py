@@ -128,9 +128,8 @@ class TransformerModel(nn.Module):
             inds = torch.tensor(inds)
             if max(inds) >= ys.shape[1] or min(inds) < 0:
                 raise ValueError("inds contain indices where xs and ys are not defined")
-        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         zs = self._combine(xs, ys)
-        zs = zs.to(device)
+        zs = zs.to(ys.device)
         embeds = self._read_in(zs)
         output = self._backbone(inputs_embeds=embeds).last_hidden_state
         prediction = self._read_out(output)
@@ -187,10 +186,10 @@ class TransformerModel_labeled(nn.Module):
                 raise ValueError("inds contain indices where xs and ys are not defined")
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         # Create cat tensor and align its shape to xs
-        cat_b = torch.full(xs.shape[:-1] + (1,), float(cat), device=device)  # shape (batch_size, num_points, 1)
+        cat_b = torch.full(xs.shape[:-1] + (1,), float(cat), device=ys.device)  # shape (batch_size, num_points, 1)
         # Combine xs, ys, cat 
         zs = self._combine(xs, ys, cat_b)
-        zs = zs.to(device)
+        zs = zs.to(ys.device)
         embeds = self._read_in(zs)
         output = self._backbone(inputs_embeds=embeds).last_hidden_state
         prediction = self._read_out(output)

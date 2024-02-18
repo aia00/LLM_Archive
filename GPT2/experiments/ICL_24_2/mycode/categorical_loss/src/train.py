@@ -76,10 +76,11 @@ def train(model, args):
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = model.to(device)
-    # if torch.cuda.device_count() > 1:
-    #     print("Let's use", torch.cuda.device_count(), "GPUs!")
-    #     # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
-    #     model = nn.DataParallel(model)
+
+    if torch.cuda.device_count() > 1:
+        print("Let's use", torch.cuda.device_count(), "GPUs!")
+        # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
+        model = nn.DataParallel(model)
 
     for i in pbar:
         data_sampler_args = {}
@@ -99,10 +100,18 @@ def train(model, args):
             curriculum.n_dims_truncated,
             **data_sampler_args,
         )
-        if args.training.task in ["multiple_task_without_label", "multiple_task_with_label"]:
+
+        if args.training.task =="multiple_task_with_label":
             task_key = np.random.choice(task_choices_keys)
             task_type = task_choices[task_key]
             cat_num = len(task_choices_keys)
+
+        elif args.training.task == "multiple_task_without_label":
+            task_key = np.random.choice(task_choices_keys)
+            task_type = task_choices[task_key]
+            task_key = None
+            cat_num = len(task_choices_keys)
+
         else:
             task_type = args.training.task
             task_key = None
@@ -127,7 +136,7 @@ def train(model, args):
 
         point_wise_tags = list(range(curriculum.n_points))
         point_wise_loss_func = task.get_metric()
-        point_wise_loss = point_wise_loss_func(output, ys.to(device)).mean(dim=0)
+        point_wise_loss = point_wise_loss_func(output, ys).mean(dim=0)
 
         baseline_loss = (
             sum(
