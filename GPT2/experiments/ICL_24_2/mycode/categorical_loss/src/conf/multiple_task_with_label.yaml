@@ -8,6 +8,7 @@ model:
 training:
     task: multiple_task_with_label
     train_steps: 400001
+    batch_size: 128
     curriculum:
         points:
             start: 11
