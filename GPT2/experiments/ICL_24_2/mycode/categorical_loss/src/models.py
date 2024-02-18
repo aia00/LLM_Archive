@@ -20,6 +20,14 @@ def build_model(conf):
             n_layer=conf.n_layer,
             n_head=conf.n_head,
         )
+    elif conf.family == "gpt2_labeled":
+        model = TransformerModel_labeled(
+            n_dims=conf.n_dims,
+            n_positions=conf.n_positions,
+            n_embd=conf.n_embd,
+            n_layer=conf.n_layer,
+            n_head=conf.n_head,
+        )
     else:
         raise NotImplementedError
 
@@ -120,11 +128,75 @@ class TransformerModel(nn.Module):
             inds = torch.tensor(inds)
             if max(inds) >= ys.shape[1] or min(inds) < 0:
                 raise ValueError("inds contain indices where xs and ys are not defined")
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         zs = self._combine(xs, ys)
+        zs = zs.to(device)
         embeds = self._read_in(zs)
         output = self._backbone(inputs_embeds=embeds).last_hidden_state
         prediction = self._read_out(output)
         return prediction[:, ::2, 0][:, inds]  # predict only on xs
+    
+
+
+
+class TransformerModel_labeled(nn.Module):
+    def __init__(self, n_dims, n_positions, n_embd=128, n_layer=12, n_head=4):
+        super(TransformerModel_labeled, self).__init__()
+        configuration = GPT2Config(
+            n_positions=2 * n_positions,
+            n_embd=n_embd,
+            n_layer=n_layer,
+            n_head=n_head,
+            resid_pdrop=0.0,
+            embd_pdrop=0.0,
+            attn_pdrop=0.0,
+            use_cache=False,
+        )
+        self.name = f"gpt2_embd={n_embd}_layer={n_layer}_head={n_head}"
+
+        self.n_positions = n_positions
+        self.n_dims = n_dims
+        self._read_in = nn.Linear(n_dims + 1, n_embd)  # Added 1 for category
+        self._backbone = GPT2Model(configuration)
+        self._read_out = nn.Linear(n_embd, 1)
+
+    @staticmethod
+    def _combine(xs_b, ys_b, cat_b):  # Added argument for category
+        """Interleaves the x's, y's and category into a single sequence."""
+        bsize, points, dim = xs_b.shape
+        ys_b_wide = torch.cat(
+            (
+                ys_b.view(bsize, points, 1),
+                torch.zeros(bsize, points, dim, device=ys_b.device),
+            ),
+            axis=2,
+        )
+        # Add 'cat' to the 'xs_b' tensor as the first dimension
+        xs_b_cat = torch.cat([cat_b, xs_b], dim=-1)  # cat_b and xs_b are now of shape (batch_size, num_points, num_features+1)
+        # ys_b stays zeros at the end because it does not have a 'cat'
+        zs = torch.stack((xs_b_cat, ys_b_wide), dim=2)
+        zs = zs.view(bsize, 2 * points, dim + 1)  # dim increased by 1
+        return zs
+
+    def forward(self, xs, ys, cat, inds=None):  # cat is an integer representing the category
+        if inds is None:
+            inds = torch.arange(ys.shape[1])
+        else:
+            inds = torch.tensor(inds)
+            if max(inds) >= ys.shape[1] or min(inds) < 0:
+                raise ValueError("inds contain indices where xs and ys are not defined")
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        # Create cat tensor and align its shape to xs
+        cat_b = torch.full(xs.shape[:-1] + (1,), float(cat), device=device)  # shape (batch_size, num_points, 1)
+        # Combine xs, ys, cat 
+        zs = self._combine(xs, ys, cat_b)
+        zs = zs.to(device)
+        embeds = self._read_in(zs)
+        output = self._backbone(inputs_embeds=embeds).last_hidden_state
+        prediction = self._read_out(output)
+        return prediction[:, ::2, 0][:, inds]  # predict only on xs
+
+
 
 
 class NNModel:

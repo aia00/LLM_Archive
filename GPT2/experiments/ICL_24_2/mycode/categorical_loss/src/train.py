@@ -1,10 +1,12 @@
 import os
+import pdb
 from random import randint
 import uuid
 
 from quinine import QuinineArgumentParser
 from tqdm import tqdm
 import torch
+import torch.nn as nn
 import yaml
 
 from eval import get_run_metrics
@@ -21,9 +23,13 @@ import wandb
 torch.backends.cudnn.benchmark = True
 
 
-def train_step(model, xs, ys, optimizer, loss_func):
+def train_step(model, xs, ys, optimizer, loss_func, cat):
     optimizer.zero_grad()
-    output = model(xs, ys)
+    # pdb.set_trace()
+    if cat is not None:
+        output = model(xs, ys, cat)
+    else:
+        output = model(xs, ys)
     loss = loss_func(output, ys)
     loss.backward()
     optimizer.step()
@@ -65,7 +71,15 @@ def train(model, args):
 
     num_training_examples = args.training.num_training_examples
 
-    task_choices = ['linear_regression', "quadratic_regression", "linear_classification"]
+    task_choices = {0:'linear_regression', 1:"quadratic_regression", 2:"linear_classification"}
+    task_choices_keys = list(task_choices.keys())
+
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    model = model.to(device)
+    # if torch.cuda.device_count() > 1:
+    #     print("Let's use", torch.cuda.device_count(), "GPUs!")
+    #     # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
+    #     model = nn.DataParallel(model)
 
     for i in pbar:
         data_sampler_args = {}
@@ -85,10 +99,14 @@ def train(model, args):
             curriculum.n_dims_truncated,
             **data_sampler_args,
         )
-        if args.training.task == "multiple_task_without_label":
-            task_type = np.random.choice(task_choices)
+        if args.training.task in ["multiple_task_without_label", "multiple_task_with_label"]:
+            task_key = np.random.choice(task_choices_keys)
+            task_type = task_choices[task_key]
+            cat_num = len(task_choices_keys)
         else:
             task_type = args.training.task
+            task_key = None
+            cat_num = None
         task_sampler = get_task_sampler(
                 task_type,
                 n_dims,
@@ -100,12 +118,16 @@ def train(model, args):
 
         loss_func = task.get_training_metric()
 
-        # loss1, loss2
-        loss, output = train_step(model, xs.cuda(), ys.cuda(), optimizer, loss_func)
+        
+        xs = xs.to(device)
+        ys = ys.to(device)
+       
+        
+        loss, output = train_step(model, xs, ys, optimizer, loss_func, task_key)
 
         point_wise_tags = list(range(curriculum.n_points))
         point_wise_loss_func = task.get_metric()
-        point_wise_loss = point_wise_loss_func(output, ys.cuda()).mean(dim=0)
+        point_wise_loss = point_wise_loss_func(output, ys.to(device)).mean(dim=0)
 
         baseline_loss = (
             sum(
@@ -167,7 +189,7 @@ def main(args):
         )
 
     model = build_model(args.model)
-    model.cuda()
+    # model.cuda()
     model.train()
 
     train(model, args)
@@ -179,7 +201,7 @@ def main(args):
 if __name__ == "__main__":
     parser = QuinineArgumentParser(schema=schema)
     args = parser.parse_quinfig()
-    assert args.model.family in ["gpt2", "lstm"]
+    assert args.model.family in ["gpt2", "lstm", "gpt2_labeled"]
     print(f"Running with: {args}")
 
     if not args.test_run:

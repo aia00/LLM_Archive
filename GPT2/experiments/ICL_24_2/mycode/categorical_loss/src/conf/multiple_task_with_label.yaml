@@ -1,0 +1,21 @@
+inherit: 
+    - base.yaml
+
+model:
+    family: gpt2_labeled
+
+
+training:
+    task: multiple_task_with_label
+    train_steps: 400001
+    curriculum:
+        points:
+            start: 11
+            end: 41
+            inc: 2
+            interval: 2000
+
+out_dir: ../models/multiple_task_with_label
+
+wandb:
+    name: "multiple_task_with_label_standard"
