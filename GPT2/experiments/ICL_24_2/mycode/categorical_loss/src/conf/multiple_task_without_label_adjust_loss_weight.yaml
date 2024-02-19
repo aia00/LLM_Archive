@@ -1,0 +1,22 @@
+inherit: 
+    - base.yaml
+
+model:
+    family: gpt2
+
+
+training:
+    task: multiple_task_without_label
+    train_steps: 300001
+    batch_size: 128
+    curriculum:
+        points:
+            start: 11
+            end: 41
+            inc: 2
+            interval: 2000
+
+out_dir: ../models/multiple_task_without_label_adjust_loss_weight
+
+wandb:
+    name: "multiple_task_without_label_standard_adjust_loss_weight"
