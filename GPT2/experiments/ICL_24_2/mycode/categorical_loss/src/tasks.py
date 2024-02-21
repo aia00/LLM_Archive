@@ -99,6 +99,11 @@ class LinearRegression(Task):
         w_b = self.w_b.to(xs_b.device)
         ys_b = self.scale * (xs_b @ w_b)[:, :, 0]
         return ys_b
+    
+    # def evaluate_for_category(self, xs_b):
+    #     w_b = self.w_b.to(xs_b.device)
+    #     ys_b = self.scale * (xs_b @ w_b)[:, :, 0]
+    #     return ys_b
 
     @staticmethod
     def generate_pool_dict(n_dims, num_tasks, **kwargs):  # ignore extra args

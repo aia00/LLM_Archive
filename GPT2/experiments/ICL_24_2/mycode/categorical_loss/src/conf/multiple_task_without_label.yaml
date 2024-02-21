@@ -3,6 +3,8 @@ inherit:
 
 training:
     task: multiple_task_without_label
+    train_steps: 200001
+    batch_size: 128
     curriculum:
         points:
             start: 11

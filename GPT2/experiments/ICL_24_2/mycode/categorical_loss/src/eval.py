@@ -8,11 +8,45 @@ import pandas as pd
 from tqdm import tqdm
 import torch
 import yaml
+import collections
 
 import models
 from samplers import get_data_sampler, sample_transformation
 from tasks import get_task_sampler
 
+
+def remove_module_from_state_dict(state_dict):
+    new_state_dict = collections.OrderedDict()
+    for key, value in state_dict.items():
+        if key.startswith('module.'):  # Check if 'module.' prefix is in the key
+            new_key = key[7:]           # Remove 'module.' prefix
+        else:
+            new_key = key               # Use the original key
+        new_state_dict[new_key] = value # Add to the new dictionary 
+
+    return new_state_dict
+
+
+
+def get_parrallel_model_from_run(run_path, step=-1, only_conf=False):
+    config_path = os.path.join(run_path, "config.yaml")
+    with open(config_path) as fp:  # we don't Quinfig it to avoid inherits
+        conf = Munch.fromDict(yaml.safe_load(fp))
+    if only_conf:
+        return None, conf
+
+    model = models.build_model(conf.model)
+
+    if step == -1:
+        state_path = os.path.join(run_path, "state.pt")
+        state = torch.load(state_path)
+        model.load_state_dict(remove_module_from_state_dict(state["model_state_dict"]))
+    else:
+        model_path = os.path.join(run_path, f"model_{step}.pt")
+        state_dict = torch.load(model_path)
+        model.load_state_dict(remove_module_from_state_dict(state_dict))
+
+    return model, conf
 
 def get_model_from_run(run_path, step=-1, only_conf=False):
     config_path = os.path.join(run_path, "config.yaml")
