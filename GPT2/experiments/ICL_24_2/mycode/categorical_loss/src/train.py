@@ -26,14 +26,18 @@ torch.backends.cudnn.benchmark = True
 def train_step(model, xs, ys, optimizer, loss_func, cat):
     optimizer.zero_grad()
     # pdb.set_trace()
-    if cat is not None:
-        output = model(xs, ys, cat)
+    if cat[0] is not None:
+        output = model(xs, ys, cat[0], cat[1])
+        loss = loss_func(output, ys, cat[0])
     else:
         output = model(xs, ys)
-    loss = loss_func(output, ys)
+        loss = loss_func(output, ys)
     loss.backward()
     optimizer.step()
-    return loss.detach().item(), output.detach()
+    if cat[0] is not None and cat[1]==True:
+        return loss.detach().item(), output[0].detach()
+    else:
+        return loss.detach().item(), output.detach()
 
 
 def sample_seeds(total_seeds, count):
@@ -101,7 +105,7 @@ def train(model, args):
             **data_sampler_args,
         )
 
-        if args.training.task =="multiple_task_with_label":
+        if args.training.task in ["multiple_task_with_label", "multiple_task_with_label_cat_loss"]:
             task_key = np.random.choice(task_choices_keys)
             task_type = task_choices[task_key]
             cat_num = len(task_choices_keys)
@@ -116,6 +120,8 @@ def train(model, args):
             task_type = args.training.task
             task_key = None
             cat_num = None
+
+
         task_sampler = get_task_sampler(
                 task_type,
                 n_dims,
@@ -125,14 +131,20 @@ def train(model, args):
         task = task_sampler(**task_sampler_args)
         ys = task.evaluate(xs)
 
-        loss_func = task.get_training_metric()
 
+        
+        if args.training.task == "multiple_task_with_label_cat_loss":
+            loss_func = task.get_training_metric_with_cat_loss()
+            cat_loss_bool = True
+        else:
+            loss_func = task.get_training_metric()
+            cat_loss_bool = False
         
         xs = xs.to(device)
         ys = ys.to(device)
        
         
-        loss, output = train_step(model, xs, ys, optimizer, loss_func, task_key)
+        loss, output = train_step(model, xs, ys, optimizer, loss_func, [task_key,cat_loss_bool])
 
         point_wise_tags = list(range(curriculum.n_points))
         point_wise_loss_func = task.get_metric()
@@ -210,7 +222,7 @@ def main(args):
 if __name__ == "__main__":
     parser = QuinineArgumentParser(schema=schema)
     args = parser.parse_quinfig()
-    assert args.model.family in ["gpt2", "lstm", "gpt2_labeled"]
+    assert args.model.family in ["gpt2", "lstm", "gpt2_labeled", "gpt2_labeled_cat"]
     print(f"Running with: {args}")
 
     if not args.test_run:

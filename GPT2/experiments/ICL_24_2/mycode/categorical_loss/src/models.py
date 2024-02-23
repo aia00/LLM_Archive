@@ -28,6 +28,14 @@ def build_model(conf):
             n_layer=conf.n_layer,
             n_head=conf.n_head,
         )
+    elif conf.family == "gpt2_labeled_cat":
+        model = TransformerModel_labeled_cat(
+            n_dims=conf.n_dims,
+            n_positions=conf.n_positions,
+            n_embd=conf.n_embd,
+            n_layer=conf.n_layer,
+            n_head=conf.n_head,
+        )
     else:
         raise NotImplementedError
 
@@ -176,8 +184,29 @@ class TransformerModel_labeled(nn.Module):
         zs = torch.stack((xs_b_cat, ys_b_wide), dim=2)
         zs = zs.view(bsize, 2 * points, dim + 1)  # dim increased by 1
         return zs
+    
+    @staticmethod
+    def _combine_for_category(xs_b, ys_b, cat, cat_b):  # Added argument for category
+        """Interleaves the x's, y's and category into a single sequence."""
+        bsize, points, dim = xs_b.shape
+        one_hot_tensor = torch.nn.functional.one_hot(torch.tensor(cat), num_classes=3).float().view(1, 1, 3)
+        one_hot_tensor = one_hot_tensor.expand(bsize, points, -1).to(xs_b.device)
+        ys_b_wide = torch.cat(
+            (
+                ys_b.view(bsize, points, 1),
+                one_hot_tensor,
+                torch.zeros(bsize, points, dim-3, device=ys_b.device).to(xs_b.device),
+            ),
+            axis=2,
+        )
+        # Add 'cat' to the 'xs_b' tensor as the first dimension
+        xs_b_cat = torch.cat([cat_b, xs_b], dim=-1)  # cat_b and xs_b are now of shape (batch_size, num_points, num_features+1)
+        # ys_b stays zeros at the end because it does not have a 'cat'
+        zs = torch.stack((xs_b_cat, ys_b_wide), dim=2)
+        zs = zs.view(bsize, 2 * points, dim + 1)  # dim increased by 1
+        return zs
 
-    def forward(self, xs, ys, cat, inds=None):  # cat is an integer representing the category
+    def forward(self, xs, ys, cat, cat_loss_bool, inds=None):  # cat is an integer representing the category
         if inds is None:
             inds = torch.arange(ys.shape[1])
         else:
@@ -188,12 +217,125 @@ class TransformerModel_labeled(nn.Module):
         # Create cat tensor and align its shape to xs
         cat_b = torch.full(xs.shape[:-1] + (1,), float(cat), device=ys.device)  # shape (batch_size, num_points, 1)
         # Combine xs, ys, cat 
-        zs = self._combine(xs, ys, cat_b)
-        zs = zs.to(ys.device)
-        embeds = self._read_in(zs)
-        output = self._backbone(inputs_embeds=embeds).last_hidden_state
-        prediction = self._read_out(output)
-        return prediction[:, ::2, 0][:, inds]  # predict only on xs
+        if cat_loss_bool == False:
+            zs = self._combine(xs, ys, cat_b)
+            zs = zs.to(ys.device)
+            embeds = self._read_in(zs)
+            output = self._backbone(inputs_embeds=embeds).last_hidden_state
+            prediction = self._read_out(output)
+            return prediction[:, ::2, 0][:, inds]  # predict only on xs
+        
+        else:
+            zs = self._combine_for_category(xs, ys, cat, cat_b)
+            zs = zs.to(ys.device)
+            embeds = self._read_in(zs)
+            output = self._backbone(inputs_embeds=embeds).last_hidden_state
+            prediction = self._read_out(output)
+            # print(prediction.shape)
+            return prediction[:, ::2, 0][:, inds] # predict only on xs
+        
+
+class TransformerModel_labeled_cat(nn.Module):
+    def __init__(self, n_dims, n_positions, n_embd=128, n_layer=12, n_head=4):
+        super(TransformerModel_labeled_cat, self).__init__()
+        configuration = GPT2Config(
+            n_positions=2 * n_positions,
+            n_embd=n_embd,
+            n_layer=n_layer,
+            n_head=n_head,
+            resid_pdrop=0.0,
+            embd_pdrop=0.0,
+            attn_pdrop=0.0,
+            use_cache=False,
+        )
+        self.name = f"gpt2_embd={n_embd}_layer={n_layer}_head={n_head}"
+
+        self.n_positions = n_positions
+        self.n_dims = n_dims
+        self._read_in = nn.Linear(n_dims + 1, n_embd)  # Added 1 for category
+        self._backbone = GPT2Model(configuration)
+        self._finetune1 = nn.Linear(n_embd, n_embd*2)
+        self._finetune2 = nn.Linear(n_embd*2, n_embd*2)
+
+        self._pre_read_out = nn.Linear(n_embd*2, n_embd)
+        self._read_out = nn.Linear(n_embd, 1)
+
+        self._pre_cat_out = nn.Linear(n_embd*2, n_embd)
+        self._cat_out = nn.Linear(n_embd, 3)
+
+    @staticmethod
+    def _combine(xs_b, ys_b, cat_b):  # Added argument for category
+        """Interleaves the x's, y's and category into a single sequence."""
+        bsize, points, dim = xs_b.shape
+        ys_b_wide = torch.cat(
+            (
+                ys_b.view(bsize, points, 1),
+                torch.zeros(bsize, points, dim, device=ys_b.device),
+            ),
+            axis=2,
+        )
+        # Add 'cat' to the 'xs_b' tensor as the first dimension
+        xs_b_cat = torch.cat([cat_b, xs_b], dim=-1)  # cat_b and xs_b are now of shape (batch_size, num_points, num_features+1)
+        # ys_b stays zeros at the end because it does not have a 'cat'
+        zs = torch.stack((xs_b_cat, ys_b_wide), dim=2)
+        zs = zs.view(bsize, 2 * points, dim + 1)  # dim increased by 1
+        return zs
+    
+    @staticmethod
+    def _combine_for_category(xs_b, ys_b, cat, cat_b):  # Added argument for category
+        """Interleaves the x's, y's and category into a single sequence."""
+        bsize, points, dim = xs_b.shape
+        # one_hot_tensor = torch.nn.functional.one_hot(torch.tensor(cat), num_classes=3).float().view(1, 1, 3)
+        # # one_hot_tensor = torch.tensor(cat).float().view(1, 1, 1)
+        # one_hot_tensor = one_hot_tensor.expand(bsize, points, -1).to(xs_b.device)
+        ys_b_wide = torch.cat(
+            (
+                ys_b.view(bsize, points, 1),
+                # one_hot_tensor,
+                torch.zeros(bsize, points, dim, device=ys_b.device).to(xs_b.device),
+            ),
+            axis=2,
+        )
+        # Add 'cat' to the 'xs_b' tensor as the first dimension
+        xs_b_cat = torch.cat([cat_b, xs_b], dim=-1)  # cat_b and xs_b are now of shape (batch_size, num_points, num_features+1)
+        # ys_b stays zeros at the end because it does not have a 'cat'
+        zs = torch.stack((xs_b_cat, ys_b_wide), dim=2)
+        zs = zs.view(bsize, 2 * points, dim + 1)  # dim increased by 1
+        return zs
+
+    def forward(self, xs, ys, cat, cat_loss_bool, inds=None):  # cat is an integer representing the category
+        if inds is None:
+            inds = torch.arange(ys.shape[1])
+        else:
+            inds = torch.tensor(inds)
+            if max(inds) >= ys.shape[1] or min(inds) < 0:
+                raise ValueError("inds contain indices where xs and ys are not defined")
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        # Create cat tensor and align its shape to xs
+        cat_b = torch.full(xs.shape[:-1] + (1,), float(cat), device=ys.device)  # shape (batch_size, num_points, 1)
+        # Combine xs, ys, cat 
+        if cat_loss_bool == False:
+            zs = self._combine(xs, ys, cat_b)
+            zs = zs.to(ys.device)
+            embeds = self._read_in(zs)
+            output = self._backbone(inputs_embeds=embeds).last_hidden_state
+            prediction = self._read_out(output)
+            return prediction[:, ::2, 0][:, inds]  # predict only on xs
+        
+        else:
+            zs = self._combine_for_category(xs, ys, cat, cat_b)
+            zs = zs.to(ys.device)
+            embeds = self._read_in(zs)
+            output1 = self._backbone(inputs_embeds=embeds).last_hidden_state
+            output2 = self._finetune1(output1)
+            output3 = self._finetune2(output2)
+            output_pre_read = self._pre_read_out(output3)
+            output_pre_cat = self._pre_cat_out(output3)
+            prediction = self._read_out(output_pre_read)
+            prediction_cat = self._cat_out(output_pre_cat)
+            # print(prediction.shape)
+            return prediction[:, ::2, 0][:, inds],  prediction_cat[:, ::2, 0:3][:, inds] # predict only on xs
+
 
 
 

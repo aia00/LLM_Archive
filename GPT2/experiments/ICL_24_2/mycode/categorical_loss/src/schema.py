@@ -14,7 +14,7 @@ from funcy import merge
 
 
 model_schema = {
-    "family": merge(tstring, allowed(["gpt2", "gpt2_labeled", "lstm"])),
+    "family": merge(tstring, allowed(["gpt2", "gpt2_labeled", "lstm", "gpt2_labeled_cat"])),
     "n_positions": merge(tinteger, required),  # maximum context length
     "n_dims": merge(tinteger, required),  # latent dimension
     "n_embd": merge(tinteger, required),
@@ -41,7 +41,8 @@ TASK_LIST = [
     "relu_2nn_regression",
     "decision_tree",
     "multiple_task_without_label",
-    "multiple_task_with_label"
+    "multiple_task_with_label",
+    "multiple_task_with_label_cat_loss"
 ]
 
 training_schema = {

@@ -1,7 +1,8 @@
 import math
 
 import torch
-
+import torch.nn.functional as F
+from torch import nn
 
 def squared_error(ys_pred, ys):
     return (ys - ys_pred).square()
@@ -14,6 +15,36 @@ def mean_squared_error(ys_pred, ys):
 def accuracy(ys_pred, ys):
     return (ys == ys_pred.sign()).float()
 
+def mean_se_for_cat_loss(ys_pred, ys, cat):
+    # print(ys_pred[0].shape)
+    # print(ys_pred[1].shape)
+    bsize, points= ys.shape[0], ys.shape[1]
+    sw_logits = ys_pred[1]
+        # create a BCEWithLogitsLoss instance
+    answer = torch.nn.functional.one_hot(torch.tensor(cat), num_classes=3).float().view(1, 1, 3)
+    answer = answer.expand(bsize, points, -1)
+    # answer = answer.view(-1, 3)
+
+    target_indices = torch.argmax(answer, dim=-1)
+
+    # Create a cross entropy loss instance
+    criterion = nn.CrossEntropyLoss(reduction='none')
+
+    # Compute the loss
+    losses = criterion(sw_logits.view(-1,3).to(ys.device), target_indices.view(-1).to(ys.device))
+
+    # Now losses is of shape (batch*points)
+    # Reshape it to (batch, points)
+    losses = losses.view(-1)
+
+    losses = losses.mean()
+
+
+    return (ys - ys_pred[0]).square().mean()+losses
+
+    
+
+
 
 sigmoid = torch.nn.Sigmoid()
 bce_loss = torch.nn.BCELoss()
@@ -23,6 +54,34 @@ def cross_entropy(ys_pred, ys):
     output = sigmoid(ys_pred)
     target = (ys + 1) / 2
     return bce_loss(output, target)*5
+
+def mean_ce_for_cat_loss(ys_pred, ys, cat):
+    # print(ys_pred[0].shape)
+    # print(ys_pred[1].shape)
+    bsize, points= ys.shape[0], ys.shape[1]
+    sw_logits = ys_pred[1] 
+        # create a BCEWithLogitsLoss instance
+    answer = torch.nn.functional.one_hot(torch.tensor(cat), num_classes=3).float().view(1, 1, 3)
+    answer = answer.expand(bsize, points, -1)
+    # answer = answer.view(-1, 3)
+
+    target_indices = torch.argmax(answer, dim=-1)
+
+    # Create a cross entropy loss instance
+    criterion = nn.CrossEntropyLoss(reduction='none')
+
+    # Compute the loss
+    losses = criterion(sw_logits.view(-1,3).to(ys.device), target_indices.view(-1).to(ys.device))
+
+    # Now losses is of shape (batch*points)
+    # Reshape it to (batch, points)
+    losses = losses.view(-1)
+    losses = losses.mean()
+    output = sigmoid(ys_pred[0])
+    target = (ys + 1) / 2
+    # print(bce_loss(output, target)*5)
+    # print(losses)
+    return bce_loss(output, target)*5+ losses
 
 
 class Task:
@@ -99,11 +158,6 @@ class LinearRegression(Task):
         w_b = self.w_b.to(xs_b.device)
         ys_b = self.scale * (xs_b @ w_b)[:, :, 0]
         return ys_b
-    
-    # def evaluate_for_category(self, xs_b):
-    #     w_b = self.w_b.to(xs_b.device)
-    #     ys_b = self.scale * (xs_b @ w_b)[:, :, 0]
-    #     return ys_b
 
     @staticmethod
     def generate_pool_dict(n_dims, num_tasks, **kwargs):  # ignore extra args
@@ -116,6 +170,11 @@ class LinearRegression(Task):
     @staticmethod
     def get_training_metric():
         return mean_squared_error
+    
+    @staticmethod
+    def get_training_metric_with_cat_loss():
+        return mean_se_for_cat_loss
+    
 
 
 class SparseLinearRegression(LinearRegression):
@@ -175,6 +234,10 @@ class LinearClassification(LinearRegression):
     @staticmethod
     def get_training_metric():
         return cross_entropy
+        
+    @staticmethod
+    def get_training_metric_with_cat_loss():
+        return mean_ce_for_cat_loss
 
 
 class NoisyLinearRegression(LinearRegression):
@@ -213,6 +276,11 @@ class QuadraticRegression(LinearRegression):
         ys_b_quad = ys_b_quad / math.sqrt(3)
         ys_b_quad = self.scale * ys_b_quad
         return ys_b_quad
+    
+        
+    @staticmethod
+    def get_training_metric_with_cat_loss():
+        return mean_se_for_cat_loss
 
 
 class Relu2nnRegression(Task):
