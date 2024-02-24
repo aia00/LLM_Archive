@@ -16,7 +16,7 @@ training:
             inc: 2
             interval: 2000
 
-out_dir: ../models/multiple_task_without_label_cat_loss_add_layers
+out_dir: ../models/multiple_task_without_label_cat_loss
 
 wandb:
-    name: "multiple_task_without_label_standard_cat_loss_add_layers"
+    name: "multiple_task_without_label_standard_cat_loss"

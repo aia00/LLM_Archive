@@ -1,6 +1,10 @@
 inherit: 
     - base.yaml
 
+model:
+    family: gpt2
+
+
 training:
     task: multiple_task_without_label
     train_steps: 200001
@@ -15,4 +19,4 @@ training:
 out_dir: ../models/multiple_task_without_label
 
 wandb:
-    name: "multiple_task_without_label_standard"
+    name: "multiple_task_without_label_standard_adjust_loss_weight"
