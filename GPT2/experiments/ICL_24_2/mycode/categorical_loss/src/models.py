@@ -235,6 +235,8 @@ class TransformerModel_labeled(nn.Module):
             return prediction[:, ::2, 0][:, inds] # predict only on xs
         
 
+# places t change when with label:
+        
 class TransformerModel_labeled_cat(nn.Module):
     def __init__(self, n_dims, n_positions, n_embd=128, n_layer=12, n_head=4):
         super(TransformerModel_labeled_cat, self).__init__()
@@ -252,7 +254,7 @@ class TransformerModel_labeled_cat(nn.Module):
 
         self.n_positions = n_positions
         self.n_dims = n_dims
-        self._read_in = nn.Linear(n_dims + 1, n_embd)  # Added 1 for category
+        self._read_in = nn.Linear(n_dims , n_embd)  # Added 1 for category
         self._backbone = GPT2Model(configuration)
         self._finetune1 = nn.Linear(n_embd, n_embd*2)
         self._finetune2 = nn.Linear(n_embd*2, n_embd*2)
@@ -292,15 +294,16 @@ class TransformerModel_labeled_cat(nn.Module):
             (
                 ys_b.view(bsize, points, 1),
                 # one_hot_tensor,
-                torch.zeros(bsize, points, dim, device=ys_b.device).to(xs_b.device),
+                torch.zeros(bsize, points, dim-1, device=ys_b.device).to(xs_b.device),
             ),
             axis=2,
         )
         # Add 'cat' to the 'xs_b' tensor as the first dimension
-        xs_b_cat = torch.cat([cat_b, xs_b], dim=-1)  # cat_b and xs_b are now of shape (batch_size, num_points, num_features+1)
+        # xs_b_cat = torch.cat([cat_b, xs_b], dim=-1)  # cat_b and xs_b are now of shape (batch_size, num_points, num_features+1)
+        xs_b_cat = xs_b
         # ys_b stays zeros at the end because it does not have a 'cat'
         zs = torch.stack((xs_b_cat, ys_b_wide), dim=2)
-        zs = zs.view(bsize, 2 * points, dim + 1)  # dim increased by 1
+        zs = zs.view(bsize, 2 * points, dim )  # dim increased by 1
         return zs
 
     def forward(self, xs, ys, cat, cat_loss_bool, inds=None):  # cat is an integer representing the category

@@ -42,7 +42,8 @@ TASK_LIST = [
     "decision_tree",
     "multiple_task_without_label",
     "multiple_task_with_label",
-    "multiple_task_with_label_cat_loss"
+    "multiple_task_with_label_cat_loss",
+    "multiple_task_without_label_cat_loss"
 ]
 
 training_schema = {

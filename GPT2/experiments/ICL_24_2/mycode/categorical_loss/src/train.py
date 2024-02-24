@@ -105,7 +105,7 @@ def train(model, args):
             **data_sampler_args,
         )
 
-        if args.training.task in ["multiple_task_with_label", "multiple_task_with_label_cat_loss"]:
+        if args.training.task in ["multiple_task_with_label", "multiple_task_with_label_cat_loss","multiple_task_without_label_cat_loss"]:
             task_key = np.random.choice(task_choices_keys)
             task_type = task_choices[task_key]
             cat_num = len(task_choices_keys)
@@ -133,7 +133,7 @@ def train(model, args):
 
 
         
-        if args.training.task == "multiple_task_with_label_cat_loss":
+        if args.training.task in ["multiple_task_with_label_cat_loss", "multiple_task_without_label_cat_loss"]:
             loss_func = task.get_training_metric_with_cat_loss()
             cat_loss_bool = True
         else:

@@ -40,7 +40,7 @@ def mean_se_for_cat_loss(ys_pred, ys, cat):
     losses = losses.mean()
 
 
-    return (ys - ys_pred[0]).square().mean()+losses
+    return (ys - ys_pred[0]).square().mean()+losses*5
 
     
 
@@ -81,7 +81,7 @@ def mean_ce_for_cat_loss(ys_pred, ys, cat):
     target = (ys + 1) / 2
     # print(bce_loss(output, target)*5)
     # print(losses)
-    return bce_loss(output, target)*5+ losses
+    return bce_loss(output, target)*5+ losses*5
 
 
 class Task:
