@@ -120,6 +120,7 @@ def get_task_sampler(
         "quadratic_regression": QuadraticRegression,
         "relu_2nn_regression": Relu2nnRegression,
         "decision_tree": DecisionTree,
+        "cube_regression": CubeRegression
     }
     if task_name in task_names_to_classes:
         task_cls = task_names_to_classes[task_name]
@@ -276,6 +277,21 @@ class QuadraticRegression(LinearRegression):
         ys_b_quad = ys_b_quad / math.sqrt(3)
         ys_b_quad = self.scale * ys_b_quad
         return ys_b_quad
+    
+        
+    @staticmethod
+    def get_training_metric_with_cat_loss():
+        return mean_se_for_cat_loss
+
+class CubeRegression(LinearRegression):
+    def evaluate(self, xs_b):
+        w_b = self.w_b.to(xs_b.device)
+        ys_b_cube = ((xs_b**3) @ w_b)[:, :, 0]
+        #         ys_b_quad = ys_b_quad * math.sqrt(self.n_dims) / ys_b_quad.std()
+        # Renormalize to Linear Regression Scale
+        ys_b_cube = ys_b_cube / math.sqrt(8)
+        ys_b_cube = self.scale * ys_b_cube
+        return ys_b_cube
     
         
     @staticmethod

@@ -27,8 +27,12 @@ def train_step(model, xs, ys, optimizer, loss_func, cat):
     optimizer.zero_grad()
     # pdb.set_trace()
     if cat[0] is not None:
-        output = model(xs, ys, cat[0], cat[1])
-        loss = loss_func(output, ys, cat[0])
+        if cat[1] == False:
+            output = model(xs, ys, cat[0])
+            loss = loss_func(output, ys)
+        else:
+            output = model(xs, ys, cat[0], cat[1])
+            loss = loss_func(output, ys, cat[0])
     else:
         output = model(xs, ys)
         loss = loss_func(output, ys)
@@ -75,7 +79,7 @@ def train(model, args):
 
     num_training_examples = args.training.num_training_examples
 
-    task_choices = {0:'linear_regression', 1:"quadratic_regression", 2:"linear_classification"}
+    task_choices = {0:'linear_regression', 1:"quadratic_regression", 2:"cube_regression"}
     task_choices_keys = list(task_choices.keys())
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

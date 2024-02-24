@@ -184,29 +184,8 @@ class TransformerModel_labeled(nn.Module):
         zs = torch.stack((xs_b_cat, ys_b_wide), dim=2)
         zs = zs.view(bsize, 2 * points, dim + 1)  # dim increased by 1
         return zs
-    
-    @staticmethod
-    def _combine_for_category(xs_b, ys_b, cat, cat_b):  # Added argument for category
-        """Interleaves the x's, y's and category into a single sequence."""
-        bsize, points, dim = xs_b.shape
-        one_hot_tensor = torch.nn.functional.one_hot(torch.tensor(cat), num_classes=3).float().view(1, 1, 3)
-        one_hot_tensor = one_hot_tensor.expand(bsize, points, -1).to(xs_b.device)
-        ys_b_wide = torch.cat(
-            (
-                ys_b.view(bsize, points, 1),
-                one_hot_tensor,
-                torch.zeros(bsize, points, dim-3, device=ys_b.device).to(xs_b.device),
-            ),
-            axis=2,
-        )
-        # Add 'cat' to the 'xs_b' tensor as the first dimension
-        xs_b_cat = torch.cat([cat_b, xs_b], dim=-1)  # cat_b and xs_b are now of shape (batch_size, num_points, num_features+1)
-        # ys_b stays zeros at the end because it does not have a 'cat'
-        zs = torch.stack((xs_b_cat, ys_b_wide), dim=2)
-        zs = zs.view(bsize, 2 * points, dim + 1)  # dim increased by 1
-        return zs
 
-    def forward(self, xs, ys, cat, cat_loss_bool, inds=None):  # cat is an integer representing the category
+    def forward(self, xs, ys, cat,  inds=None):  # cat is an integer representing the category
         if inds is None:
             inds = torch.arange(ys.shape[1])
         else:
@@ -217,22 +196,14 @@ class TransformerModel_labeled(nn.Module):
         # Create cat tensor and align its shape to xs
         cat_b = torch.full(xs.shape[:-1] + (1,), float(cat), device=ys.device)  # shape (batch_size, num_points, 1)
         # Combine xs, ys, cat 
-        if cat_loss_bool == False:
-            zs = self._combine(xs, ys, cat_b)
-            zs = zs.to(ys.device)
-            embeds = self._read_in(zs)
-            output = self._backbone(inputs_embeds=embeds).last_hidden_state
-            prediction = self._read_out(output)
-            return prediction[:, ::2, 0][:, inds]  # predict only on xs
-        
-        else:
-            zs = self._combine_for_category(xs, ys, cat, cat_b)
-            zs = zs.to(ys.device)
-            embeds = self._read_in(zs)
-            output = self._backbone(inputs_embeds=embeds).last_hidden_state
-            prediction = self._read_out(output)
-            # print(prediction.shape)
-            return prediction[:, ::2, 0][:, inds] # predict only on xs
+
+        zs = self._combine(xs, ys, cat_b)
+        zs = zs.to(ys.device)
+        embeds = self._read_in(zs)
+        output = self._backbone(inputs_embeds=embeds).last_hidden_state
+        prediction = self._read_out(output)
+        return prediction[:, ::2, 0][:, inds]  # predict only on xs
+    
         
 
 # places t change when with label:
