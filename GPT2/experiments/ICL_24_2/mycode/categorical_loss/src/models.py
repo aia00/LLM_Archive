@@ -114,6 +114,11 @@ class TransformerModel(nn.Module):
         self._backbone = GPT2Model(configuration)
         self._read_out = nn.Linear(n_embd, 1)
 
+
+        # self._read_in_x =  nn.Linear(n_dims, n_embd)
+        # self._read_in_y =  nn.Linear(n_dims, n_embd)
+
+
     @staticmethod
     def _combine(xs_b, ys_b):
         """Interleaves the x's and the y's into a single sequence."""
@@ -136,9 +141,11 @@ class TransformerModel(nn.Module):
             inds = torch.tensor(inds)
             if max(inds) >= ys.shape[1] or min(inds) < 0:
                 raise ValueError("inds contain indices where xs and ys are not defined")
+        
         zs = self._combine(xs, ys)
         zs = zs.to(ys.device)
         embeds = self._read_in(zs)
+        
         output = self._backbone(inputs_embeds=embeds).last_hidden_state
         prediction = self._read_out(output)
         return prediction[:, ::2, 0][:, inds]  # predict only on xs
