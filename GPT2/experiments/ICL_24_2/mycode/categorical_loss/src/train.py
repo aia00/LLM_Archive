@@ -79,7 +79,8 @@ def train(model, args):
 
     num_training_examples = args.training.num_training_examples
 
-    task_choices = {0:'linear_regression', 1:"quadratic_regression", 2:"cube_regression"}
+    task_choices = {0:'linear_regression', 1:"quadratic_regression", 2:"cube_regression",
+                    3:"relu_2nn_regression", 4: "decision_tree"}
     task_choices_keys = list(task_choices.keys())
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
