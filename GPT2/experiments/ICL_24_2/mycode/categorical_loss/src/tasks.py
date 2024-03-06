@@ -21,7 +21,7 @@ def mean_se_for_cat_loss(ys_pred, ys, cat):
     bsize, points= ys.shape[0], ys.shape[1]
     sw_logits = ys_pred[1]
         # create a BCEWithLogitsLoss instance
-    answer = torch.nn.functional.one_hot(torch.tensor(cat), num_classes=3).float().view(1, 1, 3)
+    answer = torch.nn.functional.one_hot(torch.tensor(cat), num_classes=5).float().view(1, 1, 5)
     answer = answer.expand(bsize, points, -1)
     # answer = answer.view(-1, 3)
 
@@ -31,7 +31,7 @@ def mean_se_for_cat_loss(ys_pred, ys, cat):
     criterion = nn.CrossEntropyLoss(reduction='none')
 
     # Compute the loss
-    losses = criterion(sw_logits.view(-1,3).to(ys.device), target_indices.view(-1).to(ys.device))
+    losses = criterion(sw_logits.view(-1,5).to(ys.device), target_indices.view(-1).to(ys.device))
 
     # Now losses is of shape (batch*points)
     # Reshape it to (batch, points)
@@ -359,6 +359,10 @@ class Relu2nnRegression(Task):
     @staticmethod
     def get_training_metric():
         return mean_squared_error
+    
+    @staticmethod
+    def get_training_metric_with_cat_loss():
+        return mean_se_for_cat_loss
 
 
 class DecisionTree(Task):
@@ -433,3 +437,7 @@ class DecisionTree(Task):
     @staticmethod
     def get_training_metric():
         return mean_squared_error
+
+    @staticmethod
+    def get_training_metric_with_cat_loss():
+        return mean_se_for_cat_loss
