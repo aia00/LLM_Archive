@@ -115,8 +115,9 @@ class TransformerModel(nn.Module):
         self._read_out = nn.Linear(n_embd, 1)
 
 
-        # self._read_in_x =  nn.Linear(n_dims, n_embd)
-        # self._read_in_y =  nn.Linear(n_dims, n_embd)
+        self._finetune1 = nn.Linear(n_embd, n_embd*2)
+        self._finetune2 = nn.Linear(n_embd*2, n_embd*2)
+        self._pre_read = nn.Linear(n_embd*2, n_embd)
 
 
     @staticmethod
@@ -147,7 +148,13 @@ class TransformerModel(nn.Module):
         embeds = self._read_in(zs)
         
         output = self._backbone(inputs_embeds=embeds).last_hidden_state
-        prediction = self._read_out(output)
+        # prediction = self._read_out(output)
+
+        output_1 = self._finetune1(output)
+        output_2 = self._finetune2(output_1)
+        output_3 = self._pre_read(output_2)
+        prediction = self._read_out(output_3)
+
         return prediction[:, ::2, 0][:, inds]  # predict only on xs
     
 

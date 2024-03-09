@@ -40,7 +40,7 @@ def mean_se_for_cat_loss(ys_pred, ys, cat):
     losses = losses.mean()
 
 
-    return (ys - ys_pred[0]).square().mean()+losses*5
+    return (ys - ys_pred[0]).square().mean()+losses*20
 
     
 
