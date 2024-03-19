@@ -79,17 +79,23 @@ def train(model, args):
 
     num_training_examples = args.training.num_training_examples
 
-    task_choices = {0:'linear_regression', 1:"quadratic_regression", 2:"cube_regression",
-                    3:"relu_2nn_regression", 4: "decision_tree"}
+    # task_choices = {0:'noisy_linear_regression', 1:"quadratic_regression", 2:"cube_regression",
+    #                 3:"relu_2nn_regression", 4: "decision_tree"} 
+    # task_choices = {0:'linear_regression', 1:"quadratic_regression", 2:"cube_regression",
+    #                 3:"relu_2nn_regression", 4: "decision_tree"} #702
+    # task_choices = {3:"relu_2nn_regression",} #f52
+    # task_choices = {2:"cube_regression",}
+    task_choices = {0:'linear_classification', 1:"quadratic_regression", 2:"cube_regression",
+                    3:"relu_2nn_regression", 4: "decision_tree"} #426 #33e
     task_choices_keys = list(task_choices.keys())
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = model.to(device)
 
-    if torch.cuda.device_count() > 1:
-        print("Let's use", torch.cuda.device_count(), "GPUs!")
-        # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
-        model = nn.DataParallel(model)
+    # if torch.cuda.device_count() > 1:
+    #     print("Let's use", torch.cuda.device_count(), "GPUs!")
+    #     # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
+    #     model = nn.DataParallel(model)
 
     for i in pbar:
         data_sampler_args = {}

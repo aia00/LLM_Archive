@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from transformers import GPT2Model, GPT2Config
 from tqdm import tqdm
 from sklearn.svm import LinearSVC

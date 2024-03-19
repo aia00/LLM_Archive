@@ -61,7 +61,7 @@ def mean_ce_for_cat_loss(ys_pred, ys, cat):
     bsize, points= ys.shape[0], ys.shape[1]
     sw_logits = ys_pred[1] 
         # create a BCEWithLogitsLoss instance
-    answer = torch.nn.functional.one_hot(torch.tensor(cat), num_classes=3).float().view(1, 1, 3)
+    answer = torch.nn.functional.one_hot(torch.tensor(cat), num_classes=5).float().view(1, 1, 5)
     answer = answer.expand(bsize, points, -1)
     # answer = answer.view(-1, 3)
 
@@ -71,7 +71,7 @@ def mean_ce_for_cat_loss(ys_pred, ys, cat):
     criterion = nn.CrossEntropyLoss(reduction='none')
 
     # Compute the loss
-    losses = criterion(sw_logits.view(-1,3).to(ys.device), target_indices.view(-1).to(ys.device))
+    losses = criterion(sw_logits.view(-1,5).to(ys.device), target_indices.view(-1).to(ys.device))
 
     # Now losses is of shape (batch*points)
     # Reshape it to (batch, points)
@@ -249,7 +249,7 @@ class NoisyLinearRegression(LinearRegression):
         pool_dict=None,
         seeds=None,
         scale=1,
-        noise_std=0,
+        noise_std=1,
         renormalize_ys=False,
     ):
         """noise_std: standard deviation of noise added to the prediction."""
