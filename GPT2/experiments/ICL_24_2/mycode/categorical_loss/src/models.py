@@ -102,9 +102,9 @@ class TransformerModel(nn.Module):
             n_embd=n_embd,
             n_layer=n_layer,
             n_head=n_head,
-            resid_pdrop=0.0,
-            embd_pdrop=0.0,
-            attn_pdrop=0.0,
+            resid_pdrop=0.05,
+            embd_pdrop=0.05,
+            attn_pdrop=0.05,
             use_cache=False,
         )
         self.name = f"gpt2_embd={n_embd}_layer={n_layer}_head={n_head}"
@@ -117,7 +117,9 @@ class TransformerModel(nn.Module):
 
 
         self._finetune1 = nn.Linear(n_embd, n_embd*2)
+
         self._finetune2 = nn.Linear(n_embd*2, n_embd*2)
+
         self._pre_read = nn.Linear(n_embd*2, n_embd)
 
 
@@ -152,8 +154,11 @@ class TransformerModel(nn.Module):
         # prediction = self._read_out(output)
 
         output_1 = self._finetune1(output)
+        
         output_2 = self._finetune2(output_1)
         output_3 = self._pre_read(output_2)
+
+        output_3 = self._pre_read(output_1)
         prediction = self._read_out(output_3)
 
         return prediction[:, ::2, 0][:, inds]  # predict only on xs
@@ -231,9 +236,9 @@ class TransformerModel_labeled_cat(nn.Module):
             n_embd=n_embd,
             n_layer=n_layer,
             n_head=n_head,
-            resid_pdrop=0.0,
-            embd_pdrop=0.0,
-            attn_pdrop=0.0,
+            resid_pdrop=0.05,
+            embd_pdrop=0.05,
+            attn_pdrop=0.05,
             use_cache=False,
         )
         self.name = f"gpt2_embd={n_embd}_layer={n_layer}_head={n_head}"
@@ -243,6 +248,7 @@ class TransformerModel_labeled_cat(nn.Module):
         self._read_in = nn.Linear(n_dims , n_embd)  # Added 1 for category
         self._backbone = GPT2Model(configuration)
         self._finetune1 = nn.Linear(n_embd, n_embd*2)
+
         self._finetune2 = nn.Linear(n_embd*2, n_embd*2)
 
         self._pre_read_out = nn.Linear(n_embd*2, n_embd)
@@ -317,9 +323,14 @@ class TransformerModel_labeled_cat(nn.Module):
             embeds = self._read_in(zs)
             output1 = self._backbone(inputs_embeds=embeds).last_hidden_state
             output2 = self._finetune1(output1)
+
             output3 = self._finetune2(output2)
             output_pre_read = self._pre_read_out(output3)
             output_pre_cat = self._pre_cat_out(output3)
+
+            # output_pre_read = self._pre_read_out(output2)
+            # output_pre_cat = self._pre_cat_out(output2)
+
             prediction = self._read_out(output_pre_read)
             prediction_cat = self._cat_out(output_pre_cat)
             # print(prediction.shape)

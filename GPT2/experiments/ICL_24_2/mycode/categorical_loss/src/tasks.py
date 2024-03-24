@@ -24,26 +24,19 @@ def mean_se_for_cat_loss(ys_pred, ys, cat):
     answer = torch.nn.functional.one_hot(torch.tensor(cat), num_classes=5).float().view(1, 1, 5)
     answer = answer.expand(bsize, points, -1)
     # answer = answer.view(-1, 3)
-
     target_indices = torch.argmax(answer, dim=-1)
-
     # Create a cross entropy loss instance
     criterion = nn.CrossEntropyLoss(reduction='none')
-
     # Compute the loss
     losses = criterion(sw_logits.view(-1,5).to(ys.device), target_indices.view(-1).to(ys.device))
 
     # Now losses is of shape (batch*points)
     # Reshape it to (batch, points)
     losses = losses.view(-1)
-
     losses = losses.mean()
 
-
-    return (ys - ys_pred[0]).square().mean()+losses*20
-
-    
-
+    return (ys - ys_pred[0]).square().mean()+losses*5
+    # return losses*20
 
 
 sigmoid = torch.nn.Sigmoid()
@@ -64,15 +57,11 @@ def mean_ce_for_cat_loss(ys_pred, ys, cat):
     answer = torch.nn.functional.one_hot(torch.tensor(cat), num_classes=5).float().view(1, 1, 5)
     answer = answer.expand(bsize, points, -1)
     # answer = answer.view(-1, 3)
-
     target_indices = torch.argmax(answer, dim=-1)
-
     # Create a cross entropy loss instance
     criterion = nn.CrossEntropyLoss(reduction='none')
-
     # Compute the loss
     losses = criterion(sw_logits.view(-1,5).to(ys.device), target_indices.view(-1).to(ys.device))
-
     # Now losses is of shape (batch*points)
     # Reshape it to (batch, points)
     losses = losses.view(-1)
@@ -82,6 +71,7 @@ def mean_ce_for_cat_loss(ys_pred, ys, cat):
     # print(bce_loss(output, target)*5)
     # print(losses)
     return bce_loss(output, target)*5+ losses*5
+    # return losses*5
 
 
 class Task:
