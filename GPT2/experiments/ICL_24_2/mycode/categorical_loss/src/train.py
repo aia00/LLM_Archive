@@ -79,12 +79,13 @@ def train(model, args):
 
     num_training_examples = args.training.num_training_examples
 
-    task_choices = {0:'noisy_linear_regression', 1:"quadratic_regression", 2:"cube_regression",
-                    3:"relu_2nn_regression", 4: "decision_tree"} # 
+    # task_choices = {0:'noisy_linear_regression', 1:"quadratic_regression", 2:"cube_regression",
+                    # 3:"relu_2nn_regression", 4: "decision_tree"} 
     # task_choices = {0:'linear_regression', 1:"quadratic_regression", 2:"cube_regression",
     #                 3:"relu_2nn_regression", 4: "decision_tree"} 
-    # task_choices = {3:"relu_2nn_regression",} 
-    # task_choices = {2:"cube_regression",} 
+    # task_choices = {3:"relu_2nn_regression",}  #614
+    # task_choices = {2:"cube_regression",} #855
+    task_choices = {1:"quadratic_regression",} #5b9
     # task_choices = {0:'linear_classification', 1:"quadratic_regression", 2:"cube_regression",
     #                 3:"relu_2nn_regression", 4: "decision_tree"} 
     task_choices_keys = list(task_choices.keys())
@@ -146,6 +147,7 @@ def train(model, args):
         
         if args.training.task in ["multiple_task_with_label_cat_loss", "multiple_task_without_label_cat_loss"]:
             loss_func = task.get_training_metric_with_cat_loss()
+            # loss_func = task.get_training_metric()
             cat_loss_bool = True
         else:
             loss_func = task.get_training_metric()

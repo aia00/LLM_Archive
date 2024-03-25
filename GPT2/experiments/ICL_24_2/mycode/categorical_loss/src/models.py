@@ -151,14 +151,14 @@ class TransformerModel(nn.Module):
         embeds = self._read_in(zs)
         
         output = self._backbone(inputs_embeds=embeds).last_hidden_state
-        # prediction = self._read_out(output)
 
         output_1 = self._finetune1(output)
         
         output_2 = self._finetune2(output_1)
         output_3 = self._pre_read(output_2)
 
-        output_3 = self._pre_read(output_1)
+        # output_3 = self._pre_read(output_1)
+
         prediction = self._read_out(output_3)
 
         return prediction[:, ::2, 0][:, inds]  # predict only on xs
