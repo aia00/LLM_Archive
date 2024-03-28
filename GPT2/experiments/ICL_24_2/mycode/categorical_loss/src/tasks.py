@@ -18,17 +18,19 @@ def accuracy(ys_pred, ys):
 def mean_se_for_cat_loss(ys_pred, ys, cat):
     # print(ys_pred[0].shape)
     # print(ys_pred[1].shape)
+    CLASSES = 2
+
     bsize, points= ys.shape[0], ys.shape[1]
     sw_logits = ys_pred[1]
         # create a BCEWithLogitsLoss instance
-    answer = torch.nn.functional.one_hot(torch.tensor(cat), num_classes=5).float().view(1, 1, 5)
+    answer = torch.nn.functional.one_hot(torch.tensor(cat), num_classes=CLASSES).float().view(1, 1, CLASSES)
     answer = answer.expand(bsize, points, -1)
     # answer = answer.view(-1, 3)
     target_indices = torch.argmax(answer, dim=-1)
     # Create a cross entropy loss instance
     criterion = nn.CrossEntropyLoss(reduction='none')
     # Compute the loss
-    losses = criterion(sw_logits.view(-1,5).to(ys.device), target_indices.view(-1).to(ys.device))
+    losses = criterion(sw_logits.view(-1,CLASSES).to(ys.device), target_indices.view(-1).to(ys.device))
 
     # Now losses is of shape (batch*points)
     # Reshape it to (batch, points)
@@ -51,17 +53,18 @@ def cross_entropy(ys_pred, ys):
 def mean_ce_for_cat_loss(ys_pred, ys, cat):
     # print(ys_pred[0].shape)
     # print(ys_pred[1].shape)
+    CLASSES =2
     bsize, points= ys.shape[0], ys.shape[1]
     sw_logits = ys_pred[1] 
         # create a BCEWithLogitsLoss instance
-    answer = torch.nn.functional.one_hot(torch.tensor(cat), num_classes=5).float().view(1, 1, 5)
+    answer = torch.nn.functional.one_hot(torch.tensor(cat), num_classes=CLASSES).float().view(1, 1, CLASSES)
     answer = answer.expand(bsize, points, -1)
     # answer = answer.view(-1, 3)
     target_indices = torch.argmax(answer, dim=-1)
     # Create a cross entropy loss instance
     criterion = nn.CrossEntropyLoss(reduction='none')
     # Compute the loss
-    losses = criterion(sw_logits.view(-1,5).to(ys.device), target_indices.view(-1).to(ys.device))
+    losses = criterion(sw_logits.view(-1,CLASSES).to(ys.device), target_indices.view(-1).to(ys.device))
     # Now losses is of shape (batch*points)
     # Reshape it to (batch, points)
     losses = losses.view(-1)

@@ -243,6 +243,8 @@ class TransformerModel_labeled_cat(nn.Module):
         )
         self.name = f"gpt2_embd={n_embd}_layer={n_layer}_head={n_head}"
 
+        self.CLASSES = 2
+
         self.n_positions = n_positions
         self.n_dims = n_dims
         self._read_in = nn.Linear(n_dims , n_embd)  # Added 1 for category
@@ -255,7 +257,7 @@ class TransformerModel_labeled_cat(nn.Module):
         self._read_out = nn.Linear(n_embd, 1)
 
         self._pre_cat_out = nn.Linear(n_embd*2, n_embd)
-        self._cat_out = nn.Linear(n_embd, 5)
+        self._cat_out = nn.Linear(n_embd, self.CLASSES)
 
     @staticmethod
     def _combine(xs_b, ys_b, cat_b):  # Added argument for category
@@ -334,7 +336,7 @@ class TransformerModel_labeled_cat(nn.Module):
             prediction = self._read_out(output_pre_read)
             prediction_cat = self._cat_out(output_pre_cat)
             # print(prediction.shape)
-            return prediction[:, ::2, 0][:, inds],  prediction_cat[:, ::2, 0:5][:, inds] # predict only on xs
+            return prediction[:, ::2, 0][:, inds],  prediction_cat[:, ::2, 0:self.CLASSES][:, inds] # predict only on xs
 
 
 
