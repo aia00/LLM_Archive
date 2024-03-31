@@ -102,11 +102,11 @@ class TransformerModel(nn.Module):
             n_embd=n_embd,
             n_layer=n_layer,
             n_head=n_head,
-            resid_pdrop=0.05,
-            embd_pdrop=0.05,
-            attn_pdrop=0.05,
+            resid_pdrop=0,
+            embd_pdrop=0,
+            attn_pdrop=0,
             use_cache=False,
-        )
+        ) #3f no # 47 drop
         self.name = f"gpt2_embd={n_embd}_layer={n_layer}_head={n_head}"
 
         self.n_positions = n_positions
@@ -174,9 +174,9 @@ class TransformerModel_labeled(nn.Module):
             n_embd=n_embd,
             n_layer=n_layer,
             n_head=n_head,
-            resid_pdrop=0.0,
-            embd_pdrop=0.0,
-            attn_pdrop=0.0,
+            resid_pdrop=0,
+            embd_pdrop=0,
+            attn_pdrop=0,
             use_cache=False,
         )
         self.name = f"gpt2_embd={n_embd}_layer={n_layer}_head={n_head}"
@@ -236,11 +236,11 @@ class TransformerModel_labeled_cat(nn.Module):
             n_embd=n_embd,
             n_layer=n_layer,
             n_head=n_head,
-            resid_pdrop=0.05,
-            embd_pdrop=0.05,
-            attn_pdrop=0.05,
+            resid_pdrop=0,
+            embd_pdrop=0,
+            attn_pdrop=0,
             use_cache=False,
-        )
+        ) #6ac no; d37 drop 
         self.name = f"gpt2_embd={n_embd}_layer={n_layer}_head={n_head}"
 
         self.CLASSES = 2

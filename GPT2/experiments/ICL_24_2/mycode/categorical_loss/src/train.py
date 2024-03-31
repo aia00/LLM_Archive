@@ -83,9 +83,11 @@ def train(model, args):
                     # 3:"relu_2nn_regression", 4: "decision_tree"} 
     # task_choices = {0:'linear_regression', 1:"quadratic_regression", 2:"cube_regression",
     #                 3:"relu_2nn_regression", 4: "decision_tree"} 
-    # task_choices = {3:"relu_2nn_regression",}  #614
-    # task_choices = {2:"cube_regression",} #855
-    task_choices = {0:"quadratic_regression",1:"decision_tree"} 
+    # task_choices = {3:"relu_2nn_regression",} 
+    # task_choices = {2:"cube_regression",} 
+    # task_choices = {0:"quadratic_regression",1:"decision_tree"} 
+    # task_choices = {0:"quadratic_regression"}
+    task_choices = {0:"quadratic_regression",1:"linear_classification"}
     # task_choices = {0:'linear_classification', 1:"quadratic_regression", 2:"cube_regression",
     #                 3:"relu_2nn_regression", 4: "decision_tree"} 
     task_choices_keys = list(task_choices.keys())
