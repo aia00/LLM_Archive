@@ -18,7 +18,7 @@ def accuracy(ys_pred, ys):
 def mean_se_for_cat_loss(ys_pred, ys, cat):
     # print(ys_pred[0].shape)
     # print(ys_pred[1].shape)
-    CLASSES = 2
+    CLASSES = 4
 
     bsize, points= ys.shape[0], ys.shape[1]
     sw_logits = ys_pred[1]
@@ -53,7 +53,7 @@ def cross_entropy(ys_pred, ys):
 def mean_ce_for_cat_loss(ys_pred, ys, cat):
     # print(ys_pred[0].shape)
     # print(ys_pred[1].shape)
-    CLASSES =2
+    CLASSES =4
     bsize, points= ys.shape[0], ys.shape[1]
     sw_logits = ys_pred[1] 
         # create a BCEWithLogitsLoss instance
