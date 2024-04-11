@@ -243,7 +243,7 @@ class TransformerModel_labeled_cat(nn.Module):
         ) #6ac no; d37 drop 
         self.name = f"gpt2_embd={n_embd}_layer={n_layer}_head={n_head}"
 
-        self.CLASSES = 4
+        self.CLASSES = 3
 
         self.n_positions = n_positions
         self.n_dims = n_dims
