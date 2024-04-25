@@ -127,6 +127,8 @@ def get_task_sampler(
         raise NotImplementedError
 
 
+from scipy.stats import laplace,logistic
+import numpy as np
 
 class LinearRegression(Task):
     def __init__(self, n_dims, batch_size, pool_dict=None, seeds=None, scale=1):
@@ -135,7 +137,9 @@ class LinearRegression(Task):
         self.scale = scale
 
         if pool_dict is None and seeds is None:
-            self.w_b = torch.randn(self.b_size, self.n_dims, 1)
+            self.w_b = torch.randn(self.b_size, self.n_dims, 1) 
+            # self.w_b = torch.from_numpy(laplace.rvs(scale=1/np.sqrt(2), size=(self.b_size, self.n_dims, 1))).float()
+            # self.w_b = torch.from_numpy(logistic.rvs(loc=0, scale=np.sqrt(3)/np.pi, size=(self.b_size, self.n_dims, 1))).float()
         elif seeds is not None:
             self.w_b = torch.zeros(self.b_size, self.n_dims, 1)
             generator = torch.Generator()
@@ -267,7 +271,8 @@ class QuadraticRegression(LinearRegression):
         ys_b_quad = ((xs_b**2) @ w_b)[:, :, 0]
         #         ys_b_quad = ys_b_quad * math.sqrt(self.n_dims) / ys_b_quad.std()
         # Renormalize to Linear Regression Scale
-        ys_b_quad = ys_b_quad / math.sqrt(3)
+        # ys_b_quad = ys_b_quad / (math.sqrt(3)/math.sqrt(2))
+        ys_b_quad = ys_b_quad / (math.sqrt(15))
         ys_b_quad = self.scale * ys_b_quad
         return ys_b_quad
     

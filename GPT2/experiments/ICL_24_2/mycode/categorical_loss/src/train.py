@@ -93,7 +93,7 @@ def train(model, args):
     # task_choices = {0:'noisy_linear_regression', 1:"quadratic_regression", 2:"linear_classification"} 
     # task_choices = {0:'noisy_linear_regression', 1:"quadratic_regression", 2:"linear_classification", 3:"decision_tree"} 
     # task_choices = {0:'noisy_linear_regression', 1:"cube_regression", 2:"linear_classification", 3:"decision_tree"} 
-    task_choices = {0:'noisy_linear_regression', 1:"linear_classification", 2:"decision_tree"} 
+    task_choices = {0:'noisy_linear_regression', 1:"quadratic_regression", 2:"linear_classification"} 
     task_choices_keys = list(task_choices.keys())
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
