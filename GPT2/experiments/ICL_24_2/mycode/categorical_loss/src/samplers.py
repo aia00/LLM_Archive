@@ -44,9 +44,9 @@ class GaussianSampler(DataSampler):
 
     def sample_xs(self, n_points, b_size, n_dims_truncated=None, seeds=None):
         if seeds is None:
-            # xs_b = torch.randn(b_size, n_points, self.n_dims) 
+            xs_b = torch.randn(b_size, n_points, self.n_dims) 
             # xs_b = torch.from_numpy(laplace.rvs(scale=1/np.sqrt(2), size=(b_size, n_points, self.n_dims))).float()
-            xs_b = torch.from_numpy(logistic.rvs(loc=0, scale=np.sqrt(3)/np.pi, size=(b_size, n_points, self.n_dims))).float()
+            # xs_b = torch.from_numpy(logistic.rvs(loc=0, scale=np.sqrt(3)/np.pi, size=(b_size, n_points, self.n_dims))).float()
         else:
             xs_b = torch.zeros(b_size, n_points, self.n_dims)
             generator = torch.Generator()

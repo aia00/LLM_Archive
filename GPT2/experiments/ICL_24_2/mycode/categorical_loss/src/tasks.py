@@ -137,7 +137,7 @@ class LinearRegression(Task):
         self.scale = scale
 
         if pool_dict is None and seeds is None:
-            self.w_b = torch.randn(self.b_size, self.n_dims, 1) 
+            self.w_b = torch.randn(self.b_size, self.n_dims, 1)
             # self.w_b = torch.from_numpy(laplace.rvs(scale=1/np.sqrt(2), size=(self.b_size, self.n_dims, 1))).float()
             # self.w_b = torch.from_numpy(logistic.rvs(loc=0, scale=np.sqrt(3)/np.pi, size=(self.b_size, self.n_dims, 1))).float()
         elif seeds is not None:
@@ -258,7 +258,8 @@ class NoisyLinearRegression(LinearRegression):
 
     def evaluate(self, xs_b):
         ys_b = super().evaluate(xs_b)
-        ys_b_noisy = ys_b + torch.randn_like(ys_b) * self.noise_std
+        ys_b_noisy = (ys_b + torch.randn_like(ys_b) * self.noise_std) * math.sqrt(0.3)
+        # ys_b_noisy = (ys_b + torch.randn_like(ys_b) * self.noise_std)
         if self.renormalize_ys:
             ys_b_noisy = ys_b_noisy * math.sqrt(self.n_dims) / ys_b_noisy.std()
 
