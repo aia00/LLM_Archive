@@ -1,0 +1,3 @@
+model_path: google/gemma-7b
+tokenizer_path: google/gemma-7b
+torch_dtype: bf16

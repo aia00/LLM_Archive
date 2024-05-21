@@ -1,0 +1,5 @@
+defaults:
+  - _self_
+  - model: gemma
+  - dataset: trivia_qa
+  - run: noise0_b16

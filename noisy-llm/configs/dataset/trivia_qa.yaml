@@ -1,0 +1,4 @@
+name: mandarjoshi/trivia_qa
+subset: rc.nocontext
+# subset: rc.wikipedia.nocontext
+split: validation

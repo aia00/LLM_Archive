@@ -1,0 +1,5 @@
+defaults:
+  - _self_
+  - model: vicuna
+  - dataset: trivia_qa
+  - run: noise30_b16

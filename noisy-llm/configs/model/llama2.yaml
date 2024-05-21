@@ -1,0 +1,4 @@
+model_path: meta-llama/Llama-2-7b-hf
+tokenizer_path: meta-llama/Llama-2-7b-hf
+torch_dtype: bf16
+conversation_template: llama-2
