@@ -40,9 +40,7 @@ PRINT_VICUNA = True
 if PRINT_VICUNA:
     for i in prompt_level_list:
         exact_match_values = list(exact_match['vicuna'][i].values())
-        # f1_values = list(f1['vicuna'][i].values())
         plt.plot(noise_level_list, exact_match_values, label=f'{i}shots', marker='o')
-        # plt.plot(noise_level_list, f1_values, label='f1', marker='o')
         plt.legend()
         plt.title(f'few-shots vicuna')
         plt.xlabel('noise_level')
