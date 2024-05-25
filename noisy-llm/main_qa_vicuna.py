@@ -26,7 +26,7 @@ def main(cfg:DictConfig):
     tokenizer.padding_side = 'left'
     stop = [tokenizer.eos_token]
     
-    os.environ["CUDA_VISIBLE_DEVICES"] = "2,3"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
     model = AutoModelForCausalLM.from_pretrained(
         cfg.model.model_path,
         device_map="auto",
@@ -83,7 +83,7 @@ def main(cfg:DictConfig):
             
             df = pd.read_csv('ICL_demo_data.csv')
             # Specify the number of pairs you want to select
-            few_shots_num = 3
+            few_shots_num = 1
 
             # Randomly select K rows from the dataframe
             random_rows = df.sample(n=few_shots_num)

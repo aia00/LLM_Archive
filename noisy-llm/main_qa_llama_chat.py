@@ -1,6 +1,7 @@
 import os
 import torch
 import numpy as np
+import pandas as pd
 from tqdm.auto import tqdm
 from omegaconf import DictConfig
 import hydra
@@ -26,7 +27,7 @@ def main(cfg:DictConfig):
     tokenizer.padding_side = 'left'
     stop = [tokenizer.eos_token]
     
-    os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
+    os.environ["CUDA_VISIBLE_DEVICES"] = "2,3"
     model = AutoModelForCausalLM.from_pretrained(
         cfg.model.model_path,
         device_map="auto",
@@ -80,20 +81,32 @@ def main(cfg:DictConfig):
         
         for i, question in enumerate(questions_chunk):
             question = question.replace('?', '')
-            llama_chat_prompt = '''
-                Example Question: What is the capital city of France?
-                Example Answer: Paris.
-                Example Question: Who wrote the play 'Romeo and Juliet'?
-                Example Answer: William Shakespeare.
-                Example Question: What is the largest ocean on Earth?
-                Example Answer: The Pacific Ocean.
-                Example Question: In what year did humans first land on the Moon?
-                Example Answer: 1969.
-                Example Question: What is the chemical symbol for gold?
-                Example Answer: Au.
-                '''
-            llama_chat_prompt = '''Don't answer a whole sentence or repeat parts of the question.
-            Please answer the questions in the simplest words or phrases.'''
+            # llama_chat_prompt = '''
+            #     Example Question: What is the capital city of France?
+            #     Example Answer: Paris.
+            #     Example Question: Who wrote the play 'Romeo and Juliet'?
+            #     Example Answer: William Shakespeare.
+            #     Example Question: What is the largest ocean on Earth?
+            #     Example Answer: The Pacific Ocean.
+            #     Example Question: In what year did humans first land on the Moon?
+            #     Example Answer: 1969.
+            #     Example Question: What is the chemical symbol for gold?
+            #     Example Answer: Au.
+            #     '''
+            # llama_chat_prompt = '''Don't answer a whole sentence or repeat parts of the question.
+            # Please answer the questions in the simplest words or phrases.'''
+            
+            df = pd.read_csv('ICL_demo_data.csv')
+            # Specify the number of pairs you want to select
+            few_shots_num = 1
+
+            # Randomly select K rows from the dataframe
+            random_rows = df.sample(n=few_shots_num)
+
+            llama_chat_prompt = f'Follow this pattern:\n'
+            
+            for index, row in random_rows.iterrows():
+                llama_chat_prompt += f"Q: {row['Question']}\nA: {row['Answer']}\n"
 
             full_prompt = llama_chat_prompt + f"Answer these questions:\nQ: {question}?\nA:"
             full_prompts.append(full_prompt)
