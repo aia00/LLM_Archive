@@ -2,4 +2,4 @@ defaults:
   - _self_
   - model: llama2_chat
   - dataset: trivia_qa
-  - run: noise10_b16
+  - run: noise0_b16
