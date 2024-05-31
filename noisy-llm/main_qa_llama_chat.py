@@ -1,7 +1,7 @@
 import os
 import torch
-import numpy as np
 import pandas as pd
+import numpy as np
 from tqdm.auto import tqdm
 from omegaconf import DictConfig
 import hydra
@@ -13,7 +13,6 @@ from utils.normalization_utils import trim_prediction
 from utils.generation_utils import stop_sequences_criteria
 from transformers import AutoTokenizer, AutoModelForCausalLM, set_seed
     
-access_token = "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"
 
 @hydra.main(config_path='configs', config_name='llama_tqa_0_chat.yaml', version_base='1.3')
 def main(cfg:DictConfig):
@@ -23,7 +22,7 @@ def main(cfg:DictConfig):
     f1_list = []
     
     ## TODO: LOAD MODEL AND TOKENIZER
-    tokenizer = AutoTokenizer.from_pretrained(cfg.model.tokenizer_path, token=access_token)
+    tokenizer = AutoTokenizer.from_pretrained(cfg.model.tokenizer_path)
     tokenizer.padding_side = 'left'
     stop = [tokenizer.eos_token]
     
@@ -32,7 +31,6 @@ def main(cfg:DictConfig):
         cfg.model.model_path,
         device_map="auto",
         torch_dtype=parse_dtype(cfg.model.torch_dtype),
-        token=access_token
     ).eval()
     
     if tokenizer.pad_token:
@@ -81,7 +79,26 @@ def main(cfg:DictConfig):
         
         for i, question in enumerate(questions_chunk):
             question = question.replace('?', '')
-            # llama_chat_prompt = '''
+
+            
+            df = pd.read_csv('ICL_demo_data.csv')
+            # Specify the number of pairs you want to select
+            few_shots_num = 3
+
+            # Randomly select K rows from the dataframe
+            random_rows = df.sample(n=few_shots_num)
+
+            llama_chat_prompt = f'Follow this pattern:\n'
+            
+            for index, row in random_rows.iterrows():
+                llama_chat_prompt += f"Q: {row['Question']}\nA: {row['Answer']}\n"
+            
+            # print(vicuna_prompt)
+
+            # vicuna_prompt = '''Don't answer a whole sentence or repeat parts of the question.
+            #     Please answer the questions in the simplest words or phrases.'''
+            
+            # vicuna_prompt = '''
             #     Example Question: What is the capital city of France?
             #     Example Answer: Paris.
             #     Example Question: Who wrote the play 'Romeo and Juliet'?
@@ -93,26 +110,16 @@ def main(cfg:DictConfig):
             #     Example Question: What is the chemical symbol for gold?
             #     Example Answer: Au.
             #     '''
-            # llama_chat_prompt = '''Don't answer a whole sentence or repeat parts of the question.
-            # Please answer the questions in the simplest words or phrases.'''
             
-            df = pd.read_csv('ICL_demo_data.csv')
-            # Specify the number of pairs you want to select
-            few_shots_num = 1
-
-            # Randomly select K rows from the dataframe
-            random_rows = df.sample(n=few_shots_num)
-
-            llama_chat_prompt = f'Follow this pattern:\n'
             
-            for index, row in random_rows.iterrows():
-                llama_chat_prompt += f"Q: {row['Question']}\nA: {row['Answer']}\n"
 
-            full_prompt = llama_chat_prompt + f"Answer these questions:\nQ: {question}?\nA:"
+            full_prompt = llama_chat_prompt + f"Q: {question}?\nA:"
+            # print(full_prompt)
+
             full_prompts.append(full_prompt)
             
             start_string_idx = full_prompt.find(question)
-            end_string_idx = full_prompt.find('?')                                      # make sure there is no question mark in the system prompt
+            end_string_idx = start_string_idx + len(question)         # make sure there is no question mark in the system prompt
             
             # print(f'pre-question text: {full_prompt[:start_string_idx]}')
             # print(f'encoded: {tokenizer.encode(full_prompt[:start_string_idx])}')
@@ -176,10 +183,10 @@ def main(cfg:DictConfig):
         
         for i, (prediction, answer) in enumerate(zip(predictions, answers_chunk)):
             eval_score_dict = get_eval_score(prediction, answer)
-            # print('------------------------------')
-            # print(f'prediction: {prediction}')
-            # print(f'answer: {answer}')
-            # print(f"Eval scores: {eval_score_dict}")
+            print('------------------------------')
+            print(f'prediction: {prediction}')
+            print(f'answer: {answer}')
+            print(f"Eval scores: {eval_score_dict}")
             
             outputs.append({
                 'question': questions_chunk[i],
