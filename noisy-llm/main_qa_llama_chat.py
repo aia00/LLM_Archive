@@ -14,6 +14,8 @@ from utils.generation_utils import stop_sequences_criteria
 from transformers import AutoTokenizer, AutoModelForCausalLM, set_seed
     
 
+access_token = "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"
+
 @hydra.main(config_path='configs', config_name='llama_tqa_0_chat.yaml', version_base='1.3')
 def main(cfg:DictConfig):
     set_seed(cfg.run.seed)
@@ -22,7 +24,7 @@ def main(cfg:DictConfig):
     f1_list = []
     
     ## TODO: LOAD MODEL AND TOKENIZER
-    tokenizer = AutoTokenizer.from_pretrained(cfg.model.tokenizer_path)
+    tokenizer = AutoTokenizer.from_pretrained(cfg.model.tokenizer_path, token=access_token)
     tokenizer.padding_side = 'left'
     stop = [tokenizer.eos_token]
     
@@ -31,6 +33,7 @@ def main(cfg:DictConfig):
         cfg.model.model_path,
         device_map="auto",
         torch_dtype=parse_dtype(cfg.model.torch_dtype),
+        token=access_token
     ).eval()
     
     if tokenizer.pad_token:
@@ -83,7 +86,7 @@ def main(cfg:DictConfig):
             
             df = pd.read_csv('ICL_demo_data.csv')
             # Specify the number of pairs you want to select
-            few_shots_num = 3
+            few_shots_num = 5
 
             # Randomly select K rows from the dataframe
             random_rows = df.sample(n=few_shots_num)
