@@ -126,6 +126,7 @@ class TransformerModel(nn.Module):
     @staticmethod
     def _combine(xs_b, ys_b):
         """Interleaves the x's and the y's into a single sequence."""
+        # print(xs_b.shape)
         bsize, points, dim = xs_b.shape
         ys_b_wide = torch.cat(
             (

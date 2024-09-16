@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import os
 import json
 
-noise_level_list = [0, 5, 10, 20, 30]  
+noise_level_list = [0, 5, 10, 20, 30, 50, 75, 100]  
 
-file_noise_level_str = ['0', '05', '10', '20', '30']
+file_noise_level_str = ['0', '05', '10', '20', '30', '50', '75', '100']
 
 llama_chat_out_path = '../outputs/llama_chat_2'
 
@@ -53,8 +53,11 @@ def draw_pics(model_name_str, model_out_path):
     plt.clf()
 
 
+
 model_name_list = ['vicuna', 'llama_chat']
 model_out_path_list = [vicuna_out_path, llama_chat_out_path]
+
+
 for i,name in enumerate(model_name_list):
     draw_pics(name, model_out_path_list[i])
 

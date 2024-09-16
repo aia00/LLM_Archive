@@ -94,8 +94,8 @@ def train(model, args):
     # task_choices = {0:'noisy_linear_regression', 1:"quadratic_regression", 2:"linear_classification", 3:"decision_tree"} 
     # task_choices = {0:'noisy_linear_regression', 1:"cube_regression", 2:"linear_classification", 3:"decision_tree"} 
     # task_choices = {0:'noisy_linear_regression', 1:"quadratic_regression", 2:"linear_classification"} 
-    # task_choices = {0:'noisy_linear_regression', 1:"quadratic_regression", 2:"linear_classification"} 
-    task_choices = {0:'noisy_linear_regression', 1:"quadratic_regression"}
+    task_choices = {0:'linear_regression', 1:"quadratic_regression", 2:"linear_classification"} 
+
     task_choices_keys = list(task_choices.keys())
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -131,10 +131,8 @@ def train(model, args):
             cat_num = len(task_choices_keys)
 
         elif args.training.task == "multiple_task_without_label":
-            # key_probabilities = [1/6, 5/12, 5/12]
+            key_probabilities = [1/6, 5/12, 5/12]
             # key_probabilities = [1/3, 1/3, 1/3]
-            # key_probabilities = [1]
-            key_probabilities = [1/2,1/2]
             assert np.isclose(sum(key_probabilities), 1), "Probabilities must sum to 1"
             task_key = np.random.choice(task_choices_keys, p=key_probabilities)
             task_type = task_choices[task_key]

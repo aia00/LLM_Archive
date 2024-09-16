@@ -1,0 +1,5 @@
+batch_size: 16
+noise_scale: 1.00
+max_new_tokens: 10
+max_length: 300     # max length of the input text
+seed: 42
