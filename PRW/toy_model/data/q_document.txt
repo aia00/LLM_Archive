@@ -1,0 +1,10 @@
+gamma = 20, alpha = 0.5, initialization accuracy= 0.22
+10 iteration test accuracy result
+only_q =    0.33, 0.43, 0.56, 0.63, 0.75, 0.77, 0.80, 0.85, 0.87, 0.91
+q_and_a =   0.28, 0.36, 0.44, 0.52, 0.62, 0.69, 0.71, 0.77, 0.80
+
+
+gamma = 10, alpha = 0.5, initialization = 0.05
+10 iteration test accuracy result
+only_q =    0.06, 0.09, 0.13, 0.17, 0.24, 0.28, 0.34, 0.37, 0.43, 0.51
+q_and_a =   0.06, 0.07, 0.08, 0.12, 0.11, 0.12, 0.16, 0.20
