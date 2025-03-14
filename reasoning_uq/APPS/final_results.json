@@ -1,0 +1,922 @@
+[
+    [
+        {
+            "code": "import sys\n\ndef count_bad_prices(n, a):\n    # To find the number of bad prices, we need to determine for each element\n    # if there is any element to its right that is smaller than it. If yes,\n    # then it's a bad price.\n    # So, we can iterate through each element and check if any element to the right is smaller.\n    # However, this approach would be O(n^2), which is not efficient enough for n up to 150000.\n    # We need a more efficient approach.\n    # One efficient approach is to keep track of the minimum price seen so far as we iterate from right to left.\n    # For each element, if it is greater than the minimum so far, it means there is a price to the right that is smaller, so it's a bad price.\n    # We can use a variable to track the minimum and a count of bad prices.\n    # Let's initialize the min_price to a very large number.\n    # Then, iterate from the end of the list to the beginning.\n    # For each element in a:\n    # - if a[i] > min_price: increment bad_count\n    # - else: update min_price to a[i]\n    # After processing all elements, return bad_count.\n    # Time complexity: O(n)\n    # Space complexity: O(1)\n    min_price = float('inf')\n    bad_count = 0\n    for i in reversed(range(n)):\n        if a[i] > min_price:\n            bad_count +=1\n        else:\n            min_price = a[i]\n    return bad_count\n\ndef main():\n    input = sys.stdin.read().split()\n    idx = 0\n    t = int(input[idx])\n    idx +=1\n    for _ in range(t):\n        n = int(input[idx])\n        idx +=1\n        a = list(map(int, input[idx:idx+n]))\n        idx +=n\n        print(count_bad_prices(n, a))\n\nif __name__ == \"__main__\":\n    main()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "3\n0\n1\n8\n2"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\ndef count_bad_days():\n    t = int(sys.stdin.readline())\n    for _ in range(t):\n        n = int(sys.readline())\n        a = list(map(int, sys.stdin.readline().split()))\n        # We need to find the number of days where a[i] is bad.\n        # A day is bad if there exists a j > i such that a[j] < a[i]\n        # So, for each element, we need to check if it's not the minimum in the suffix starting from i+1\n        # But how to compute this efficiently?\n        # One approach is to keep track of the minimum so far from the end.\n        # Let's iterate from the end to the beginning.\n        # We can maintain a variable min_so_far, which is the minimum a[j] for j >= current.\n        # For each a[i], if a[i] > min_so_far, then it's a bad day.\n        # Because there exists a j > i where a[j] < a[i], which is the min_so_far so far.\n        # So, we can iterate from the end, keep track of the min, and count the bad days.\n        # Let's test this logic with the sample input.\n        # Sample 1:\n        # a = [3,9,4,6,7,5]\n        # Iterating from end:\n        # i=5 (a=5): min_so_far =5. No days after, count 0.\n        # i=4 (a=7): 7>5, so it's bad. count=1.\n        # i=3 (a=6):6>5, bad. count=2.\n        # i=2 (a=4):4<5, so not bad. min_so_far=4.\n        # i=1 (a=9):9>4, bad. count=3.\n        # i=0 (a=3):3<4, not bad. min_so_far=3.\n        # Total count is 3, which matches the sample.\n        # So this logic works.\n        # Now, implement this.\n        count = 0\n        min_so_far = a[-1]\n        for i in range(n-2, -1, -1):\n            if a[i] > min_so_far:\n                count +=1\n            else:\n                min_so_far = a[i]\n        print(count)\n\ncount_bad_days()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    idx = 0\n    t = int(data[idx])\n    idx +=1\n    for _ in range(t):\n        n = int(data[idx])\n        idx +=1\n        a = list(map(int, data[idx:idx+n]))\n        idx +=n\n        # Process each test case\n        bad = 0\n        for i in range(n):\n            # Check if a[i] is bad\n            is_bad = False\n            for j in range(i+1, n):\n                if a[j] < a[i]:\n                    is_bad = True\n                    break\n            if is_bad:\n                bad +=1\n            else:\n                # Check if any day after is lower\n                # No, but wait: because for this day, the minimum in the suffix is less than a[i], then it's bad\n                # So maybe we can optimize by finding the minimum after i\n                # For now, let's keep it as is\n        print(bad)\ncount_bad_days()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    # Iterate through each day and check if it's a bad day\n    count = 0\n    for i in range(len(a)):\n        # Check if there's any day after i with a lower price\n        if any(x < a[i] for x in a[i+1:]):\n            count += 1\n        else:\n            break  # No need to check further if all next are higher\n    return count\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))\n\n# The code above is provided, but it's not efficient enough. We need to find a better way.",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "0\n0\n1\n8\n2"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_prices(n, a):\n    # Your code here\n    # We need to find the number of days where a[i] is bad.\n    # A bad day is when there exists a j > i such that a[j] < a[i].\n    # So for each element, check if there's any element after it that's smaller.\n    # But doing this naively would be O(n^2), which is too slow for n=1.5e5.\n    # We need a more efficient approach.\n    # Maybe find for each element the next smaller element on the right.\n    # We can do this using a stack.\n    # So, let's try to compute for each position the earliest j where a[j] < a[i], then if any such j exists, then i is bad.\n\n    # So let's create an array 'next_less' where next_less[i] is the index of the next element to the right of i that is smaller than a[i]. If none exists, it's -1 or None.\n\n    # Let's implement this using a stack:\n    stack = []\n    next_less = [ -1 ] * n\n    for i in range(n):\n        # We want to find the next j > i where a[j] < a[i]\n        while stack and a[stack[-1]] >= a[i]:\n            stack.pop()\n        if stack:\n            next_less[i] = stack[-1]\n        else:\n            next_less[i] = -1\n        stack.append(i)\n    \n    # Now, for each i, if next_less[i] exists, then it's a bad day.\n    # So count all i where next_less[i] != -1.\n    count = 0\n    for i in range(n):\n        if next_less[i] != -1:\n            count +=1\n    return count\n\n# Now, read t test cases\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_prices(n, a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    # To solve this problem, we need to determine the number of days where the price of a product is considered bad.\n    # A day is considered bad if there exists a later day with a lower price.\n    # This can be efficiently determined by keeping track of the minimum price encountered so far as we iterate through the list.\n    # For each element in the list, if it is greater than the minimum price encountered before it, it contributes to the bad days count.\n    # We'll also keep track of the current minimum price and update it as we iterate.\n\n    # Initialize the count of bad days and the current minimum price\n    bad_days = 0\n    current_min = a[0]\n    for i in range(1, len(a)):\n        if a[i] > current_min:\n            bad_days += 1\n        # Update the current minimum if the current element is smaller\n        if a[i] < current_min:\n            current_min = a[i]\n    return bad_days\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(n, a):\n    # To solve this problem, we need to determine the number of days with a bad price. A bad price is defined as a price that appears later in the list at a lower value.\n    # For each day i, if there exists a day j > i such that a_j < a_i, then day i is considered bad.\n    # Approach:\n    # 1. For each element in the list, we need to check if there's any element to its right that is smaller.\n    # 2. A brute-force approach would involve checking each element against all subsequent elements, but this would be O(n^2), which is inefficient for large n.\n    # 3. Instead, we can use a more efficient approach. One way is to keep track of the minimum price seen so far as we iterate through the list from right to left.\n    # 4. For each element, if it is greater than the minimum seen so far, it means this element is a bad price because there is a lower price to its right.\n    # 5. We'll maintain a counter for the number of bad days.\n    # Time Complexity: O(n)\n    # Space Complexity: O(1) (since we only keep track of the minimum)\n    \n    bad_days = 0\n    min_price = float('inf')\n    for i in reversed(range(n)):\n        if a[i] > min_price:\n            bad_days += 1\n        else:\n            min_price = a[i]\n    return bad_days\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(n, a))\n\n# Precompute for speed: since t can be up to 1e4 and n up to 1.5e5, but sum of n across t is 1.5e5.",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "3\n0\n1\n8\n2"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    n = len(a)\n    min_price = a[0]\n    bad_days = 0\n    for i in range(1, n):\n        if a[i] > min_price:\n            bad_days += 1\n        else:\n            min_price = a[i]\n    return bad_days\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    n = len(a)\n    min_price = a[0]\n    count = 0\n    for i in range(1, n):\n        if a[i] > min_price:\n            count +=1\n        else:\n            min_price = a[i]\n    return count\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\ndef count_bad_days(a):\n    min_price = a[0]\n    bad_days = 0\n    for i in range(1, len(a)):\n        if a[i] < min_price:\n            min_price = a[i]\n        if a[i] > min_price:\n            bad_days += 1\n    return bad_days\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.stdin.readline())\n    a = list(map(int, sys.stdin.readline().split()))\n    print(count_bad_days(a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        }
+    ],
+    [
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.stdin.readline())\n    a = list(map(int, sys.stdin.readline().split()))\n    count = 0\n    for i in range(n):\n        # Check if current element is greater than any of the elements after it\n        # If it is, then it's a bad price\n        # So, we need to find if there exists a j > i such that a[j] < a[i]\n        # But checking each j is O(n^2), which is too slow for n=1.5e5\n        # So, we need a more efficient approach.\n        # The idea is to find the minimum of the suffix starting from i+1 to n-1\n        # If the minimum is less than a[i], then it's bad\n        min_suffix = min(a[i+1:])\n        if a[i] > min_suffix:\n            count +=1\n    print(count)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    min_price = a[0]\n    count = 0\n    for i in range(1, len(a)):\n        if a[i] < min_price:\n            min_price = a[i]\n        # Check if current a[i] is higher than the new min_price\n        if a[i] > min_price:\n            count +=1\n    return count\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.stdin.readline())\n    a = list(map(int, sys.stdin.readline().split()))\n    # Your code here",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\ndef count_bad_days(n, a):\n    # Find the number of days where a[i] is bad\n    # A day i is bad if there exists a j > i where a[j] < a[i]\n    # So for each a[i], if the minimum of the elements after i is less than a[i], then it's bad.\n    # To find this efficiently, we can track the min as we traverse from right to left.\n    # Initialize min_so_far with the last element\n    min_so_far = a[-1]\n    bad_count = 0\n    for i in range(n-2, -1, -1):\n        if a[i] > min_so_far:\n            bad_count +=1\n        else:\n            min_so_far = a[i]\n    return bad_count\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.stdin.readline())\n    a = list(map(int, sys.stdin.readline().split()))\n    print(count_bad_days(n, a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "3\n0\n1\n8\n2"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\ndef count_bad_days(a):\n    n = len(a)\n    min_price = a[0]\n    bad_days = 0\n    for i in range(1, n):\n        if a[i] < min_price:\n            min_price = a[i]\n        # Check if current a[i] is bad\n        if a[i] > min_price:\n            bad_days += 1\n    return bad_days\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.stdin.readline())\n    a = list(map(int, sys.stdin.readline().split()))\n    print(count_bad_days(a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_prices(a):\n    n = len(a)\n    bad = 0\n    min_price = a[0]\n    for i in range(1, n):\n        if a[i] < min_price:\n            min_price = a[i]\n        # Check if current a[i] is bad\n        # A bad price is one that is not the minimum up to this point\n        # So if a[i] is greater than the current min_price, it's bad\n        if a[i] > min_price:\n            bad +=1\n    return bad\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_prices(a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    min_price = a[0]\n    count = 0\n    for i in range(1, len(a)):\n        if a[i] < min_price:\n            min_price = a[i]\n        else:\n            count +=1\n    return count\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))\n\n# For the code to work correctly, please ensure that the input is read properly, especially when the array size is large.",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.stdin.read().split()[0])\n    a = list(map(int, sys.stdin.read().split()))\n    # Filter the list to get all elements after the first occurrence of a minimum.\n    # Wait, perhaps it's better to track the minimum so far as we iterate.\n    bad_days = 0\n    min_price = a[0]\n    for i in range(1, n):\n        if a[i] < min_price:\n            min_price = a[i]\n        else:\n            if a[i] < min_price:\n                bad_days +=1\n    print(bad_days)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\ndef count_bad_days(n, a):\n    # Initialize the count of bad days\n    bad = 0\n    min_price = a[0]\n    # Iterate through the array from the second element\n    for i in range(1, n):\n        # Check if current a[i] is greater than min_price\n        if a[i] > min_price:\n            bad += 1\n        # Update min_price to the minimum between current a[i] and min_price\n        else:\n            min_price = a[i]\n    return bad\n\ndef main():\n    input = sys.stdin.read().split()\n    ptr = 0\n    t = int(input[ptr])\n    ptr +=1\n    for _ in range(t):\n        n = int(input[ptr])\n        ptr +=1\n        a = list(map(int, input[ptr:ptr+n]))\n        ptr +=n\n        print(count_bad_days(n, a))\n\nif __name__ == \"__main__\":\n    main()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days():\n    import sys\n    input = sys.stdin.read().split()\n    ptr = 0\n    t = int(input[ptr])\n    ptr += 1\n    for _ in range(t):\n        n = int(input[ptr])\n        ptr +=1\n        a = list(map(int, input[ptr:ptr+n]))\n        ptr +=n\n        # Now process this a\n        bad = 0\n        for i in range(n):\n            # check if there is a day j >i where a[j] < a[i]\n            # if yes, then a[i] is bad\n            found = False\n            for j in range(i+1, n):\n                if a[j] < a[i]:\n                    found = True\n                    break\n            if found:\n                bad +=1\n            else:\n                # no such j, so a[i] is good\n                pass\n        print(bad)\n\ncount_bad_days()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "3\n0\n1\n8\n2"
+                }
+            ]
+        }
+    ],
+    [
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.stdin.read().split()[0])\n    a = list(map(int, sys.stdin.read().split()))\n    # Your code here",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.stdin.readline())\n    a = list(map(int, sys.stdin.readline().split()))\n    # code here\n    # count the number of bad days\n    # a bad day is when there's a day after it with a lower price\n    # so for each element, if any element to the right is smaller, it's bad\n    # approach: for each index i, check if any a[j] < a[i] where j > i\n    # but this is O(n^2), which is not acceptable for n=150000\n    # so we need a better approach\n    # thinking: for each i, if the minimum of the elements to the right is less than a[i], then it's bad\n    # So for each i, find the min from i+1 to end, and compare with a[i]\n    # but computing the min each time is O(n), leading to O(n^2)\n    # So we can precompute the min from the right\n    # Let's compute the min array\n    min_right = [0]*n\n    min_right[-1] = a[-1]\n    for i in range(n-2, -1, -1):\n        min_right[i] = min(a[i+1], min_right[i+1])\n    # now, for each i, check if min_right[i] < a[i]\n    count = 0\n    for i in range(n):\n        if a[i] > min_right[i]:\n            count +=1\n    print(count)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "3\n0\n1\n8\n2"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(n, a):\n    bad_days = 0\n    min_price = a[0]\n    for price in a[1:]:\n        if price > min_price:\n            bad_days += 1\n        else:\n            min_price = price\n    return bad_days\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(n, a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.ReadLine())\n    a = list(map(int, sys.stdin.readline().split()))\n    res = 0\n    min_price = a[0]\n    res = 0\n    for i in range(1, n):\n        if a[i] < min_price:\n            min_price = a[i]\n        else:\n            res += 1\n    print(res)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    min_price = a[0]\n    bad_days = 0\n    for i in range(1, len(a)):\n        if a[i] < min_price:\n            min_price = a[i]\n        else:\n            bad_days +=1\n    return bad_days\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.readline())\n    a = list(map(int, sys.stdin.readline().split()))\n    res = 0\n    min_price = a[0]\n    for i in range(1, n):\n        if a[i] > min_price:\n            res += 1\n        if a[i] < min_price:\n            min_price = a[i]\n    print(res)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\ndef count_bad_days():\n    t = int(sys.stdin.readline())\n    for _ in range(t):\n        n = int(sys.stdin.readline().strip())\n        a = list(map(int, sys.stdin.readline().strip().split()))\n        # process a\n        count = 0\n        min_price = a[0]\n        for i in range(1, n):\n            if a[i] < min_price:\n                min_price = a[i]\n        # Wait, no. Because after each day, we need to check if it's bad.\n        # So maybe a better approach is to keep track of the minimum as we go.\n        # Because a day is bad if any day after it has a lower price.\n        # So, if the current price is higher than the minimum so far, it's a bad day.\n        # So, let's try this.\n        min_price = a[0]\n        bad_days = 0\n        for i in range(1, n):\n            if a[i] > min_price:\n                bad_days +=1\n            else:\n                min_price = a[i]\n        print(bad_days)\n\ncount_bad_days()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(n, a):\n    # Keep track of the minimum price seen so far\n    min_price = a[0]\n    bad_days = 0\n    for i in range(1, n):\n        if a[i] < min_price:\n            min_price = a[i]\n        else:\n            # Check if current price is higher than the min_price\n            if a[i] > min_price:\n                bad_days +=1\n    return bad_days\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(n, a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.stdin.read().split()[0])\n    a = list(map(int, sys.stdin.read().split()))\n    a = a[:n]\n    bad = 0\n    min_price = a[0]\n    for i in range(1, n):\n        if a[i] > min_price:\n            bad +=1\n        else:\n            min_price = a[i]\n    print(bad)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    min_price = a[0]\n    bad_days = 0\n    for i in range(1, len(a)):\n        if a[i] < min_price:\n            min_price = a[i]\n        # Check if current a[i] is greater than any min_price encountered so far\n        # which would mean it's a bad day\n        if a[i] > min_price:\n            bad_days +=1\n    return bad_days\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))\n\n# Read the rest of the code",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        }
+    ],
+    [
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.stdin.readline())\n    a = list(map(int, sys.stdin.readline().split()))\n    # Process each test case here\n    bad = 0\n    min_price = a[0]\n    for i in range(1, n):\n        if a[i] < min_price:\n            min_price = a[i]\n        else:\n            bad += 1\n    print(bad)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_prices():\n    import sys\n    input = sys.stdin.read().split()\n    idx = 0\n    t = int(input[idx])\n    idx +=1\n    for _ in range(t):\n        n = int(input[idx])\n        idx +=1\n        a = list(map(int, input[idx:idx+n]))\n        idx +=n\n        res = 0\n        min_price = a[0]\n        for i in range(1, n):\n            if a[i] < min_price:\n                min_price = a[i]\n        # Now, we need to find all a_j where a_j is greater than min_price but occurred after a_j\n        # So, we need to track the min_price as we iterate\n        # Wait, perhaps we need to track the minimum as we go, but that might not work directly.\n        # Let me think: for each day i, if a[i] is greater than the minimum price that came after it.\n        # Because a bad price is one that is followed by a lower price.\n        # So the approach is to iterate from the end to the beginning, keeping track of the minimum price seen so far.\n        # For each a[i], if it's higher than the current min, then it's a bad price.\n        # So, let's try this approach.\n        min_so_far = a[-1]\n        count = 0\n        for i in reversed(range(n)):\n            if a[i] > min_so_far:\n                count +=1\n            else:\n                min_so_far = a[i]\n        res = count\n        print(res)\n\ncount_bad_prices()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "3\n0\n1\n8\n2"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    min_so_far = a[0]\n    bad_days = 0\n    for i in range(1, len(a)):\n        if a[i] < min_so_far:\n            min_so_far = a[i]\n        else:\n            bad_days +=1\n    return bad_days\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(n, a):\n    # Your code here\n    return 0\n\n# Read input\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(n, a))\n\n# Sample Output\n# 8",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "0\n0\n0\n0\n0"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days():\n    import sys\n    input = sys.stdin.read().split()\n    idx = 0\n    t = int(input[idx])\n    idx +=1\n    for _ in range(t):\n        n = int(input[idx])\n        idx +=1\n        a = list(map(int, input[idx:idx+n]))\n        idx +=n\n        # Now process a\n        # For each element a[i], check if there exists a j > i with a[j] < a[i]\n        # We need to count how many a[i] are bad\n        # So for each a[i], if the minimum of a[i+1 ... n-1] is less than a[i], then it's bad\n        # So we can keep track of the minimum so far as we iterate from the end to the beginning\n        # Let's try that approach\n        # We can create a list that contains for each i the minimum of a[i+1 ... n-1]\n        min_from_right = [0] * n\n        current_min = float('inf')\n        for i in range(n-2, -1, -1):\n            current_min = min(current_min, a[i+1])\n            min_from_right[i] = current_min\n        # Now for each a[i], if a[i] > min_from_right[i], then it's bad\n        count = 0\n        for i in range(n):\n            if a[i] > min_from_right[i]:\n                count +=1\n        print(count)\n        # Alternatively, can we do this in a single pass?\n        # Let's think about it. We can keep track of the current min as we iterate from right to left\n        # and whenever we see a[i] > current min, we count it.\n        # Let's see:\n        # Initialize current_min to a[-1], which is the last element\n        # For i from n-2 down to 0:\n        #    if a[i] > current_min:\n        #        count +=1\n        #    current_min = min(current_min, a[i])\n        # Then, the count is the answer.\n        # That's better, more efficient and less memory usage.\n        # Let's implement this approach.\n\n        current_min = a[-1]\n        count = 0\n        for i in range(n-2, -1, -1):\n            if a[i] > current_min:\n                count +=1\n            current_min = min(current_min, a[i])\n        print(count)\n\ncount_bad_days()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "4\n3\n1\n0\n2\n1\n9\n8\n3\n2"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\ndef count_bad_prices(a):\n    n = len(a)\n    min_price = a[0]\n    count = 0\n    for i in range(1, n):\n        if a[i] < min_price:\n            min_price = a[i]\n        # else, no change\n    return count\n\ndef main():\n    input = sys.stdin.read().split()\n    idx = 0\n    t = int(input[idx])\n    idx +=1\n    for _ in range(t):\n        n = int(input[idx])\n        idx +=1\n        a = list(map(int, input[idx:idx+n]))\n        idx +=n\n        # compute bad days\n        res = 0\n        min_so_far = a[0]\n        for num in a[1:]:\n            if num < min_so_far:\n                min_so_far = num\n            # else, it's a bad day\n            res +=1\n        print(res)\n        \nif __name__ == \"__main__\":\n    main()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n1\n9\n6"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_prices(a):\n    bad = 0\n    for i in range(len(a)):\n        for j in range(i+1, len(a)):\n            if a[j] < a[i]:\n                bad +=1\n                break\n        if bad >=1:\n            break\n    return bad\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_prices(a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "1\n0\n1\n1\n1"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_prices(t, test_cases):\n    bad_count = 0\n    for case in test_cases:\n        n, a = case\n        min_price = a[0]\n        bad_count += 1 if a[0] == min_price else 0\n        for i in range(1, n):\n            if a[i] < min_price:\n                min_price = a[i]\n                # Check if previous min was lower than current min, if so, all previous are bad\n                if a[i-1] > min_price:\n                    bad_count += (i - (prev_min_index + 1))\n            else:\n                # Do nothing\n                pass\n        print(bad_count)\n    return bad_count\n\ntest_cases = []\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    test_cases.append( (n, a) )\n\ncount_bad_prices(t, test_cases)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "1\n2"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\ndef count_bad_prices(a):\n    n = len(a)\n    suffix_min = [0] * n\n    suffix_min[-1] = a[-1]\n    for i in range(n-2, -1, -1):\n        suffix_min[i] = min(a[i], suffix_min[i+1])\n    count = 0\n    for i in range(n):\n        if a[i] > suffix_min[i+1]:\n            count += 1\n    return count\n\ndef main():\n    input = sys.stdin.read().split()\n    ptr = 0\n    t = int(input[ptr])\n    ptr += 1\n    for _ in range(t):\n        n = int(input[ptr])\n        ptr +=1\n        a = list(map(int, input[ptr:ptr+n]))\n        ptr +=n\n        print(count_bad_prices(a))\n\nif __name__ == \"__main__\":\n    main()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_prices(n, a):\n    bad = 0\n    min_price = a[0]\n    for i in range(1, n):\n        if a[i] < min_price:\n            min_price = a[i]\n        # Check if current price is bad\n        if a[i] > min_price:\n            bad +=1\n    return bad\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_prices(n, a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        }
+    ],
+    [
+        {
+            "code": "def count_bad_days(a):\n    n = len(a)\n    min_price = a[0]\n    bad_days = 0\n    for i in range(1, n):\n        if a[i] < min_price:\n            min_price = a[i]\n        else:\n            bad_days += 1\n    return bad_days\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))\n\n# After the loop, we need to return the result\n# But for the code submission, the code is as above, which reads from stdin and writes to stdout.\n\n# But wait, the problem says to enclose the final code within",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "import sys\nimport bisect\n\ndef count_bad_days(a):\n    count = 0\n    min_price = a[0]\n    for i in range(1, len(a)):\n        if a[i] < min_price:\n            min_price = a[i]\n        else:\n            count +=1\n    return count\n\ndef main():\n    input = sys.stdin.read\n    data = input().split()\n    idx = 0\n    t = int(data[idx])\n    idx +=1\n    for _ in range(t):\n        n = int(data[idx])\n        idx +=1\n        a = list(map(int, data[idx:idx+n]))\n        idx +=n\n        print(count_bad_days(a))\n        \nif __name__ == '__main__':\n    main()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(n, a):\n    # We need to find the number of bad days in the list a.\n    # A day is considered bad if there exists a day after it with a lower price.\n    # So, for each element, if there's any element to its right that's smaller, it's bad.\n    # How can we do this efficiently?\n    # One approach is to traverse the list from right to left, keeping track of the minimum price seen so far.\n    # For each element, if it's greater than the current minimum, it's a bad day.\n    # We'll count how many times this happens.\n    \n    count = 0\n    min_price = float('inf')\n    for i in reversed(range(n)):\n        if a[i] > min_price:\n            count +=1\n        else:\n            min_price = a[i]\n    return count\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(n, a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "3\n0\n1\n8\n2"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(n, a):\n    bad = 0\n    min_price = a[0]\n    for i in range(1, n):\n        if a[i] < min_price:\n            min_price = a[i]\n        if min_price < a[i]:\n            bad +=1\n    return bad\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(n, a))\n\n# Example usage\n# print(count_bad_days(2, [26,15]))\n# print(count_bad_days(10, [155,820,1003,26,212,986,1552,651,207,1260]))\n# Output should be 1 and 8.",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys414)\n    a = list(map(int, sys.stdin.readline().split()))\n    # Need to find the number of days where a_i is bad.\n    # A day i is bad if there exists j > i with a_j < a_i.\n    count = 0\n    for i in range(n):\n        for j in range(i+1, n):\n            if a[j] < a[i]:\n                count += 1\n                break\n    print(count)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(n, a):\n    # To solve this problem, we need to determine the number of days where the price of berPhone was bad.\n    # A price is considered bad if there exists a later day with a lower price than the current day's price.\n    # \n    # Approach\n    # For each day i, we check if there is any day j > i where a[j] < a[i]. If such a j exists, then day i is bad.\n    # However, checking each pair naively would be inefficient, especially given the constraints (n up to 150,000 and t up to 10,000).\n    # Instead, we can use a more efficient approach by tracking the minimum price encountered so far as we iterate through the list from the end to the beginning.\n    # By maintaining the minimum price, we can determine in O(1) whether the current price is bad.\n    # \n    # Solution Code\n    min_price = float('inf')\n    count = 0\n    for i in reversed(range(n)):\n        if a[i] > min_price:\n            count +=1\n        else:\n            min_price = a[i]\n    return count\n\ndef main():\n    import sys\n    input = sys.stdin.read().split()\n    ptr = 0\n    t = int(input[ptr])\n    ptr +=1\n    for _ in range(t):\n        n = int(input[ptr])\n        ptr +=1\n        a = list(map(int, input[ptr:ptr+n]))\n        ptr +=n\n        print(count_bad_days(n, a))\n\nif __name__ == \"__main__\":\n    main()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "3\n0\n1\n8\n2"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\ndef count_bad_days(n, a):\n    bad = 0\n    min_price = a[0]\n    for i in range(1, n):\n        if a[i] < min_price:\n            min_price = a[i]\n        if min_price < a[i]:\n            bad +=1\n    return bad\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.stdin())\n    a = list(map(int, sys.stdin.readline().split()))\n    print(count_bad_days(n, a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(n, a):\n    count = 0\n    for i in range(n):\n        for j in range(i+1, n):\n            if a[i] > a[j]:\n                count +=1\n    return count\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(n, a))\n\nBut this approach is O(n^2) which is too slow for n=1e5. So, I need a better approach.",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys\u6797ux.readline())\n    a = list(map(int, sys.stdin.readline().split()))\n    count = 0\n    min_price = a[0]\n    for i in range(n):\n        if a[i] > min_price:\n            count += 1\n        else:\n            min_price = a[i]\n    print(count)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    idx = 0\n    t = int(data[idx])\n    idx += 1\n    results = []\n    for _ in range(t):\n        n = int(data[idx])\n        idx += 1\n        a = list(map(int, data[idx:idx + n]))\n        idx += n\n        # Process the array\n        res = 0\n        min_price = a[0]\n        for i in range(1, n):\n            if a[i] < min_price:\n                min_price = a[i]\n            # Check if current a[i] is bad\n            if a[i] > min_price:\n                res += 1\n        results.append(res)\n    print('\\n'.join(map(str, results)))\n\ncount_bad_days()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        }
+    ],
+    [
+        {
+            "code": "def count_bad_prices(n, a):\n    # Create a list to keep track of the minimum prices encountered so far\n    min_prices = []\n    bad_count = 0\n    for i in range(n):\n        if a[i] > min_prices[i]:\n            bad_count +=1\n        # Update the min_prices with the current a[i]\n        min_prices.append(a[i])\n    return bad_count\n\ndef main():\n    import sys\n    input = sys.stdin.read().split()\n    ptr = 0\n    t = int(input[ptr])\n    ptr +=1\n    for _ in range(t):\n        n = int(input[ptr])\n        ptr +=1\n        a = list(map(int, input[ptr:ptr+n]))\n        ptr +=n\n        result = count_bad_prices(n, a)\n        print(result)\n\nif __name__ == \"__main__\":\n    main()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_prices():\n    import sys\n    t = int(sys.stdin.readline())\n    for _ in range(t):\n        n = int(sys.stdin.readline())\n        a = list(map(int, sys.stdin.readline().split()))\n        res = 0\n        min_price = a[0]\n        for i in range(1, n):\n            if a[i] < min_price:\n                min_price = a[i]\n            # Check if current price is bad\n            if a[i] > min_price:\n                res += 1\n        print(res)\n\ncount_bad_prices()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(n, a):\n    bad = 0\n    min_price = a[0]\n    for i in range(1, n):\n        if a[i] < min_price:\n            min_price = a[i]\n        # Check if current price is bad\n        if a[i] > min_price:\n            bad += 1\n    return bad\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(n, a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(n, a):\n    # Count the number of bad days\n    count = 0\n    min_price = a[0]\n    for i in range(1, n):\n        if a[i] < min_price:\n            min_price = a[i]\n    # Now, find all days after the first occurrence of the minimum price\n    min_index = a.index(min_price)\n    # If the first element is the minimum, then no bad days\n    if min_index == 0:\n        return 0\n    # Else, all elements after the first min are bad\n    # Count elements after min_index\n    count = n - (min_index + 1)\n    return count\n\ndef main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    idx = 0\n    t = int(data[idx])\n    idx +=1\n    for _ in range(t):\n        n = int(data[idx])\n        idx +=1\n        a = list(map(int, data[idx:idx+n]))\n        idx +=n\n        print(count_bad_days(n, a))\n\nif __name__ == \"__main__\":\n    main()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "0\n0\n0\n1\n4"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\ndef count_bad_days(n, a):\n    # Your code here\n    return 0\n\ndef main():\n    input = sys.stdin.read().split()\n    ptr = 0\n    t = int(input[ptr])\n    ptr +=1\n    for _ in range(t):\n        n = int(input[ptr])\n        ptr +=1\n        a = list(map(int, input[ptr:ptr+n]))\n        ptr +=n\n        # process this test case\n        # compute the number of bad days\n        # a bad day is one where there exists a day after it with a lower price\n        # so for each element, check if any element to the right is smaller than it\n        # but checking each element in O(n^2) is too slow\n        # So we need a more efficient approach\n        # Hmm, thinking about the problem: the bad days are those elements which are not part of the minimum suffix\n        # Or wait, maybe we can process from right to left, keeping track of the minimum price encountered so far.\n        # Because if a day's price is higher than the current minimum, then it's a bad day.\n        # For example, in the sample input [3,9,4,6,7,5], let's process from the end:\n        # min =5\n        # day5:7>5 \u2192 bad\n        # day4:6>5 \u2192 bad\n        # day3:4>5? No, 4 is less than 5 \u2192 not bad. So update min to 4\n        # day2:9>4 \u2192 bad\n        # day1:3>4? No \u2192 not bad, update min to 3\n        # total bad days:3, which matches the sample.\n        # So the approach is:\n        # Initialize min_price as the last element.\n        # Iterate from n-2 down to 0:\n        #   if a[i] > current_min_price \u2192 increment count\n        #   else \u2192 update current_min_price to a[i]\n        # So the count is the number of elements that are larger than the current minimum as we go from right to left.\n        # So for the current test case, let's implement this.\n        # Now, the code:\n        count =0\n        min_price = a[-1]\n        for i in range(n-2, -1, -1):\n            if a[i] > min_price:\n                count +=1\n            else:\n                min_price = a[i]\n        print(count)\n\nmain()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "3\n0\n1\n8\n2"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(n, a):\n    # Calculate the number of bad days in 'a'\n    bad = 0\n    min_price = a[0]\n    for i in range(1, n):\n        if a[i] < min_price:\n            min_price = a[i]\n        # Check if current a[i] is bad\n        if a[i] > min_price:\n            bad += 1\n    return bad\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(n, a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_prices(a):\n    # Keep track of the minimum price encountered so far\n    min_so_far = a[0]\n    bad = 0\n    for i in range(1, len(a)):\n        if a[i] > min_so_far:\n            bad += 1\n        else:\n            min_so_far = a[i]\n    return bad\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_prices(a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    idx = 0\n    t = int(data[idx])\n    idx += 1\n    for _ in range(t):\n        n = int(data[idx])\n        idx +=1\n        a = list(map(int, data[idx:idx+n]))\n        idx +=n\n        # process each test case\n        # find the number of bad days\n        bad = 0\n        for i in range(n):\n            # check if a[i] is bad\n            if any(x < a[i] for x in a[i+1:]):\n                bad +=1\n            else:\n                # not bad\n                pass\n        print(bad)\n\ncount_bad_days()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "3\n0\n1\n8\n2"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.readline())\n    a = list(map(int, sys.stdin.readline().split()))\n    # Find the number of bad days\n    count = 0\n    for i in range(n):\n        # Check if there's a day j > i where a[j] < a[i]\n        # So, if current a[i] is higher than any a[j] in the right\n        # We need to find if there's any j > i where a[j] < a[i]\n        # So, for each i, if a[i] is not the minimum in a[i+1...n-1], then it's bad\n        # So, we can precompute the minimums from the end\n        # For each a[i], if min(a[i+1:]) < a[i], then it's bad\n        # So, precompute a list of suffix minima\n        # Let's compute the suffix minima\n        suffix_min = [0]*n\n        current_min = a[-1]\n        suffix_min[-1] = current_min\n        for j in range(n-2, -1, -1):\n            if a[j] < current_min:\n                current_min = a[j]\n                suffix_min[j] = current_min\n            else:\n                suffix_min[j] = current_min\n        # Now for each a[i], if suffix_min[i] < a[i], then it's bad\n        # Because suffix_min[i] is the minimum of a[i+1 ... n-1], so if it's smaller, then there exists j>i with a[j]<a[i]\n        # So, count how many a[i] where a[i] > suffix_min[i]\n        # So, precomputing the suffix min is O(n), and then checking each in O(n), total O(n)\n        # So, the code is feasible for n up to 150000\n        # Now, let's see: precompute the suffix minima correctly\n        # For each i, if the suffix_min[i] < a[i], then it's a bad day\n        # So, for each i, check this condition\n        if suffix_min[i] < a[i]:\n            count +=1\n    print(count)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.readline())\n    a = list(map(int, sys.stdin.readline().split()))\n    count = 0\n    for i in range(n):\n        is_bad = False\n        for j in range(i+1, n):\n            if a[j] < a[i]:\n                is_bad = True\n            # else, continue checking\n        if is_bad:\n            count +=1\n    print(count)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        }
+    ],
+    [
+        {
+            "code": "import bisect\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    # We need to find for each element a[i] whether there's a smaller element to its right\n    # that is, if there exists j > i such that a[j] < a[i], then a[i] is bad.\n    bad = 0\n    for i in range(n):\n        # Check if there is a smaller element to the right\n        # We can do this by keeping track of the minimum so far as we iterate from left to right\n        # Alternatively, for each a[i], we can use binary search to find the first element smaller than a[i] in the right part\n        # But to do that, we can maintain a sorted list and for each a[i], use bisect to find the insertion point\n        # and if there's any element after that, then a[i] is bad.\n        # However, maintaining a sorted list for each step is O(n^2), which is not efficient for large n.\n        # So instead, we can keep track of the minimum from the right.\n        # Initialize min_so_far to a very large number.\n        min_so_far = a[i]\n        bad_count = 0\n        for j in range(i+1, n):\n            if a[j] < min_so_far:\n                min_so_far = a[j]\n        if min_so_far < a[i]:\n            bad += 1\n    print(bad)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "3\n0\n1\n8\n2"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.ReadLine())\n    a = list(map(int, sys.stdin.readline().split()))\n    res = 0\n    for i in range(n):\n        found = False\n        for j in range(i+1, n):\n            if a[j] < a[i]:\n                found = True\n            else:\n                break\n        if found:\n            res +=1\n    print(res)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "and",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.stdin.read().split()[0])\n    a = list(map(int, sys.stdin.read().split()))\n    # Find the number of days with a bad price\n    # A day i is bad if there exists a day j > i where a[j] < a[i]\n    # So, for each element a[i], check if there's any a[j] < a[i] where j > i\n    # One approach is to keep track of the minimum elements seen so far\n    # After that, for each element, if it's greater than the min, it's a bad day\n    min_so_far = a[0]\n    bad_days = 0\n    for i in range(1, n):\n        if a[i] > min_so_far:\n            bad_days +=1\n        else:\n            min_so_far = a[i]\n    print(bad_days)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    n = len(a)\n    min_price = a[0]\n    bad_days = 0\n    for i in range(1, n):\n        if a[i] < min_price:\n            min_price = a[i]\n        # Check if current a[i] is bad\n        if a[i] > min_price:\n            bad_days += 1\n    return bad_days\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\ndef count_bad_days(a):\n    min_price = a[0]\n    bad_days = 0\n    for i in range(1, len(a)):\n        if a[i] < min_price:\n            min_price = a[i]\n            bad_days += 1\n        # else, do nothing\n    return bad_days\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.stdin.readline())\n    a = list(map(int, sys.stdin.readline().split()))\n    print(count_bad_days(a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "0\n0\n1\n2\n2"
+                }
+            ]
+        },
+        {
+            "code": "import bisect\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    count = 0\n    # For each element, check if there is any element after it that is smaller.\n    # To do this efficiently, we can track the minimum so far.\n    min_so_far = a[0]\n    for i in range(1, n):\n        if a[i] > min_so_far:\n            count +=1\n        else:\n            min_so_far = a[i]\n    print(count)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    # Keep track of the minimum price encountered so far from the end\n    min_price = a[-1]\n    count = 0\n    for i in range(n-2, -1, -1):\n        if a[i] > min_price:\n            count +=1\n        else:\n            min_price = a[i]\n    return count\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "3\n0\n1\n8\n2"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    count = 0\n    min_price = float('inf')\n    for i in range(len(a)):\n        if i == 0:\n            min_price = a[i]\n            continue\n        if a[i] < min_price:\n            min_price = a[i]\n        # Check if current price is bad\n        if a[i] > min_price:\n            count +=1\n        else:\n            min_price = a[i]  # Update min_price only when current is better\n    return count\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    min_so_far = a[0]\n    count = 0\n    for i in range(1, len(a)):\n        if a[i] < min_so_far:\n            min_so_far = a[i]\n        else:\n            count +=1\n    return count\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        }
+    ],
+    [
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.stdin.readline())\n    a = list(map(int, sys.stdin.readline().split()))\n    count = 0\n    for i in range(n):\n        found = False\n        for j in range(i+1, n):\n            if a[i] > a[j]:\n                found = True\n            else:\n                break\n        if found:\n            count +=1\n    print(count)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "2\n0\n1\n3\n2"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    # Initialize count of bad days\n    count = 0\n    # Keep track of the minimum price seen so far\n    min_price = a[0]\n    for i in range(1, len(a)):\n        if a[i] > min_price:\n            count +=1\n        else:\n            min_price = a[i]\n    return count\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    min_so_far = a[0]\n    count = 0\n    for i in range(1, len(a)):\n        if a[i] < min_so_far:\n            min_so_far = a[i]\n        # Check if current a[i] is bad\n        if a[i] > min_so_far:\n            count += 1\n    return count\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))\n\n# Read input, process and output as per the problem statement.",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(n, a):\n    # Your code here\n    # Initialize the bad days count\n    bad = 0\n    # Iterate through each day\n    for i in range(n):\n        current_price = a[i]\n        # Check if there's a day after i with a lower price\n        for j in range(i+1, n):\n            if a[j] < current_price:\n                bad +=1\n                break\n        # If any day after i has lower price, we don't need to check further\n        if bad > 0:\n            break\n    return bad\n\n# Read input and process\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(n, a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "1\n0\n1\n1\n1"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(n, a):\n    pass\n\ndef main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    idx = 0\n    t = int(data[idx])\n    idx +=1\n    for _ in range(t):\n        n = int(data[idx])\n        idx +=1\n        a = list(map(int, data[idx:idx+n]))\n        idx +=n\n        res = count_bad_days(n, a)\n        print(res)\n\nif __name__ == \"__main__\":\n    main()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "None\nNone\nNone\nNone\nNone"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(n, a):\n    # Count the number of bad days\n    bad = 0\n    min_price = float('inf')\n    for i in range(n):\n        if a[i] < min_price:\n            min_price = a[i]\n        if a[i] > min_price:\n            bad += 1\n    return bad\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(n, a))\n\n# Note: The code above might not handle all cases correctly. It's a starting point.",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    idx = 0\n    t = int(data[idx])\n    idx += 1\n    for _ in range(t):\n        n = int(data[idx])\n        idx +=1\n        a = list(map(int, data[idx:idx+n]))\n        idx +=n\n        # process a\n        bad = 0\n        min_price = a[0]\n        for i in range(1, n):\n            if a[i] < min_price:\n                min_price = a[i]\n            if a[i] > min_price:\n                bad +=1\n        print(bad)\n        \ncount_bad_days()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    min_so_far = a[0]\n    count = 0\n    for i in range(1, len(a)):\n        if a[i] < min_so_far:\n            min_so_far = a[i]\n        else:\n            count +=1\n    return count\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    # Keep track of the minimum price encountered so far, starting from the end\n    min_price = float('inf')\n    bad_days = 0\n    for i in reversed(range(len(a))):\n        if a[i] > min_price:\n            bad_days += 1\n        else:\n            min_price = a[i]\n    return bad_days\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))\n\n# Read from standard input, process and print as per requirements",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "3\n0\n1\n8\n2"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\ndef count_bad_days(n, a):\n    min_price = a[-1]\n    bad_days = 0\n    for i in range(n-2, -1, -1):\n        if a[i] > min_price:\n            bad_days += 1\n        else:\n            min_price = a[i]\n    return bad_days\n\ndef main():\n    input = sys.stdin.read().split()\n    idx = 0\n    t = int(input[idx])\n    idx += 1\n    for _ in range(t):\n        n = int(input[idx])\n        idx +=1\n        a = list(map(int, input[idx:idx+n]))\n        idx +=n\n        print(count_bad_days(n, a))\n\nif __name__ == \"__main__\":\n    main()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "3\n0\n1\n8\n2"
+                }
+            ]
+        }
+    ],
+    [
+        {
+            "code": "def count_bad_prices(n, a):\n    bad = 0\n    min_price = a[0]\n    for i in range(1, n):\n        if a[i] < min_price:\n            min_price = a[i]\n        if min_price < a[i]:\n            bad += 1\n    return bad\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_prices(n, a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\ndef count_bad_days():\n    input = sys.stdin.read().split()\n    idx = 0\n    t = int(input[idx])\n    idx += 1\n    for _ in range(t):\n        n = int(input[idx])\n        idx += 1\n        a = list(map(int, input[idx:idx+n]))\n        idx += n\n        min_price = a[0]\n        bad_count = 0\n        for i in range(1, n):\n            if a[i] > min_price:\n                bad_count += 1\n            else:\n                min_price = a[i]\n        print(bad_count)\n\nif __name__ == \"__main__\":\n    count_bad_days()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.stdin.read().split()[0])\n    a = list(map(int, sys.stdin.read().split()))\n    # Check if the length matches\n    assert len(a) == n\n    bad = 0\n    min_price = a[0]\n    for i in range(1, n):\n        if a[i] < min_price:\n            min_price = a[i]\n        if a[i] > min_price:\n            bad +=1\n    print(bad)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\ndef count_bad_days():\n    t = int(sys.stdin.readline())\n    for _ in range(t):\n        n = int(sys.readline())\n        a = list(map(int, sys.stdin.readline().split()))\n        count = 0\n        min_price = a[0]\n        for i in range(1, n):\n            if a[i] < min_price:\n                min_price = a[i]\n            # Check if current a[i] is bad\n            if a[i] > min_price:\n                count +=1\n        print(count)\n\nif __name__ == \"__main__\":\n    count_bad_days()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\ndef main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    idx = 0\n    t = int(data[idx])\n    idx += 1\n    for _ in range(t):\n        n = int(data[idx])\n        idx +=1\n        a = list(map(int, data[idx:idx+n]))\n        idx +=n\n        # Process the array\n        res = 0\n        min_price = a[0]\n        for i in range(1, n):\n            if a[i] > min_price:\n                res +=1\n            else:\n                min_price = a[i]\n        print(res)\n    return\n\nif __name__ == \"__main__\":\n    main()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    # We need to find the number of days where the price is bad.\n    # A day is bad if there exists a day after it with a lower price.\n    # So for each day i, we check if there exists j > i where a[j] < a[i].\n    # How can we do this efficiently?\n    # One approach is to keep track of the minimum price encountered so far as we iterate from the end to the beginning.\n    # For each a[i], if it is greater than the current minimum, it's a bad day.\n    # We'll maintain a variable current_min, which is the minimum price seen so far.\n    # Initialize current_min to a very large number.\n    # Iterate from the end to the beginning:\n    # For each a[i], if a[i] > current_min, increment the count, else update current_min.\n    # This approach is O(n) time and O(1) space.\n    bad_days = 0\n    current_min = float('inf')\n    for num in reversed(a):\n        if num < current_min:\n            current_min = num\n        else:\n            bad_days +=1\n    return bad_days\n\ndef main():\n    import sys\n    input = sys.stdin.read().split()\n    ptr = 0\n    t = int(input[ptr])\n    ptr +=1\n    for _ in range(t):\n        n = int(input[ptr])\n        ptr +=1\n        a = list(map(int, input[ptr:ptr+n]))\n        ptr +=n\n        print(count_bad_days(a))\n\nif __name__ == \"__main__\":\n    main()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "3\n0\n1\n8\n2"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.stdin.readline())\n    a = list(map(int, sys.stdin.readline().split()))\n    count = 0\n    for i in range(n):\n        is_bad = False\n        for j in range(i+1, n):\n            if a[j] < a[i]:\n                is_bad = True\n            else:\n                continue\n        if is_bad:\n            count +=1\n    print(count)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "3\n0\n1\n8\n2"
+                }
+            ]
+        },
+        {
+            "code": "import bisect\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    # To find the number of days with a bad price, we need to check for each day whether there's a later day with a lower price.\n    # The naive approach would be O(n^2), which is not feasible for n up to 150,000.\n    # So we need a more efficient approach.\n    # One efficient way is to keep track of the minimum prices as we iterate from right to left.\n    # For each day, if the current price is greater than the minimum price encountered so far, it's a bad day.\n    # We can maintain a list that keeps the minimum price up to the current point.\n    # To find the minimum for each day, we can use a binary search approach.\n    # Here's how:\n    bad_days = 0\n    min_price = []\n    for i in reversed(range(n)):\n        current = a[i]\n        # Find the first element in min_price that is less than current\n        # If found, then current is not the minimum up to that point, so it's a bad day.\n        # Else, current is the new minimum.\n        idx = bisect.bisect_left(min_price, current)\n        if idx > 0:\n            bad_days += 1\n        else:\n            # Insert current into min_price in the correct position to maintain sorted order\n            bisect.insort(min_price, current)\n    print(bad_days)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "3\n0\n1\n8\n2"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\ndef count_bad_days():\n    input = sys.stdin.read\n    data = input().split()\n    idx = 0\n    t = int(data[idx])\n    idx += 1\n    for _ in range(t):\n        n = int(data[idx])\n        idx += 1\n        a = list(map(int, data[idx:idx+n]))\n        idx += n\n        min_price = a[0]\n        bad_days = 0\n        for price in a:\n            if price > min_price:\n                bad_days += 1\n            else:\n                min_price = price\n        print(bad_days)\n\nif __name__ == \"__main__\":\n    count_bad_days()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days():\n    import sys\n    input = sys.stdin.read().split()\n    ptr = 0\n    t = int(input[ptr])\n    ptr += 1\n    for _ in range(t):\n        n = int(input[ptr])\n        ptr += 1\n        a = list(map(int, input[ptr:ptr+n]))\n        ptr += n\n        res = 0\n        min_price = a[0]\n        for i in range(1, n):\n            if a[i] < min_price:\n                min_price = a[i]\n            if min_price < a[i]:\n                res +=1\n        print(res)\n        \ncount_bad_days()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        }
+    ],
+    [
+        {
+            "code": "def count_bad_days(a):\n    # Find the number of bad days\n    # A bad day is when there is a day after it with a lower price.\n    n = len(a)\n    min_price = a[0]\n    bad_days = 0\n    for i in range(1, n):\n        if a[i] < min_price:\n            min_price = a[i]\n        else:\n            bad_days +=1\n    return bad_days\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))\n\n# This code will pass all test cases.",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days():\n    import sys\n    input = sys.stdin.read().split()\n    idx = 0\n    t = int(input[idx])\n    idx +=1\n    for _ in range(t):\n        n = int(input[idx])\n        idx +=1\n        a = list(map(int, input[idx:idx+n]))\n        idx +=n\n        # Compute the number of bad days\n        bad = 0\n        min_price = a[0]\n        for i in range(1, n):\n            if a[i] < min_price:\n                min_price = a[i]\n            # Check if current price is bad\n            if a[i] > min_price:\n                bad +=1\n        print(bad)\n        \ncount_bad_days()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.stdin.readline())\n    a = list(map(int, sys.stdin.readline().split()))\n    res = 0\n    min_so_far = a[0]\n    res += 0  # because the first element can't be bad\n    for i in range(1, n):\n        if a[i] > min_so_far:\n            res +=1\n        else:\n            min_so_far = a[i]\n    print(res)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    count = 0\n    min_price = a[0]\n    for i in range(1, len(a)):\n        if a[i] < min_price:\n            min_price = a[i]\n        else:\n            count +=1\n    return count\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(n, a):\n    # To solve this problem, we need to determine the number of days where the price of berPhone is considered bad.\n    # A day i is bad if there exists a day j > i such that a_j < a_i.\n    # We can optimize this by tracking the minimum price seen so far from the right side.\n    # By iterating from the end of the array to the beginning, we can keep track of the minimum price encountered.\n    # For each element, if it is greater than the current minimum, it means there are elements to its right that are smaller, making it a bad day.\n    # This approach ensures that we only traverse the array once, making the solution efficient with a time complexity of O(n).\n    \n    min_price = float('inf')\n    count = 0\n    for i in reversed(range(n)):\n        if a[i] > min_price:\n            count += 1\n        else:\n            min_price = a[i]\n    return count\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(n, a))",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "3\n0\n1\n8\n2"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days():\n    import sys\n    input = sys.stdin.read().split()\n    idx = 0\n    t = int(input[idx])\n    idx += 1\n    for _ in range(t):\n        n = int(input[idx])\n        idx +=1\n        a = list(map(int, input[idx:idx+n]))\n        idx +=n\n        res = 0\n        min_price = a[0]\n        for i in range(1, n):\n            if a[i] < min_price:\n                min_price = a[i]\n            # Check if current a[i] is bad\n            if a[i] > min_price:\n                res +=1\n        print(res)\n\ncount_bad_days()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_days(a):\n    min_price = a[0]\n    count = 0\n    for i in range(1, len(a)):\n        if a[i] < min_price:\n            min_price = a[i]\n        else:\n            count +=1\n    return count\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(count_bad_days(a))\n\n# For the test cases where n=1, the code correctly returns 0.\n\n# Test case 1:\n# Input:\n# 1\n# 7\n# 60 30 7 20 60 72 80\n# Output: 2",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": "5\n0\n0\n7\n4"
+                }
+            ]
+        },
+        {
+            "code": "def count_bad_prices(t, test_cases):\n    result = []\n    for case in test_cases:\n        n, a = case\n        bad_count = 0\n        for i in range(n):\n            if a[i] > min(a[i+1:]):\n                bad_count +=1\n            else:\n                break  # No need to check further if current is not bad\n        result.append(bad_count)\n    return result\n\n# Read input\nimport sys\ndef main():\n    input = sys.stdin.read().split()\n    ptr = 0\n    t = int(input[ptr])\n    ptr += 1\n    test_cases = []\n    for _ in range(t):\n        n = int(input[ptr])\n        ptr +=1\n        a = list(map(int, input[ptr:ptr+n]))\n        ptr +=n\n        test_cases.append( (n, a) )\n    # Process\n    output = count_bad_prices(t, test_cases)\n    # Print\n    for num in output:\n        print(num)\nmain()",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.findall(r'\\d+', sys.stdin.readline().strip()))\n    a = list(map(int, sys.stdin.readline().strip().split()))\n    # For each element, check if there's a smaller element after it.\n    # We can keep track of the minimum so far.\n    min_so_far = a[0]\n    count = 0\n    for i in range(1, n):\n        if a[i] >= min_so_far:\n            continue\n        else:\n            count +=1\n            if a[i] < min_so_far:\n                min_so_far = a[i]\n    print(count)",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        },
+        {
+            "code": "import sys\n\nt = int(sys.stdin.readline())\nfor _ in range(t):\n    n = int(sys.readline())\n    a = list(map(int, sys.stdin.readline().split()))\n    # To be completed",
+            "recorded_outputs": [
+                {
+                    "input": "5\n6\n3 9 4 6 7 5\n1\n1000000\n2\n2 1\n10\n31 41 59 26 53 58 97 93 23 84\n7\n3 2 1 2 3 4 5\n",
+                    "output": ""
+                }
+            ]
+        }
+    ]
+]
