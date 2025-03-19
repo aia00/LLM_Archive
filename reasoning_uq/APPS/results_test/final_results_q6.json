@@ -1,0 +1,662 @@
+[
+    {
+        "code_index": 1,
+        "code": "def main():\n    n = int(input())\n    reachable = set()\n    current = n\n    reachable.add(current)\n    while True:\n        next_num = current + 1\n        while next_num % 10 == 0:\n            next_num = next_num // 10\n        if next_num not in reachable:\n            reachable.add(next_num)\n            current = next_num\n        else:\n            break\n        current = next_num\n        # Check if we can loop\n        if current in reachable:\n            break\n    print(len(reachable))\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "123456789",
+                "standard_solution_output": "38",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "901234567",
+                "standard_solution_output": "54",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "765432109",
+                "standard_solution_output": "52",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "890123456",
+                "standard_solution_output": "52",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "66",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "234567890",
+                "standard_solution_output": "40",
+                "model_output": "2",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 2,
+        "code": "def main():\n    n = int(input())\n    reachable = set()\n    current = n\n    reachable.add(current)\n    while True:\n        next_num = current + 1\n        while next_num % 10 == 0:\n            next_num = next_num // 10\n        if next_num not in reachable:\n            reachable.add(next_num)\n            current = next_num\n        else:\n            break\n    print(len(reachable))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "123456789",
+                "standard_solution_output": "38",
+                "model_output": "38",
+                "error": null
+            },
+            {
+                "input": "901234567",
+                "standard_solution_output": "54",
+                "model_output": "54",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "37",
+                "error": null
+            },
+            {
+                "input": "765432109",
+                "standard_solution_output": "52",
+                "model_output": "52",
+                "error": null
+            },
+            {
+                "input": "890123456",
+                "standard_solution_output": "52",
+                "model_output": "52",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "37",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "10",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "10",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "66",
+                "model_output": "66",
+                "error": null
+            },
+            {
+                "input": "234567890",
+                "standard_solution_output": "40",
+                "model_output": "40",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 3,
+        "code": "def main():\n    n = int(input())\n    reachable = set()\n    reachable.add(n)\n    while True:\n        next_num = n + 1\n        while next_num % 10 == 0:\n            next_num = next_num // 10\n        if next_num not in reachable:\n            reachable.add(next_num)\n            n = next_num\n        else:\n            break\n        next_num = n + 1\n        while next_num % 10 == 0:\n            next_num = next_num // 10\n        if next_num not in reachable:\n            reachable.add(next_num)\n            n = next_num\n        else:\n            break\n    print(len(reachable))\n    \nmain()",
+        "test_results": [
+            {
+                "input": "123456789",
+                "standard_solution_output": "38",
+                "model_output": "38",
+                "error": null
+            },
+            {
+                "input": "901234567",
+                "standard_solution_output": "54",
+                "model_output": "54",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "37",
+                "error": null
+            },
+            {
+                "input": "765432109",
+                "standard_solution_output": "52",
+                "model_output": "52",
+                "error": null
+            },
+            {
+                "input": "890123456",
+                "standard_solution_output": "52",
+                "model_output": "52",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "37",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "10",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "10",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "66",
+                "model_output": "66",
+                "error": null
+            },
+            {
+                "input": "234567890",
+                "standard_solution_output": "40",
+                "model_output": "40",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 4,
+        "code": "def main():\n    n = int(input())\n    reachable = set()\n    reachable.add(n)\n    while True:\n        next_num = f(n)\n        if next_num in reachable:\n            break\n        reachable.add(next_num)\n        n = next_num\n    print(len(reachable))\n    \ndef f(x):\n    x += 1\n    while x % 10 == 0:\n        x = x // 10\n    return x\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "123456789",
+                "standard_solution_output": "38",
+                "model_output": "38",
+                "error": null
+            },
+            {
+                "input": "901234567",
+                "standard_solution_output": "54",
+                "model_output": "54",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "37",
+                "error": null
+            },
+            {
+                "input": "765432109",
+                "standard_solution_output": "52",
+                "model_output": "52",
+                "error": null
+            },
+            {
+                "input": "890123456",
+                "standard_solution_output": "52",
+                "model_output": "52",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "37",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "10",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "10",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "66",
+                "model_output": "66",
+                "error": null
+            },
+            {
+                "input": "234567890",
+                "standard_solution_output": "40",
+                "model_output": "40",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 5,
+        "code": "def count_reachable(n):\n    visited = set()\n    stack = [n]\n    while stack:\n        current = stack.pop()\n        if current in visited:\n            continue\n        visited.add(current)\n        next_num = current + 1\n        while next_num % 10 == 0:\n            next_num = next_num // 10\n        stack.append(next_num)\n    return len(visited)\n\nif __name__ == \"__main__\":\n    print(count_reachable(10098))",
+        "test_results": [
+            {
+                "input": "123456789",
+                "standard_solution_output": "38",
+                "model_output": "29",
+                "error": null
+            },
+            {
+                "input": "901234567",
+                "standard_solution_output": "54",
+                "model_output": "29",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "29",
+                "error": null
+            },
+            {
+                "input": "765432109",
+                "standard_solution_output": "52",
+                "model_output": "29",
+                "error": null
+            },
+            {
+                "input": "890123456",
+                "standard_solution_output": "52",
+                "model_output": "29",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "29",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "29",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "29",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "66",
+                "model_output": "29",
+                "error": null
+            },
+            {
+                "input": "234567890",
+                "standard_solution_output": "40",
+                "model_output": "29",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 6,
+        "code": "def reachable(n):\n    visited = set()\n    queue = [n]\n    visited.add(n)\n    while queue:\n        current = queue.pop(0)\n        next_num = current + 1\n        while True:\n            if next_num % 10 == 0:\n                next_num = next_num // 10\n            else:\n                break\n        if next_num not in visited:\n            visited.add(next_num)\n            queue.append(next_num)\n    return len(visited)\n\nn = int(input())\nprint(reachable(n))",
+        "test_results": [
+            {
+                "input": "123456789",
+                "standard_solution_output": "38",
+                "model_output": "38",
+                "error": null
+            },
+            {
+                "input": "901234567",
+                "standard_solution_output": "54",
+                "model_output": "54",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "37",
+                "error": null
+            },
+            {
+                "input": "765432109",
+                "standard_solution_output": "52",
+                "model_output": "52",
+                "error": null
+            },
+            {
+                "input": "890123456",
+                "standard_solution_output": "52",
+                "model_output": "52",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "37",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "10",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "10",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "66",
+                "model_output": "66",
+                "error": null
+            },
+            {
+                "input": "234567890",
+                "standard_solution_output": "40",
+                "model_output": "40",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 7,
+        "code": "def count_reachable(n):\n    visited = set()\n    stack = [n]\n    while stack:\n        current = stack.pop()\n        if current in visited:\n            continue\n        visited.add(current)\n        next_num = current + 1\n        while next_num % 10 == 0:\n            next_num //= 10\n        stack.append(next_num)\n    return len(visited)\n\ndef main():\n    n = int(input())\n    print(count_reachable(n))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "123456789",
+                "standard_solution_output": "38",
+                "model_output": "38",
+                "error": null
+            },
+            {
+                "input": "901234567",
+                "standard_solution_output": "54",
+                "model_output": "54",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "37",
+                "error": null
+            },
+            {
+                "input": "765432109",
+                "standard_solution_output": "52",
+                "model_output": "52",
+                "error": null
+            },
+            {
+                "input": "890123456",
+                "standard_solution_output": "52",
+                "model_output": "52",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "37",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "10",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "10",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "66",
+                "model_output": "66",
+                "error": null
+            },
+            {
+                "input": "234567890",
+                "standard_solution_output": "40",
+                "model_output": "40",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 8,
+        "code": "def reachable_numbers(n):\n    visited = set()\n    queue = [n]\n    while queue:\n        current = queue.pop(0)\n        if current in visited:\n            continue\n        visited.add(current)\n        # Compute f(current)\n        next_num = current + 1\n        while next_num % 10 == 0:\n            next_num = next_num // 10\n        if next_num not in visited:\n            queue.append(next_num)\n    return len(visited)\n\nn = int(input())\nprint(reachable_numbers(n))",
+        "test_results": [
+            {
+                "input": "123456789",
+                "standard_solution_output": "38",
+                "model_output": "38",
+                "error": null
+            },
+            {
+                "input": "901234567",
+                "standard_solution_output": "54",
+                "model_output": "54",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "37",
+                "error": null
+            },
+            {
+                "input": "765432109",
+                "standard_solution_output": "52",
+                "model_output": "52",
+                "error": null
+            },
+            {
+                "input": "890123456",
+                "standard_solution_output": "52",
+                "model_output": "52",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "37",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "10",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "10",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "66",
+                "model_output": "66",
+                "error": null
+            },
+            {
+                "input": "234567890",
+                "standard_solution_output": "40",
+                "model_output": "40",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 9,
+        "code": "def reachable(n):\n    visited = set()\n    stack = [n]\n    while stack:\n        current = stack.pop()\n        if current in visited:\n            continue\n        visited.add(current)\n        # Apply function f\n        next_num = current + 1\n        # Remove trailing zeros\n        while next_num % 10 == 0:\n            next_num //= 10\n        # Check if we have a cycle or not\n        if next_num in visited:\n            break\n        stack.append(next_num)\n    return len(visited)\n\nn = int(input())\nprint(reachable(n))",
+        "test_results": [
+            {
+                "input": "123456789",
+                "standard_solution_output": "38",
+                "model_output": "38",
+                "error": null
+            },
+            {
+                "input": "901234567",
+                "standard_solution_output": "54",
+                "model_output": "54",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "37",
+                "error": null
+            },
+            {
+                "input": "765432109",
+                "standard_solution_output": "52",
+                "model_output": "52",
+                "error": null
+            },
+            {
+                "input": "890123456",
+                "standard_solution_output": "52",
+                "model_output": "52",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "37",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "10",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "10",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "66",
+                "model_output": "66",
+                "error": null
+            },
+            {
+                "input": "234567890",
+                "standard_solution_output": "40",
+                "model_output": "40",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 10,
+        "code": "def reachable(n):\n    visited = set()\n    stack = [n]\n    while stack:\n        current = stack.pop()\n        if current in visited:\n            continue\n        visited.add(current)\n        next_num = current + 1\n        while next_num % 10 == 0:\n            next_num = next_num // 10\n        stack.append(next_num)\n    return len(visited)\n\nn = int(input())\nprint(reachable(n))",
+        "test_results": [
+            {
+                "input": "123456789",
+                "standard_solution_output": "38",
+                "model_output": "38",
+                "error": null
+            },
+            {
+                "input": "901234567",
+                "standard_solution_output": "54",
+                "model_output": "54",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "37",
+                "error": null
+            },
+            {
+                "input": "765432109",
+                "standard_solution_output": "52",
+                "model_output": "52",
+                "error": null
+            },
+            {
+                "input": "890123456",
+                "standard_solution_output": "52",
+                "model_output": "52",
+                "error": null
+            },
+            {
+                "input": "1234567",
+                "standard_solution_output": "37",
+                "model_output": "37",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "10",
+                "error": null
+            },
+            {
+                "input": "999999999",
+                "standard_solution_output": "10",
+                "model_output": "10",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "66",
+                "model_output": "66",
+                "error": null
+            },
+            {
+                "input": "234567890",
+                "standard_solution_output": "40",
+                "model_output": "40",
+                "error": null
+            }
+        ]
+    }
+]

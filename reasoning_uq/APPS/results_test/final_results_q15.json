@@ -1,0 +1,662 @@
+[
+    {
+        "code_index": 1,
+        "code": "def game23(n, m):\n    if n == m:\n        return 0\n    if m % n != 0:\n        return -1\n    ratio = m // n\n    a = 0\n    b = 0\n    while ratio % 2 == 0:\n        a += 1\n        ratio = ratio // 2\n    while ratio % 3 == 0:\n        b += 1\n        ratio = ratio // 3\n    if ratio != 1:\n        return -1\n    return a + b\n\ndef main():\n    n, m = map(int, input().split())\n    print(game23(n, m))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "39 3636363636",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "3 3400000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "39 3900000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 700000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "38 34000000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "2100000 420000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 987654321",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "100000000 200000000",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "3 750000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "52 1000000027",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 2,
+        "code": "def game23(n, m):\n    if n == m:\n        return 0\n    if m % n != 0:\n        return -1\n    q = m // n\n    count2 = 0\n    while q % 2 == 0:\n        count2 += 1\n        q = q // 2\n    count3 = 0\n    while q % 3 == 0:\n        count3 += 1\n        q = q // 3\n    if q == 1:\n        return count2 + count3\n    else:\n        return -1\n\ndef main():\n    n, m = map(int, input().split())\n    print(game23(n, m))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "39 3636363636",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "3 3400000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "39 3900000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 700000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "38 34000000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "2100000 420000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 987654321",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "100000000 200000000",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "3 750000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "52 1000000027",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 3,
+        "code": "def game23(n, m):\n    if n == m:\n        return 0\n    if m % n != 0:\n        return -1\n    q = m // n\n    count = 0\n    while q % 2 == 0:\n        count += 1\n        q = q // 2\n    while q % 3 == 0:\n        count += 1\n        q = q // 3\n    if q == 1:\n        return count\n    else:\n        return -1\n\ndef main():\n    n, m = map(int, input().split())\n    print(game23(n, m))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "39 3636363636",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "3 3400000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "39 3900000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 700000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "38 34000000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "2100000 420000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 987654321",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "100000000 200000000",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "3 750000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "52 1000000027",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 4,
+        "code": "def game23(n, m):\n    if m < n:\n        return -1\n    if m % n != 0:\n        return -1\n    q = m // n\n    a, b = 0, 0\n    while q % 2 == 0:\n        a += 1\n        q = q // 2\n    while q % 3 == 0:\n        b += 1\n        q = q // 3\n    if q != 1:\n        return -1\n    return a + b\n\ndef main():\n    n, m = map(int, input().split())\n    result = game23(n, m)\n    print(result if result != -1 else -1)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "39 3636363636",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "3 3400000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "39 3900000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 700000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "38 34000000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "2100000 420000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 987654321",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "100000000 200000000",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "3 750000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "52 1000000027",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 5,
+        "code": "def game23(n, m):\n    if n == m:\n        return 0\n    if m % n != 0:\n        return -1\n    q = m // n\n    count = 0\n    while q % 2 == 0:\n        count += 1\n        q = q // 2\n    while q % 3 == 0:\n        count += 1\n        q = q // 3\n    if q == 1:\n        return count\n    else:\n        return -1\n\nif __name__ == \"__main__\":\n    n, m = map(int, input().split())\n    print(game23(n, m))",
+        "test_results": [
+            {
+                "input": "39 3636363636",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "3 3400000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "39 3900000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 700000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "38 34000000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "2100000 420000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 987654321",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "100000000 200000000",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "3 750000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "52 1000000027",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 6,
+        "code": "def game23(n, m):\n    if m < n:\n        return -1\n    # To get from n to m, m must be divisible by n.\n    # So, first, check if m % n != 0. If not, return -1.\n    if m % n != 0:\n        return -1\n    # Now, compute how many times we can divide m by 2 and 3.\n    count = 0\n    while m % 2 == 0:\n        count += 1\n        m = m // 2\n    while m % 3 == 0:\n        count += 1\n        m = m // 3\n    # After removing all factors of 2 and 3, if m is not 1, then it's impossible.\n    if m != 1:\n        return -1\n    return count\n\ndef main():\n    n, m = map(int, input().split())\n    print(game23(n, m))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "39 3636363636",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "3 3400000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "39 3900000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 700000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "38 34000000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "2100000 420000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 987654321",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "100000000 200000000",
+                "standard_solution_output": "1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "3 750000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "52 1000000027",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 7,
+        "code": "def game23(n, m):\n    if n == m:\n        return 0\n    if m % n == 0:\n        count = 0\n        while m % n != 0:\n            if m % n == 0:\n                break\n            m = m // 2\n            count += 1\n        if m == n:\n            return count\n        else:\n            return -1\n    else:\n        return -1\n\ndef main():\n    n, m = map(int, input().split())\n    print(game23(n, m))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "39 3636363636",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "3 3400000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "39 3900000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 700000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "38 34000000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "2100000 420000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 987654321",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "100000000 200000000",
+                "standard_solution_output": "1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "3 750000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "52 1000000027",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 8,
+        "code": "n, m = map(int, input().split())\n\nif m % n != 0:\n    print(-1)\nelse:\n    q = m // n\n    count = 0\n    # Check for factors of 2\n    while q % 2 == 0:\n        count += 1\n        q = q // 2\n    # Check for factors of 3\n    while q % 3 == 0:\n        count += 1\n        q = q // 3\n    if q == 1:\n        print(count)\n    else:\n        print(-1)",
+        "test_results": [
+            {
+                "input": "39 3636363636",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "3 3400000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "39 3900000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 700000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "38 34000000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "2100000 420000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 987654321",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "100000000 200000000",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "3 750000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "52 1000000027",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 9,
+        "code": "def count_moves(n, m):\n    if n == m:\n        return 0\n    if m % n != 0:\n        return -1\n    k = m // n\n    a, b = 0, 0\n    while k % 2 == 0:\n        a += 1\n        k = k // 2\n    while k % 3 == 0:\n        b += 1\n        k = k // 3\n    if k != 1:\n        return -1\n    return a + b\n\ndef main():\n    n, m = map(int, input().split())\n    print(count_moves(n, m))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "39 3636363636",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "3 3400000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "39 3900000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 700000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "38 34000000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "2100000 420000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 987654321",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "100000000 200000000",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "3 750000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "52 1000000027",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 10,
+        "code": "def main():\n    n, m = map(int, input().split())\n    if n == m:\n        print(0)\n        return\n    if m % n != 0:\n        print(-1)\n        return\n    quotient = m // n\n    count = 0\n    # Factor out 2s\n    while quotient % 2 == 0:\n        count += 1\n        quotient = quotient // 2\n    # Factor out 3s\n    while quotient % 3 == 0:\n        count += 1\n        quotient = quotient // 3\n    if quotient == 1:\n        print(count)\n    else:\n        print(-1)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "39 3636363636",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "3 3400000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "39 3900000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 700000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "38 34000000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "2100000 420000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "1 987654321",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "100000000 200000000",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "3 750000000",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "52 1000000027",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            }
+        ]
+    }
+]

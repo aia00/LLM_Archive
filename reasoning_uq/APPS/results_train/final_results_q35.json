@@ -1,0 +1,662 @@
+[
+    {
+        "code_index": 1,
+        "code": "def min_changes(s, c):\n    n = len(s)\n    if n == 0:\n        return 0\n    if n == 1:\n        return 0 if s[0] == c else 1\n    mid = n // 2\n    if n % 2 == 1:\n        mid = (n + 1) // 2\n    def helper(s, c):\n        if len(s) == 1:\n            return 0 if s[0] == c else 1\n        if len(s) % 2 == 1:\n            mid = (len(s) + 1) // 2\n        else:\n            mid = len(s) // 2\n        # Case 1: first half is all c, second half is (c+1)-good\n        changes1 = 0\n        for i in range(mid):\n            if s[i] != c:\n                changes1 += 1\n        # Case 2: second half is all c, first half is (c+1)-good\n        changes2 = 0\n        for i in range(mid, len(s)):\n            if s[i] != c:\n                changes2 += 1\n        total_changes = min(changes1, changes2)\n        # Now recursively compute the minimal changes for the next level\n        option1 = changes1 + helper(s[mid:], c + 1)\n        option2 = changes2 + helper(s[mid:], c + 1)\n        return min(total_changes, option1, option2)\n    return helper(s, 'a')",
+        "test_results": [
+            {
+                "input": "5\n16\naabbccddaaabbbcc\n16\nvvvwwwwwwwwwww\n16\naabbccddaaabbb\n16\naabbccddaaabbb\n16\naabbccddaaabbb",
+                "standard_solution_output": "8\n14\n8\n8\n8",
+                "model_output": "",
+                "error": null
+            },
+            {
+                "input": "5\n1024\naabbccddaaaaaa\n1024\ncccccccccccccc\n512\nzzyyxxwwvvuutt\n1024\nttttttttttttt\n256\nggggggggggggg",
+                "standard_solution_output": "5\n12\n14\n13\n13",
+                "model_output": "",
+                "error": null
+            },
+            {
+                "input": "5\n1024\nqazwsxedcrfvtgbyhnujmikolp\n1024\nasdfghjklpoiuytrewqazxcvb\n1024\nbbaaddccdddeefffgghhiijjkk\n1024\naabbccddeeffgghhiijjkkkll\n1024\nzxcvbnm,./asdfghjklpoiuyt",
+                "standard_solution_output": "24\n22\n19\n21\n22",
+                "model_output": "",
+                "error": null
+            },
+            {
+                "input": "5\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd",
+                "standard_solution_output": "5\n5\n5\n5\n5",
+                "model_output": "",
+                "error": null
+            },
+            {
+                "input": "5\n9\nccdbbbcccc\n9\nzzzzzzzzz\n9\naaaabbbcc\n9\ndddcceeff\n9\naabbccddd",
+                "standard_solution_output": "7\n9\n1\n7\n6",
+                "model_output": "",
+                "error": null
+            },
+            {
+                "input": "5\n4\nbaba\n8\naabbccdd\n8\nccddaaab\n8\nabbaaddc\n8\nccddbbba",
+                "standard_solution_output": "2\n5\n4\n4\n6",
+                "model_output": "",
+                "error": null
+            },
+            {
+                "input": "5\n16\nbbaaddcccbbaaddcc\n16\ncccaaaabbbcccaaaa\n16\naaabbbccccaaabbb\n16\ncccccccccccccccc\n16\nbbaaddcccbbaaddcc",
+                "standard_solution_output": "10\n10\n8\n14\n10",
+                "model_output": "",
+                "error": null
+            },
+            {
+                "input": "5\n16\naabbccddaaabbbccc\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa",
+                "standard_solution_output": "9\n10\n10\n10\n10",
+                "model_output": "",
+                "error": null
+            },
+            {
+                "input": "4\n7\negecbbd\n7\nyqyqyqyq\n5\naaaaaa\n4\nccdd",
+                "standard_solution_output": "5\n8\n3\n3",
+                "model_output": "",
+                "error": null
+            },
+            {
+                "input": "1\n6\ndddddfff",
+                "standard_solution_output": "7",
+                "model_output": "",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 2,
+        "code": "def min_moves(s):\n    n = len(s)\n    if n == 0:\n        return 0\n    # We'll process the string recursively\n    def helper(s, current_char, start, end):\n        if start == end:\n            return 0 if s[start] == current_char else 1\n        mid = (start + end) // 2\n        # Option 1: first half is all current_char, second half is (current_char+1)-good\n        option1 = 0\n        for i in range(start, mid+1):\n            if s[i] != current_char:\n                option1 +=1\n        # Option 2: second half is all current_char, first half is (current_char+1)-good\n        option2 = 0\n        for i in range(mid+1, end+1):\n            if s[i] != current_char:\n                option2 +=1\n        # Recursively compute the cost for the other half\n        cost1 = option1 + helper(s, chr(ord(current_char)+1), start, mid)\n        cost2 = option2 + helper(s, chr(ord(current_char)+1), mid+1, end)\n        return min(cost1, cost2)\n    \n    return helper(s, 'a', 0, n-1)\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    s = input().strip()\n    print(min_moves(s))",
+        "test_results": [
+            {
+                "input": "5\n16\naabbccddaaabbbcc\n16\nvvvwwwwwwwwwww\n16\naabbccddaaabbb\n16\naabbccddaaabbb\n16\naabbccddaaabbb",
+                "standard_solution_output": "8\n14\n8\n8\n8",
+                "model_output": "9\n12\n6\n6\n6",
+                "error": null
+            },
+            {
+                "input": "5\n1024\naabbccddaaaaaa\n1024\ncccccccccccccc\n512\nzzyyxxwwvvuutt\n1024\nttttttttttttt\n256\nggggggggggggg",
+                "standard_solution_output": "5\n12\n14\n13\n13",
+                "model_output": "6\n11\n12\n11\n11",
+                "error": null
+            },
+            {
+                "input": "5\n1024\nqazwsxedcrfvtgbyhnujmikolp\n1024\nasdfghjklpoiuytrewqazxcvb\n1024\nbbaaddccdddeefffgghhiijjkk\n1024\naabbccddeeffgghhiijjkkkll\n1024\nzxcvbnm,./asdfghjklpoiuyt",
+                "standard_solution_output": "24\n22\n19\n21\n22",
+                "model_output": "22\n20\n20\n18\n22",
+                "error": null
+            },
+            {
+                "input": "5\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd",
+                "standard_solution_output": "5\n5\n5\n5\n5",
+                "model_output": "4\n4\n4\n4\n4",
+                "error": null
+            },
+            {
+                "input": "5\n9\nccdbbbcccc\n9\nzzzzzzzzz\n9\naaaabbbcc\n9\ndddcceeff\n9\naabbccddd",
+                "standard_solution_output": "7\n9\n1\n7\n6",
+                "model_output": "7\n8\n4\n8\n5",
+                "error": null
+            },
+            {
+                "input": "5\n4\nbaba\n8\naabbccdd\n8\nccddaaab\n8\nabbaaddc\n8\nccddbbba",
+                "standard_solution_output": "2\n5\n4\n4\n6",
+                "model_output": "2\n4\n4\n5\n5",
+                "error": null
+            },
+            {
+                "input": "5\n16\nbbaaddcccbbaaddcc\n16\ncccaaaabbbcccaaaa\n16\naaabbbccccaaabbb\n16\ncccccccccccccccc\n16\nbbaaddcccbbaaddcc",
+                "standard_solution_output": "10\n10\n8\n14\n10",
+                "model_output": "12\n9\n9\n14\n12",
+                "error": null
+            },
+            {
+                "input": "5\n16\naabbccddaaabbbccc\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa",
+                "standard_solution_output": "9\n10\n10\n10\n10",
+                "model_output": "11\n10\n10\n10\n10",
+                "error": null
+            },
+            {
+                "input": "4\n7\negecbbd\n7\nyqyqyqyq\n5\naaaaaa\n4\nccdd",
+                "standard_solution_output": "5\n8\n3\n3",
+                "model_output": "5\n8\n2\n3",
+                "error": null
+            },
+            {
+                "input": "1\n6\ndddddfff",
+                "standard_solution_output": "7",
+                "model_output": "7",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 3,
+        "code": "import sys\n\ndef min_moves(s, c):\n    if not s:\n        return 0\n    n = len(s)\n    if n == 1:\n        return 0 if s[0] == c else 1\n    # For a given c, recursively compute the minimal moves.\n    # The string is c-good if either:\n    # 1. The first half is all c and the second half is (c+1)-good.\n    # 2. The second half is all c and the first half is (c+1)-good.\n    # We can compute the cost for both options and choose the minimum.\n    \n    mid = n // 2\n    # Option 1: first half all c, second half (c+1)-good\n    cost1 = (mid - sum(1 for ch in s[:mid] if ch == c)) \n    # cost to make first half all c\n    # plus the cost to make the second half (c+1)-good\n    cost1 += min_moves(s[mid:], chr(ord(c)+1))\n    \n    # Option 2: second half all c, first half (c+1)-good\n    cost2 = (mid - sum(1 for ch in s[mid:] if ch == c)) \n    cost2 += min_moves(s[:mid], chr(ord(c)+1))\n    \n    return min(cost1, cost2)\n\ndef solve():\n    input = sys.stdin.read().split()\n    idx = 0\n    t = int(input[idx])\n    idx +=1\n    for _ in range(t):\n        n = int(input[idx])\n        idx +=1\n        s = input[idx]\n        idx +=1\n        print(min_moves(s, 'a'))\n        \nsolve()",
+        "test_results": [
+            {
+                "input": "5\n16\naabbccddaaabbbcc\n16\nvvvwwwwwwwwwww\n16\naabbccddaaabbb\n16\naabbccddaaabbb\n16\naabbccddaaabbb",
+                "standard_solution_output": "8\n14\n8\n8\n8",
+                "model_output": "8\n12\n6\n6\n6",
+                "error": null
+            },
+            {
+                "input": "5\n1024\naabbccddaaaaaa\n1024\ncccccccccccccc\n512\nzzyyxxwwvvuutt\n1024\nttttttttttttt\n256\nggggggggggggg",
+                "standard_solution_output": "5\n12\n14\n13\n13",
+                "model_output": "5\n10\n12\n11\n11",
+                "error": null
+            },
+            {
+                "input": "5\n1024\nqazwsxedcrfvtgbyhnujmikolp\n1024\nasdfghjklpoiuytrewqazxcvb\n1024\nbbaaddccdddeefffgghhiijjkk\n1024\naabbccddeeffgghhiijjkkkll\n1024\nzxcvbnm,./asdfghjklpoiuyt",
+                "standard_solution_output": "24\n22\n19\n21\n22",
+                "model_output": "22\n21\n19\n20\n21",
+                "error": null
+            },
+            {
+                "input": "5\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd",
+                "standard_solution_output": "5\n5\n5\n5\n5",
+                "model_output": "5\n5\n5\n5\n5",
+                "error": null
+            },
+            {
+                "input": "5\n9\nccdbbbcccc\n9\nzzzzzzzzz\n9\naaaabbbcc\n9\ndddcceeff\n9\naabbccddd",
+                "standard_solution_output": "7\n9\n1\n7\n6",
+                "model_output": "6\n8\n0\n6\n5",
+                "error": null
+            },
+            {
+                "input": "5\n4\nbaba\n8\naabbccdd\n8\nccddaaab\n8\nabbaaddc\n8\nccddbbba",
+                "standard_solution_output": "2\n5\n4\n4\n6",
+                "model_output": "2\n5\n4\n4\n6",
+                "error": null
+            },
+            {
+                "input": "5\n16\nbbaaddcccbbaaddcc\n16\ncccaaaabbbcccaaaa\n16\naaabbbccccaaabbb\n16\ncccccccccccccccc\n16\nbbaaddcccbbaaddcc",
+                "standard_solution_output": "10\n10\n8\n14\n10",
+                "model_output": "9\n9\n8\n14\n9",
+                "error": null
+            },
+            {
+                "input": "5\n16\naabbccddaaabbbccc\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa",
+                "standard_solution_output": "9\n10\n10\n10\n10",
+                "model_output": "8\n10\n10\n10\n10",
+                "error": null
+            },
+            {
+                "input": "4\n7\negecbbd\n7\nyqyqyqyq\n5\naaaaaa\n4\nccdd",
+                "standard_solution_output": "5\n8\n3\n3",
+                "model_output": "5\n8\n2\n3",
+                "error": null
+            },
+            {
+                "input": "1\n6\ndddddfff",
+                "standard_solution_output": "7",
+                "model_output": "7",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 4,
+        "code": "def min_moves(s):\n    n = len(s)\n    if n == 0:\n        return 0\n    return 0\n\ndef solve():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    t = int(data[0])\n    idx = 1\n    for _ in range(t):\n        n = int(data[idx])\n        idx +=1\n        s = data[idx]\n        idx +=1\n        print(min_moves(s))\n        \nsolve()",
+        "test_results": [
+            {
+                "input": "5\n16\naabbccddaaabbbcc\n16\nvvvwwwwwwwwwww\n16\naabbccddaaabbb\n16\naabbccddaaabbb\n16\naabbccddaaabbb",
+                "standard_solution_output": "8\n14\n8\n8\n8",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n1024\naabbccddaaaaaa\n1024\ncccccccccccccc\n512\nzzyyxxwwvvuutt\n1024\nttttttttttttt\n256\nggggggggggggg",
+                "standard_solution_output": "5\n12\n14\n13\n13",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n1024\nqazwsxedcrfvtgbyhnujmikolp\n1024\nasdfghjklpoiuytrewqazxcvb\n1024\nbbaaddccdddeefffgghhiijjkk\n1024\naabbccddeeffgghhiijjkkkll\n1024\nzxcvbnm,./asdfghjklpoiuyt",
+                "standard_solution_output": "24\n22\n19\n21\n22",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd",
+                "standard_solution_output": "5\n5\n5\n5\n5",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n9\nccdbbbcccc\n9\nzzzzzzzzz\n9\naaaabbbcc\n9\ndddcceeff\n9\naabbccddd",
+                "standard_solution_output": "7\n9\n1\n7\n6",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n4\nbaba\n8\naabbccdd\n8\nccddaaab\n8\nabbaaddc\n8\nccddbbba",
+                "standard_solution_output": "2\n5\n4\n4\n6",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n16\nbbaaddcccbbaaddcc\n16\ncccaaaabbbcccaaaa\n16\naaabbbccccaaabbb\n16\ncccccccccccccccc\n16\nbbaaddcccbbaaddcc",
+                "standard_solution_output": "10\n10\n8\n14\n10",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n16\naabbccddaaabbbccc\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa",
+                "standard_solution_output": "9\n10\n10\n10\n10",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "4\n7\negecbbd\n7\nyqyqyqyq\n5\naaaaaa\n4\nccdd",
+                "standard_solution_output": "5\n8\n3\n3",
+                "model_output": "0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "1\n6\ndddddfff",
+                "standard_solution_output": "7",
+                "model_output": "0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 5,
+        "code": "import sys\n\ndef min_moves(s, n):\n    if n == 1:\n        return 0 if s == 'a' else 1\n    mid = n // 2\n    option1 = (s[:mid].count('a') * 2) + (n - mid)\n    option2 = (s[mid:].count('a') * 2) + (mid - s[mid:].count('a'))\n    return min(option1, option2)\n\ndef solve():\n    t = int(sys.stdin.readline())\n    for _ in range(t):\n        n = int(sys.stdin.readline())\n        s = sys.stdin.readline().strip()\n        print(min_moves(s, n))\n\nif __name__ == \"__main__\":\n    solve()",
+        "test_results": [
+            {
+                "input": "5\n16\naabbccddaaabbbcc\n16\nvvvwwwwwwwwwww\n16\naabbccddaaabbb\n16\naabbccddaaabbb\n16\naabbccddaaabbb",
+                "standard_solution_output": "8\n14\n8\n8\n8",
+                "model_output": "11\n8\n11\n11\n11",
+                "error": null
+            },
+            {
+                "input": "5\n1024\naabbccddaaaaaa\n1024\ncccccccccccccc\n512\nzzyyxxwwvvuutt\n1024\nttttttttttttt\n256\nggggggggggggg",
+                "standard_solution_output": "5\n12\n14\n13\n13",
+                "model_output": "512\n512\n256\n512\n128",
+                "error": null
+            },
+            {
+                "input": "5\n1024\nqazwsxedcrfvtgbyhnujmikolp\n1024\nasdfghjklpoiuytrewqazxcvb\n1024\nbbaaddccdddeefffgghhiijjkk\n1024\naabbccddeeffgghhiijjkkkll\n1024\nzxcvbnm,./asdfghjklpoiuyt",
+                "standard_solution_output": "24\n22\n19\n21\n22",
+                "model_output": "512\n512\n512\n512\n512",
+                "error": null
+            },
+            {
+                "input": "5\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd",
+                "standard_solution_output": "5\n5\n5\n5\n5",
+                "model_output": "16384\n16384\n16384\n16384\n16384",
+                "error": null
+            },
+            {
+                "input": "5\n9\nccdbbbcccc\n9\nzzzzzzzzz\n9\naaaabbbcc\n9\ndddcceeff\n9\naabbccddd",
+                "standard_solution_output": "7\n9\n1\n7\n6",
+                "model_output": "4\n4\n4\n4\n4",
+                "error": null
+            },
+            {
+                "input": "5\n4\nbaba\n8\naabbccdd\n8\nccddaaab\n8\nabbaaddc\n8\nccddbbba",
+                "standard_solution_output": "2\n5\n4\n4\n6",
+                "model_output": "3\n4\n4\n5\n4",
+                "error": null
+            },
+            {
+                "input": "5\n16\nbbaaddcccbbaaddcc\n16\ncccaaaabbbcccaaaa\n16\naaabbbccccaaabbb\n16\ncccccccccccccccc\n16\nbbaaddcccbbaaddcc",
+                "standard_solution_output": "10\n10\n8\n14\n10",
+                "model_output": "10\n12\n11\n8\n10",
+                "error": null
+            },
+            {
+                "input": "5\n16\naabbccddaaabbbccc\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa",
+                "standard_solution_output": "9\n10\n10\n10\n10",
+                "model_output": "11\n10\n10\n10\n10",
+                "error": null
+            },
+            {
+                "input": "4\n7\negecbbd\n7\nyqyqyqyq\n5\naaaaaa\n4\nccdd",
+                "standard_solution_output": "5\n8\n3\n3",
+                "model_output": "3\n3\n6\n2",
+                "error": null
+            },
+            {
+                "input": "1\n6\ndddddfff",
+                "standard_solution_output": "7",
+                "model_output": "3",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 6,
+        "code": "def min_moves(s):\n    n = len(s)\n    if n == 1:\n        return 0 if s == 'a' else 1\n    \n    def helper(s, c):\n        if len(s) == 1:\n            return 0 if s == c else 1\n        mid = len(s) // 2\n        # Option 1: first half is c, second half is (c+1)-good\n        cost1 = mid\n        for i in range(mid):\n            if s[i] != c:\n                cost1 += 1\n        # Option 2: second half is c, first half is (c+1)-good\n        cost2 = mid\n        for i in range(mid, len(s)):\n            if s[i] != c:\n                cost2 += 1\n        # Choose the minimum between the two options\n        return min(cost1, cost2) + helper(s[mid:], c + 1) + helper(s[:mid], c + 1)\n    \n    return helper(s, 'a')\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    s = input().strip()\n    print(min_moves(s)",
+        "test_results": [
+            {
+                "input": "5\n16\naabbccddaaabbbcc\n16\nvvvwwwwwwwwwww\n16\naabbccddaaabbb\n16\naabbccddaaabbb\n16\naabbccddaaabbb",
+                "standard_solution_output": "8\n14\n8\n8\n8",
+                "model_output": "",
+                "error": "  File \"/tmp/tmp6v6edoc7.py\", line 29\n    print(min_moves(s)\n         ^\nSyntaxError: '(' was never closed\n"
+            },
+            {
+                "input": "5\n1024\naabbccddaaaaaa\n1024\ncccccccccccccc\n512\nzzyyxxwwvvuutt\n1024\nttttttttttttt\n256\nggggggggggggg",
+                "standard_solution_output": "5\n12\n14\n13\n13",
+                "model_output": "",
+                "error": "  File \"/tmp/tmptgqv0kpg.py\", line 29\n    print(min_moves(s)\n         ^\nSyntaxError: '(' was never closed\n"
+            },
+            {
+                "input": "5\n1024\nqazwsxedcrfvtgbyhnujmikolp\n1024\nasdfghjklpoiuytrewqazxcvb\n1024\nbbaaddccdddeefffgghhiijjkk\n1024\naabbccddeeffgghhiijjkkkll\n1024\nzxcvbnm,./asdfghjklpoiuyt",
+                "standard_solution_output": "24\n22\n19\n21\n22",
+                "model_output": "",
+                "error": "  File \"/tmp/tmp1xksgzuv.py\", line 29\n    print(min_moves(s)\n         ^\nSyntaxError: '(' was never closed\n"
+            },
+            {
+                "input": "5\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd",
+                "standard_solution_output": "5\n5\n5\n5\n5",
+                "model_output": "",
+                "error": "  File \"/tmp/tmp53lcl09c.py\", line 29\n    print(min_moves(s)\n         ^\nSyntaxError: '(' was never closed\n"
+            },
+            {
+                "input": "5\n9\nccdbbbcccc\n9\nzzzzzzzzz\n9\naaaabbbcc\n9\ndddcceeff\n9\naabbccddd",
+                "standard_solution_output": "7\n9\n1\n7\n6",
+                "model_output": "",
+                "error": "  File \"/tmp/tmplgh4l1qz.py\", line 29\n    print(min_moves(s)\n         ^\nSyntaxError: '(' was never closed\n"
+            },
+            {
+                "input": "5\n4\nbaba\n8\naabbccdd\n8\nccddaaab\n8\nabbaaddc\n8\nccddbbba",
+                "standard_solution_output": "2\n5\n4\n4\n6",
+                "model_output": "",
+                "error": "  File \"/tmp/tmp7jouvy86.py\", line 29\n    print(min_moves(s)\n         ^\nSyntaxError: '(' was never closed\n"
+            },
+            {
+                "input": "5\n16\nbbaaddcccbbaaddcc\n16\ncccaaaabbbcccaaaa\n16\naaabbbccccaaabbb\n16\ncccccccccccccccc\n16\nbbaaddcccbbaaddcc",
+                "standard_solution_output": "10\n10\n8\n14\n10",
+                "model_output": "",
+                "error": "  File \"/tmp/tmpwl8v1kzs.py\", line 29\n    print(min_moves(s)\n         ^\nSyntaxError: '(' was never closed\n"
+            },
+            {
+                "input": "5\n16\naabbccddaaabbbccc\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa",
+                "standard_solution_output": "9\n10\n10\n10\n10",
+                "model_output": "",
+                "error": "  File \"/tmp/tmpmuodc_kl.py\", line 29\n    print(min_moves(s)\n         ^\nSyntaxError: '(' was never closed\n"
+            },
+            {
+                "input": "4\n7\negecbbd\n7\nyqyqyqyq\n5\naaaaaa\n4\nccdd",
+                "standard_solution_output": "5\n8\n3\n3",
+                "model_output": "",
+                "error": "  File \"/tmp/tmp7v924yht.py\", line 29\n    print(min_moves(s)\n         ^\nSyntaxError: '(' was never closed\n"
+            },
+            {
+                "input": "1\n6\ndddddfff",
+                "standard_solution_output": "7",
+                "model_output": "",
+                "error": "  File \"/tmp/tmp8wg__23q.py\", line 29\n    print(min_moves(s)\n         ^\nSyntaxError: '(' was never closed\n"
+            }
+        ]
+    },
+    {
+        "code_index": 7,
+        "code": "def min_moves(s, n):\n    def helper(s, n, c):\n        if n == 1:\n            return 0 if s[0] == c else 1\n        mid = n // 2\n        # Case 1: first half is all c, second half is (c+1)-good\n        cost1 = mid\n        for i in range(mid):\n            if s[i] != c:\n                cost1 += 1\n        cost2 = helper(s[mid:], mid, chr(ord(c)+1))\n        total1 = cost1 + cost2\n        # Case 2: second half is all c, first half is (c+1)-good\n        cost3 = mid\n        for i in range(mid):\n            if s[i] != c:\n                cost3 += 1\n        cost4 = helper(s[:mid], mid, chr(ord(c)+1))\n        total3 = cost3 + cost4\n        return min(total1, total3)\n    \n    return helper(s, n, 'a')\n\ndef main():\n    import sys\n    input = sys.stdin.read().split()\n    idx = 0\n    t = int(input[idx])\n    idx += 1\n    for _ in range(t):\n        n = int(input[idx])\n        idx +=1\n        s = input[idx]\n        idx +=1\n        print(min_moves(s, n))\n        \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n16\naabbccddaaabbbcc\n16\nvvvwwwwwwwwwww\n16\naabbccddaaabbb\n16\naabbccddaaabbb\n16\naabbccddaaabbb",
+                "standard_solution_output": "8\n14\n8\n8\n8",
+                "model_output": "24",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpun15ldhu.py\", line 38, in <module>\n    main()\n  File \"/tmp/tmpun15ldhu.py\", line 35, in main\n    print(min_moves(s, n))\n  File \"/tmp/tmpun15ldhu.py\", line 22, in min_moves\n    return helper(s, n, 'a')\n  File \"/tmp/tmpun15ldhu.py\", line 11, in helper\n    cost2 = helper(s[mid:], mid, chr(ord(c)+1))\n  File \"/tmp/tmpun15ldhu.py\", line 11, in helper\n    cost2 = helper(s[mid:], mid, chr(ord(c)+1))\n  File \"/tmp/tmpun15ldhu.py\", line 11, in helper\n    cost2 = helper(s[mid:], mid, chr(ord(c)+1))\n  File \"/tmp/tmpun15ldhu.py\", line 9, in helper\n    if s[i] != c:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "5\n1024\naabbccddaaaaaa\n1024\ncccccccccccccc\n512\nzzyyxxwwvvuutt\n1024\nttttttttttttt\n256\nggggggggggggg",
+                "standard_solution_output": "5\n12\n14\n13\n13",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpy8olg_x0.py\", line 38, in <module>\n    main()\n  File \"/tmp/tmpy8olg_x0.py\", line 35, in main\n    print(min_moves(s, n))\n  File \"/tmp/tmpy8olg_x0.py\", line 22, in min_moves\n    return helper(s, n, 'a')\n  File \"/tmp/tmpy8olg_x0.py\", line 9, in helper\n    if s[i] != c:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "5\n1024\nqazwsxedcrfvtgbyhnujmikolp\n1024\nasdfghjklpoiuytrewqazxcvb\n1024\nbbaaddccdddeefffgghhiijjkk\n1024\naabbccddeeffgghhiijjkkkll\n1024\nzxcvbnm,./asdfghjklpoiuyt",
+                "standard_solution_output": "24\n22\n19\n21\n22",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp7e41hfuu.py\", line 38, in <module>\n    main()\n  File \"/tmp/tmp7e41hfuu.py\", line 35, in main\n    print(min_moves(s, n))\n  File \"/tmp/tmp7e41hfuu.py\", line 22, in min_moves\n    return helper(s, n, 'a')\n  File \"/tmp/tmp7e41hfuu.py\", line 9, in helper\n    if s[i] != c:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "5\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd",
+                "standard_solution_output": "5\n5\n5\n5\n5",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpl10bwmtr.py\", line 38, in <module>\n    main()\n  File \"/tmp/tmpl10bwmtr.py\", line 35, in main\n    print(min_moves(s, n))\n  File \"/tmp/tmpl10bwmtr.py\", line 22, in min_moves\n    return helper(s, n, 'a')\n  File \"/tmp/tmpl10bwmtr.py\", line 9, in helper\n    if s[i] != c:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "5\n9\nccdbbbcccc\n9\nzzzzzzzzz\n9\naaaabbbcc\n9\ndddcceeff\n9\naabbccddd",
+                "standard_solution_output": "7\n9\n1\n7\n6",
+                "model_output": "12\n15\n9\n14\n12",
+                "error": null
+            },
+            {
+                "input": "5\n4\nbaba\n8\naabbccdd\n8\nccddaaab\n8\nabbaaddc\n8\nccddbbba",
+                "standard_solution_output": "2\n5\n4\n4\n6",
+                "model_output": "5\n12\n14\n12\n13",
+                "error": null
+            },
+            {
+                "input": "5\n16\nbbaaddcccbbaaddcc\n16\ncccaaaabbbcccaaaa\n16\naaabbbccccaaabbb\n16\ncccccccccccccccc\n16\nbbaaddcccbbaaddcc",
+                "standard_solution_output": "10\n10\n8\n14\n10",
+                "model_output": "26\n24\n26\n29\n26",
+                "error": null
+            },
+            {
+                "input": "5\n16\naabbccddaaabbbccc\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa",
+                "standard_solution_output": "9\n10\n10\n10\n10",
+                "model_output": "24\n25\n25\n25\n25",
+                "error": null
+            },
+            {
+                "input": "4\n7\negecbbd\n7\nyqyqyqyq\n5\naaaaaa\n4\nccdd",
+                "standard_solution_output": "5\n8\n3\n3",
+                "model_output": "8\n9\n5\n6",
+                "error": null
+            },
+            {
+                "input": "1\n6\ndddddfff",
+                "standard_solution_output": "7",
+                "model_output": "9",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 8,
+        "code": "def min_changes(s, current_char):\n    if len(s) == 0:\n        return 0\n    if len(s) == 1:\n        return 0 if s == current_char else 1\n    n = len(s)\n    mid = n // 2\n    # Case 1: Make the first half all current_char and second half (current_char+1)-good\n    changes1 = (mid - sum(1 for c in s[:mid] if c == current_char)) \n    # Case 2: Make the second half all current_char and first half (current_char+1)-good\n    changes2 = (mid - sum(1 for c in s[mid:] if c == current_char)) \n    # Recursive case\n    min_changes_for_second = min_changes(s[:mid], chr(ord(current_char)+1))\n    min_changes_for_first = min_changes(s[mid:], chr(ord(current_char)+1))\n    changes3 = min_changes_for_first + (mid - sum(1 for c in s[mid:] if c == current_char))\n    changes4 = min_changes_for_second + (mid - sum(1 for c in s[:mid] if c == current_char))\n    return min(changes1, changes2, changes3, changes4)\n\ndef main():\n    import sys\n    input = sys.stdin.read().split()\n    idx = 0\n    t = int(input[idx])\n    idx += 1\n    for _ in range(t):\n        n = int(input[idx])\n        idx +=1\n        s = input[idx]\n        idx +=1\n        print(min_changes(s, 'a'))\n\nmain()",
+        "test_results": [
+            {
+                "input": "5\n16\naabbccddaaabbbcc\n16\nvvvwwwwwwwwwww\n16\naabbccddaaabbb\n16\naabbccddaaabbb\n16\naabbccddaaabbb",
+                "standard_solution_output": "8\n14\n8\n8\n8",
+                "model_output": "5\n7\n4\n4\n4",
+                "error": null
+            },
+            {
+                "input": "5\n1024\naabbccddaaaaaa\n1024\ncccccccccccccc\n512\nzzyyxxwwvvuutt\n1024\nttttttttttttt\n256\nggggggggggggg",
+                "standard_solution_output": "5\n12\n14\n13\n13",
+                "model_output": "1\n7\n7\n6\n6",
+                "error": null
+            },
+            {
+                "input": "5\n1024\nqazwsxedcrfvtgbyhnujmikolp\n1024\nasdfghjklpoiuytrewqazxcvb\n1024\nbbaaddccdddeefffgghhiijjkk\n1024\naabbccddeeffgghhiijjkkkll\n1024\nzxcvbnm,./asdfghjklpoiuyt",
+                "standard_solution_output": "24\n22\n19\n21\n22",
+                "model_output": "12\n11\n11\n10\n11",
+                "error": null
+            },
+            {
+                "input": "5\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd",
+                "standard_solution_output": "5\n5\n5\n5\n5",
+                "model_output": "2\n2\n2\n2\n2",
+                "error": null
+            },
+            {
+                "input": "5\n9\nccdbbbcccc\n9\nzzzzzzzzz\n9\naaaabbbcc\n9\ndddcceeff\n9\naabbccddd",
+                "standard_solution_output": "7\n9\n1\n7\n6",
+                "model_output": "5\n4\n0\n4\n2",
+                "error": null
+            },
+            {
+                "input": "5\n4\nbaba\n8\naabbccdd\n8\nccddaaab\n8\nabbaaddc\n8\nccddbbba",
+                "standard_solution_output": "2\n5\n4\n4\n6",
+                "model_output": "1\n2\n1\n2\n3",
+                "error": null
+            },
+            {
+                "input": "5\n16\nbbaaddcccbbaaddcc\n16\ncccaaaabbbcccaaaa\n16\naaabbbccccaaabbb\n16\ncccccccccccccccc\n16\nbbaaddcccbbaaddcc",
+                "standard_solution_output": "10\n10\n8\n14\n10",
+                "model_output": "6\n4\n5\n8\n6",
+                "error": null
+            },
+            {
+                "input": "5\n16\naabbccddaaabbbccc\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa",
+                "standard_solution_output": "9\n10\n10\n10\n10",
+                "model_output": "5\n5\n5\n5\n5",
+                "error": null
+            },
+            {
+                "input": "4\n7\negecbbd\n7\nyqyqyqyq\n5\naaaaaa\n4\nccdd",
+                "standard_solution_output": "5\n8\n3\n3",
+                "model_output": "3\n4\n0\n2",
+                "error": null
+            },
+            {
+                "input": "1\n6\ndddddfff",
+                "standard_solution_output": "7",
+                "model_output": "4",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 9,
+        "code": "import sys\ndef min_moves(s, n):\n    if n == 1:\n        return 0 if s[0] == 'a' else 1\n    mid = n // 2\n    # Try both options: first half all 'a' and second half a-good, or second half all 'a' and first half a-good.\n    option1 = (mid - sum(1 for c in s[:mid] if c == 'a')) + min_moves(s[mid:], mid)\n    option2 = (mid - sum(1 for c in s[mid:] if c == 'a')) + min_moves(s[:mid], mid)\n    return min(option1, option2)\n\ndef solve():\n    t = int(sys.stdin.readline())\n    for _ in range(t):\n        n = int(sys.stdin.readline())\n        s = sys.stdin.readline().strip()\n        print(min_moves(s, n))\n\n# Precompute all the required information for each possible k\n# But given the constraints, it's better to process each test case on the fly.\n\n# However, for efficiency, memoization could be used. But considering the constraints, the recursive approach may be too slow.\n\n# Let's think about memoization: each call to min_moves(s, n) can be memoized by the string and the length, but since the string can be up to 131072, it's not feasible to memoize all possible strings.\n\n# So perhaps we can find a way to represent the string in a way that allows memoization without storing all possible strings. But this might not be straightforward.\n\n# Alternative approach: use memoization with the current c, and the left and right segments, but not sure.\n\n# For the problem, the recursive approach is manageable within the constraints.\n\n# So the code as written is acceptable.\n\nsolve()",
+        "test_results": [
+            {
+                "input": "5\n16\naabbccddaaabbbcc\n16\nvvvwwwwwwwwwww\n16\naabbccddaaabbb\n16\naabbccddaaabbb\n16\naabbccddaaabbb",
+                "standard_solution_output": "8\n14\n8\n8\n8",
+                "model_output": "11",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmppcrg3fyx.py\", line 33, in <module>\n    solve()\n  File \"/tmp/tmppcrg3fyx.py\", line 16, in solve\n    print(min_moves(s, n))\n  File \"/tmp/tmppcrg3fyx.py\", line 7, in min_moves\n    option1 = (mid - sum(1 for c in s[:mid] if c == 'a')) + min_moves(s[mid:], mid)\n  File \"/tmp/tmppcrg3fyx.py\", line 7, in min_moves\n    option1 = (mid - sum(1 for c in s[:mid] if c == 'a')) + min_moves(s[mid:], mid)\n  File \"/tmp/tmppcrg3fyx.py\", line 7, in min_moves\n    option1 = (mid - sum(1 for c in s[:mid] if c == 'a')) + min_moves(s[mid:], mid)\n  [Previous line repeated 1 more time]\n  File \"/tmp/tmppcrg3fyx.py\", line 4, in min_moves\n    return 0 if s[0] == 'a' else 1\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "5\n1024\naabbccddaaaaaa\n1024\ncccccccccccccc\n512\nzzyyxxwwvvuutt\n1024\nttttttttttttt\n256\nggggggggggggg",
+                "standard_solution_output": "5\n12\n14\n13\n13",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpvsm9o2j0.py\", line 33, in <module>\n    solve()\n  File \"/tmp/tmpvsm9o2j0.py\", line 16, in solve\n    print(min_moves(s, n))\n  File \"/tmp/tmpvsm9o2j0.py\", line 7, in min_moves\n    option1 = (mid - sum(1 for c in s[:mid] if c == 'a')) + min_moves(s[mid:], mid)\n  File \"/tmp/tmpvsm9o2j0.py\", line 7, in min_moves\n    option1 = (mid - sum(1 for c in s[:mid] if c == 'a')) + min_moves(s[mid:], mid)\n  File \"/tmp/tmpvsm9o2j0.py\", line 7, in min_moves\n    option1 = (mid - sum(1 for c in s[:mid] if c == 'a')) + min_moves(s[mid:], mid)\n  [Previous line repeated 7 more times]\n  File \"/tmp/tmpvsm9o2j0.py\", line 4, in min_moves\n    return 0 if s[0] == 'a' else 1\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "5\n1024\nqazwsxedcrfvtgbyhnujmikolp\n1024\nasdfghjklpoiuytrewqazxcvb\n1024\nbbaaddccdddeefffgghhiijjkk\n1024\naabbccddeeffgghhiijjkkkll\n1024\nzxcvbnm,./asdfghjklpoiuyt",
+                "standard_solution_output": "24\n22\n19\n21\n22",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp98y064zc.py\", line 33, in <module>\n    solve()\n  File \"/tmp/tmp98y064zc.py\", line 16, in solve\n    print(min_moves(s, n))\n  File \"/tmp/tmp98y064zc.py\", line 7, in min_moves\n    option1 = (mid - sum(1 for c in s[:mid] if c == 'a')) + min_moves(s[mid:], mid)\n  File \"/tmp/tmp98y064zc.py\", line 7, in min_moves\n    option1 = (mid - sum(1 for c in s[:mid] if c == 'a')) + min_moves(s[mid:], mid)\n  File \"/tmp/tmp98y064zc.py\", line 7, in min_moves\n    option1 = (mid - sum(1 for c in s[:mid] if c == 'a')) + min_moves(s[mid:], mid)\n  [Previous line repeated 7 more times]\n  File \"/tmp/tmp98y064zc.py\", line 4, in min_moves\n    return 0 if s[0] == 'a' else 1\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "5\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd",
+                "standard_solution_output": "5\n5\n5\n5\n5",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpvdyh223j.py\", line 33, in <module>\n    solve()\n  File \"/tmp/tmpvdyh223j.py\", line 16, in solve\n    print(min_moves(s, n))\n  File \"/tmp/tmpvdyh223j.py\", line 7, in min_moves\n    option1 = (mid - sum(1 for c in s[:mid] if c == 'a')) + min_moves(s[mid:], mid)\n  File \"/tmp/tmpvdyh223j.py\", line 7, in min_moves\n    option1 = (mid - sum(1 for c in s[:mid] if c == 'a')) + min_moves(s[mid:], mid)\n  File \"/tmp/tmpvdyh223j.py\", line 7, in min_moves\n    option1 = (mid - sum(1 for c in s[:mid] if c == 'a')) + min_moves(s[mid:], mid)\n  [Previous line repeated 12 more times]\n  File \"/tmp/tmpvdyh223j.py\", line 4, in min_moves\n    return 0 if s[0] == 'a' else 1\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "5\n9\nccdbbbcccc\n9\nzzzzzzzzz\n9\naaaabbbcc\n9\ndddcceeff\n9\naabbccddd",
+                "standard_solution_output": "7\n9\n1\n7\n6",
+                "model_output": "8\n8\n4\n8\n6",
+                "error": null
+            },
+            {
+                "input": "5\n4\nbaba\n8\naabbccdd\n8\nccddaaab\n8\nabbaaddc\n8\nccddbbba",
+                "standard_solution_output": "2\n5\n4\n4\n6",
+                "model_output": "2\n6\n5\n5\n7",
+                "error": null
+            },
+            {
+                "input": "5\n16\nbbaaddcccbbaaddcc\n16\ncccaaaabbbcccaaaa\n16\naaabbbccccaaabbb\n16\ncccccccccccccccc\n16\nbbaaddcccbbaaddcc",
+                "standard_solution_output": "10\n10\n8\n14\n10",
+                "model_output": "12\n8\n10\n16\n12",
+                "error": null
+            },
+            {
+                "input": "5\n16\naabbccddaaabbbccc\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa",
+                "standard_solution_output": "9\n10\n10\n10\n10",
+                "model_output": "11\n11\n11\n11\n11",
+                "error": null
+            },
+            {
+                "input": "4\n7\negecbbd\n7\nyqyqyqyq\n5\naaaaaa\n4\nccdd",
+                "standard_solution_output": "5\n8\n3\n3",
+                "model_output": "5\n5\n-2\n4",
+                "error": null
+            },
+            {
+                "input": "1\n6\ndddddfff",
+                "standard_solution_output": "7",
+                "model_output": "5",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 10,
+        "code": "def min_moves(s):\n    n = len(s)\n    if n == 1:\n        return 0 if s == 'a' else 1\n    def dfs(c, pos, current_len):\n        if pos == 0:\n            return 0 if c == s[pos] else 1\n        mid = pos // 2\n        # Try both possibilities: first half is c, second is c+1-good\n        # Or second half is c, first is c+1-good\n        # Calculate the cost for both options\n        option1 = dfs(c, mid, current_len)\n        option2 = dfs(c+1, mid, current_len)\n        return min(option1, option2)\n    return dfs('a', 0, n)\n    \nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    s = input().strip()\n    print(min_moves(s))",
+        "test_results": [
+            {
+                "input": "5\n16\naabbccddaaabbbcc\n16\nvvvwwwwwwwwwww\n16\naabbccddaaabbb\n16\naabbccddaaabbb\n16\naabbccddaaabbb",
+                "standard_solution_output": "8\n14\n8\n8\n8",
+                "model_output": "0\n1\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n1024\naabbccddaaaaaa\n1024\ncccccccccccccc\n512\nzzyyxxwwvvuutt\n1024\nttttttttttttt\n256\nggggggggggggg",
+                "standard_solution_output": "5\n12\n14\n13\n13",
+                "model_output": "0\n1\n1\n1\n1",
+                "error": null
+            },
+            {
+                "input": "5\n1024\nqazwsxedcrfvtgbyhnujmikolp\n1024\nasdfghjklpoiuytrewqazxcvb\n1024\nbbaaddccdddeefffgghhiijjkk\n1024\naabbccddeeffgghhiijjkkkll\n1024\nzxcvbnm,./asdfghjklpoiuyt",
+                "standard_solution_output": "24\n22\n19\n21\n22",
+                "model_output": "1\n0\n1\n0\n1",
+                "error": null
+            },
+            {
+                "input": "5\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd\n32768\naabbccdd",
+                "standard_solution_output": "5\n5\n5\n5\n5",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n9\nccdbbbcccc\n9\nzzzzzzzzz\n9\naaaabbbcc\n9\ndddcceeff\n9\naabbccddd",
+                "standard_solution_output": "7\n9\n1\n7\n6",
+                "model_output": "1\n1\n0\n1\n0",
+                "error": null
+            },
+            {
+                "input": "5\n4\nbaba\n8\naabbccdd\n8\nccddaaab\n8\nabbaaddc\n8\nccddbbba",
+                "standard_solution_output": "2\n5\n4\n4\n6",
+                "model_output": "1\n0\n1\n0\n1",
+                "error": null
+            },
+            {
+                "input": "5\n16\nbbaaddcccbbaaddcc\n16\ncccaaaabbbcccaaaa\n16\naaabbbccccaaabbb\n16\ncccccccccccccccc\n16\nbbaaddcccbbaaddcc",
+                "standard_solution_output": "10\n10\n8\n14\n10",
+                "model_output": "1\n1\n0\n1\n1",
+                "error": null
+            },
+            {
+                "input": "5\n16\naabbccddaaabbbccc\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa\n16\nccddaaabbbccddaa",
+                "standard_solution_output": "9\n10\n10\n10\n10",
+                "model_output": "0\n1\n1\n1\n1",
+                "error": null
+            },
+            {
+                "input": "4\n7\negecbbd\n7\nyqyqyqyq\n5\naaaaaa\n4\nccdd",
+                "standard_solution_output": "5\n8\n3\n3",
+                "model_output": "1\n1\n0\n1",
+                "error": null
+            },
+            {
+                "input": "1\n6\ndddddfff",
+                "standard_solution_output": "7",
+                "model_output": "1",
+                "error": null
+            }
+        ]
+    }
+]

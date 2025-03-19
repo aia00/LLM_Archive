@@ -1,0 +1,662 @@
+[
+    {
+        "code_index": 1,
+        "code": "def minimal_difference():\n    t = int(input())\n    for _ in range(t):\n        n = int(input())\n        s = list(map(int, input().split()))\n        s.sort()\n        min_diff = float('inf')\n        for i in range(1, n):\n            # Consider splitting between i-1 and i\n            left = s[:i]\n            right = s[i:]\n            current_max_left = max(left)\n            current_min_right = min(right)\n            diff = current_max_left - current_min_right\n            if diff < min_diff:\n                min_diff = diff\n        print(min_diff)\n\nminimal_difference()",
+        "test_results": [
+            {
+                "input": "8\n6\n14 18 4 2 7 6\n8\n3 3 3 3 3 3 3 3\n9\n5 6 7 8 9 10 11 12 13\n3\n2 2 2\n5\n5 5 5 5 5\n6\n1 1 1 1 1 1\n7\n7 7 7 7 7 7 7\n9\n9 9 9 9 9 9 9 9 9",
+                "standard_solution_output": "1\n0\n1\n0\n0\n0\n0\n0",
+                "model_output": "-7\n0\n-1\n0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n3\n8 2 9\n7\n4 1 3 2 5 6 4\n5\n10 9 8 7 6\n4\n5 5 5 5\n6\n3 4 1 2 5 3",
+                "standard_solution_output": "1\n0\n1\n0\n0",
+                "model_output": "-6\n-1\n-1\n0\n-1",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 2 3\n6\n2 1 3 3 4 2\n7\n9 8 7 6 5 4 3\n2\n1 1\n4\n200 100 50 25",
+                "standard_solution_output": "1\n0\n1\n0\n25",
+                "model_output": "-1\n-1\n-1\n0\n-100",
+                "error": null
+            },
+            {
+                "input": "3\n4\n3 9 2 8\n3\n1 3 1\n5\n6 6 4 8 2",
+                "standard_solution_output": "1\n0\n0",
+                "model_output": "-5\n-2\n-2",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 5 3\n6\n2 1 3 2 4 3\n4\n7 9 3 1\n2\n1000 1\n3\n8 9 7",
+                "standard_solution_output": "1\n0\n2\n999\n1",
+                "model_output": "-1\n-1\n-4\n-999\n-1",
+                "error": null
+            },
+            {
+                "input": "7\n3\n1 4 2\n5\n6 3 8 5 2\n8\n9 5 4 2 1 7 3 6\n4\n10 8 9 7\n2\n6 5\n6\n3 1 2 4 5 6\n3\n9 8 7",
+                "standard_solution_output": "1\n1\n1\n1\n1\n1\n1",
+                "model_output": "-2\n-2\n-2\n-1\n-1\n-1\n-1",
+                "error": null
+            },
+            {
+                "input": "5\n4\n1 2 3 4\n6\n1 2 3 4 5 6\n3\n8 9 1\n1\n1000\n3\n300 400 500",
+                "standard_solution_output": "1\n1\n1\n10000000000\n100",
+                "model_output": "-1\n-1\n-7\ninf\n-100",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 3 2 2\n7\n5 5 2 1 7 4 3\n6\n9 7 3 1 8 8",
+                "standard_solution_output": "0\n0\n0",
+                "model_output": "-1\n-2\n-4",
+                "error": null
+            },
+            {
+                "input": "7\n3\n8 9 5\n8\n2 4 1 6 3 5 9 7\n3\n5 2 7\n2\n10 6\n5\n3 9 1 8 4\n4\n1 2 6 5\n3\n7 3 9",
+                "standard_solution_output": "1\n1\n2\n4\n1\n1\n2",
+                "model_output": "-3\n-2\n-3\n-4\n-4\n-3\n-4",
+                "error": null
+            },
+            {
+                "input": "7\n4\n2 2 5 2\n3\n10 9 8\n6\n1 1 1 1 1 1\n5\n5 4 3 2 1\n7\n6 5 4 3 2 1 2\n4\n7 7 7 7\n3\n100 100 100",
+                "standard_solution_output": "0\n1\n0\n1\n0\n0\n0",
+                "model_output": "-3\n-1\n0\n-1\n-1\n0\n0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 2,
+        "code": "def minimal_difference():\n    import sys\n    t = int(sys.stdin.readline())\n    for _ in range(t):\n        n = int(sys.stdin.readline())\n        s = list(map(int, sys.stdin.readline().split()))\n        s.sort()\n        min_diff = float('inf')\n        for i in range(n):\n            for j in range(i+1, n):\n                # Team A is from 0 to i (inclusive)\n                # Team B is from j to n-1 (inclusive)\n                current_max_A = s[i]\n                current_min_B = s[j]\n                diff = current_max_A - current_min_B\n                if diff < min_diff:\n                    min_diff = diff\n        print(min_diff)\nminimal_difference()",
+        "test_results": [
+            {
+                "input": "8\n6\n14 18 4 2 7 6\n8\n3 3 3 3 3 3 3 3\n9\n5 6 7 8 9 10 11 12 13\n3\n2 2 2\n5\n5 5 5 5 5\n6\n1 1 1 1 1 1\n7\n7 7 7 7 7 7 7\n9\n9 9 9 9 9 9 9 9 9",
+                "standard_solution_output": "1\n0\n1\n0\n0\n0\n0\n0",
+                "model_output": "-16\n0\n-8\n0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n3\n8 2 9\n7\n4 1 3 2 5 6 4\n5\n10 9 8 7 6\n4\n5 5 5 5\n6\n3 4 1 2 5 3",
+                "standard_solution_output": "1\n0\n1\n0\n0",
+                "model_output": "-7\n-5\n-4\n0\n-4",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 2 3\n6\n2 1 3 3 4 2\n7\n9 8 7 6 5 4 3\n2\n1 1\n4\n200 100 50 25",
+                "standard_solution_output": "1\n0\n1\n0\n25",
+                "model_output": "-2\n-3\n-6\n0\n-175",
+                "error": null
+            },
+            {
+                "input": "3\n4\n3 9 2 8\n3\n1 3 1\n5\n6 6 4 8 2",
+                "standard_solution_output": "1\n0\n0",
+                "model_output": "-7\n-2\n-6",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 5 3\n6\n2 1 3 2 4 3\n4\n7 9 3 1\n2\n1000 1\n3\n8 9 7",
+                "standard_solution_output": "1\n0\n2\n999\n1",
+                "model_output": "-2\n-3\n-8\n-999\n-2",
+                "error": null
+            },
+            {
+                "input": "7\n3\n1 4 2\n5\n6 3 8 5 2\n8\n9 5 4 2 1 7 3 6\n4\n10 8 9 7\n2\n6 5\n6\n3 1 2 4 5 6\n3\n9 8 7",
+                "standard_solution_output": "1\n1\n1\n1\n1\n1\n1",
+                "model_output": "-3\n-6\n-8\n-3\n-1\n-5\n-2",
+                "error": null
+            },
+            {
+                "input": "5\n4\n1 2 3 4\n6\n1 2 3 4 5 6\n3\n8 9 1\n1\n1000\n3\n300 400 500",
+                "standard_solution_output": "1\n1\n1\n10000000000\n100",
+                "model_output": "-3\n-5\n-8\ninf\n-200",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 3 2 2\n7\n5 5 2 1 7 4 3\n6\n9 7 3 1 8 8",
+                "standard_solution_output": "0\n0\n0",
+                "model_output": "-2\n-6\n-8",
+                "error": null
+            },
+            {
+                "input": "7\n3\n8 9 5\n8\n2 4 1 6 3 5 9 7\n3\n5 2 7\n2\n10 6\n5\n3 9 1 8 4\n4\n1 2 6 5\n3\n7 3 9",
+                "standard_solution_output": "1\n1\n2\n4\n1\n1\n2",
+                "model_output": "-4\n-8\n-5\n-4\n-8\n-5\n-6",
+                "error": null
+            },
+            {
+                "input": "7\n4\n2 2 5 2\n3\n10 9 8\n6\n1 1 1 1 1 1\n5\n5 4 3 2 1\n7\n6 5 4 3 2 1 2\n4\n7 7 7 7\n3\n100 100 100",
+                "standard_solution_output": "0\n1\n0\n1\n0\n0\n0",
+                "model_output": "-3\n-2\n0\n-4\n-5\n0\n0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 3,
+        "code": "def minimal_diff():\n    t = int(input())\n    for _ in range(t):\n        n = int(input())\n        s = list(map(int, input().split()))\n        s.sort()\n        min_diff = float('inf')\n        # Check all possible splits where the first team is the first k elements\n        for k in range(1, n):\n            A = s[:k]\n            B = s[k:]\n            max_A = max(A)\n            min_B = min(B)\n            diff = max_A - min_B  # since s is sorted, max_A >= min_B\n            if diff < min_diff:\n                min_diff = diff\n        print(min_diff)\n\nminimal_diff()",
+        "test_results": [
+            {
+                "input": "8\n6\n14 18 4 2 7 6\n8\n3 3 3 3 3 3 3 3\n9\n5 6 7 8 9 10 11 12 13\n3\n2 2 2\n5\n5 5 5 5 5\n6\n1 1 1 1 1 1\n7\n7 7 7 7 7 7 7\n9\n9 9 9 9 9 9 9 9 9",
+                "standard_solution_output": "1\n0\n1\n0\n0\n0\n0\n0",
+                "model_output": "-7\n0\n-1\n0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n3\n8 2 9\n7\n4 1 3 2 5 6 4\n5\n10 9 8 7 6\n4\n5 5 5 5\n6\n3 4 1 2 5 3",
+                "standard_solution_output": "1\n0\n1\n0\n0",
+                "model_output": "-6\n-1\n-1\n0\n-1",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 2 3\n6\n2 1 3 3 4 2\n7\n9 8 7 6 5 4 3\n2\n1 1\n4\n200 100 50 25",
+                "standard_solution_output": "1\n0\n1\n0\n25",
+                "model_output": "-1\n-1\n-1\n0\n-100",
+                "error": null
+            },
+            {
+                "input": "3\n4\n3 9 2 8\n3\n1 3 1\n5\n6 6 4 8 2",
+                "standard_solution_output": "1\n0\n0",
+                "model_output": "-5\n-2\n-2",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 5 3\n6\n2 1 3 2 4 3\n4\n7 9 3 1\n2\n1000 1\n3\n8 9 7",
+                "standard_solution_output": "1\n0\n2\n999\n1",
+                "model_output": "-1\n-1\n-4\n-999\n-1",
+                "error": null
+            },
+            {
+                "input": "7\n3\n1 4 2\n5\n6 3 8 5 2\n8\n9 5 4 2 1 7 3 6\n4\n10 8 9 7\n2\n6 5\n6\n3 1 2 4 5 6\n3\n9 8 7",
+                "standard_solution_output": "1\n1\n1\n1\n1\n1\n1",
+                "model_output": "-2\n-2\n-2\n-1\n-1\n-1\n-1",
+                "error": null
+            },
+            {
+                "input": "5\n4\n1 2 3 4\n6\n1 2 3 4 5 6\n3\n8 9 1\n1\n1000\n3\n300 400 500",
+                "standard_solution_output": "1\n1\n1\n10000000000\n100",
+                "model_output": "-1\n-1\n-7\ninf\n-100",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 3 2 2\n7\n5 5 2 1 7 4 3\n6\n9 7 3 1 8 8",
+                "standard_solution_output": "0\n0\n0",
+                "model_output": "-1\n-2\n-4",
+                "error": null
+            },
+            {
+                "input": "7\n3\n8 9 5\n8\n2 4 1 6 3 5 9 7\n3\n5 2 7\n2\n10 6\n5\n3 9 1 8 4\n4\n1 2 6 5\n3\n7 3 9",
+                "standard_solution_output": "1\n1\n2\n4\n1\n1\n2",
+                "model_output": "-3\n-2\n-3\n-4\n-4\n-3\n-4",
+                "error": null
+            },
+            {
+                "input": "7\n4\n2 2 5 2\n3\n10 9 8\n6\n1 1 1 1 1 1\n5\n5 4 3 2 1\n7\n6 5 4 3 2 1 2\n4\n7 7 7 7\n3\n100 100 100",
+                "standard_solution_output": "0\n1\n0\n1\n0\n0\n0",
+                "model_output": "-3\n-1\n0\n-1\n-1\n0\n0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 4,
+        "code": "def main():\n    import sys\n    input = sys.stdin.read().split()\n    idx = 0\n    t = int(input[idx])\n    idx += 1\n    for _ in range(t):\n        n = int(input[idx])\n        idx +=1\n        s = list(map(int, input[idx:idx+n]))\n        idx +=n\n        s.sort()\n        min_diff = float('inf')\n        for i in range(n):\n            for j in range(i+1, n):\n                if s[i] < s[j]:\n                    current_diff = s[j] - s[i]\n                    if current_diff < min_diff:\n                        min_diff = current_diff\n        print(min_diff)\nmain()",
+        "test_results": [
+            {
+                "input": "8\n6\n14 18 4 2 7 6\n8\n3 3 3 3 3 3 3 3\n9\n5 6 7 8 9 10 11 12 13\n3\n2 2 2\n5\n5 5 5 5 5\n6\n1 1 1 1 1 1\n7\n7 7 7 7 7 7 7\n9\n9 9 9 9 9 9 9 9 9",
+                "standard_solution_output": "1\n0\n1\n0\n0\n0\n0\n0",
+                "model_output": "1\ninf\n1\ninf\ninf\ninf\ninf\ninf",
+                "error": null
+            },
+            {
+                "input": "5\n3\n8 2 9\n7\n4 1 3 2 5 6 4\n5\n10 9 8 7 6\n4\n5 5 5 5\n6\n3 4 1 2 5 3",
+                "standard_solution_output": "1\n0\n1\n0\n0",
+                "model_output": "1\n1\n1\ninf\n1",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 2 3\n6\n2 1 3 3 4 2\n7\n9 8 7 6 5 4 3\n2\n1 1\n4\n200 100 50 25",
+                "standard_solution_output": "1\n0\n1\n0\n25",
+                "model_output": "1\n1\n1\ninf\n25",
+                "error": null
+            },
+            {
+                "input": "3\n4\n3 9 2 8\n3\n1 3 1\n5\n6 6 4 8 2",
+                "standard_solution_output": "1\n0\n0",
+                "model_output": "1\n2\n2",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 5 3\n6\n2 1 3 2 4 3\n4\n7 9 3 1\n2\n1000 1\n3\n8 9 7",
+                "standard_solution_output": "1\n0\n2\n999\n1",
+                "model_output": "1\n1\n2\n999\n1",
+                "error": null
+            },
+            {
+                "input": "7\n3\n1 4 2\n5\n6 3 8 5 2\n8\n9 5 4 2 1 7 3 6\n4\n10 8 9 7\n2\n6 5\n6\n3 1 2 4 5 6\n3\n9 8 7",
+                "standard_solution_output": "1\n1\n1\n1\n1\n1\n1",
+                "model_output": "1\n1\n1\n1\n1\n1\n1",
+                "error": null
+            },
+            {
+                "input": "5\n4\n1 2 3 4\n6\n1 2 3 4 5 6\n3\n8 9 1\n1\n1000\n3\n300 400 500",
+                "standard_solution_output": "1\n1\n1\n10000000000\n100",
+                "model_output": "1\n1\n1\ninf\n100",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 3 2 2\n7\n5 5 2 1 7 4 3\n6\n9 7 3 1 8 8",
+                "standard_solution_output": "0\n0\n0",
+                "model_output": "1\n1\n1",
+                "error": null
+            },
+            {
+                "input": "7\n3\n8 9 5\n8\n2 4 1 6 3 5 9 7\n3\n5 2 7\n2\n10 6\n5\n3 9 1 8 4\n4\n1 2 6 5\n3\n7 3 9",
+                "standard_solution_output": "1\n1\n2\n4\n1\n1\n2",
+                "model_output": "1\n1\n2\n4\n1\n1\n2",
+                "error": null
+            },
+            {
+                "input": "7\n4\n2 2 5 2\n3\n10 9 8\n6\n1 1 1 1 1 1\n5\n5 4 3 2 1\n7\n6 5 4 3 2 1 2\n4\n7 7 7 7\n3\n100 100 100",
+                "standard_solution_output": "0\n1\n0\n1\n0\n0\n0",
+                "model_output": "3\n1\ninf\n1\n1\ninf\ninf",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 5,
+        "code": "def minimal_diff():\n    import sys\n    t = int(sys.stdin.readline())\n    for _ in range(t):\n        n = int(sys.stdin.readline())\n        s = list(map(int, sys.stdin.readline().split()))\n        s.sort()\n        min_diff = float('inf')\n        for i in range(n):\n            for j in range(i+1, n):\n                # Team A: s[i] and all before it\n                # Team B: s[j] and all after it\n                # Compute max of A and min of B\n                # Since the array is sorted, max(A) is s[i], min(B) is s[j]\n                current_diff = s[j] - s[i]\n                if current_diff < min_diff:\n                    min_diff = current_diff\n        print(min_diff)\nminimal_diff()",
+        "test_results": [
+            {
+                "input": "8\n6\n14 18 4 2 7 6\n8\n3 3 3 3 3 3 3 3\n9\n5 6 7 8 9 10 11 12 13\n3\n2 2 2\n5\n5 5 5 5 5\n6\n1 1 1 1 1 1\n7\n7 7 7 7 7 7 7\n9\n9 9 9 9 9 9 9 9 9",
+                "standard_solution_output": "1\n0\n1\n0\n0\n0\n0\n0",
+                "model_output": "1\n0\n1\n0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n3\n8 2 9\n7\n4 1 3 2 5 6 4\n5\n10 9 8 7 6\n4\n5 5 5 5\n6\n3 4 1 2 5 3",
+                "standard_solution_output": "1\n0\n1\n0\n0",
+                "model_output": "1\n0\n1\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 2 3\n6\n2 1 3 3 4 2\n7\n9 8 7 6 5 4 3\n2\n1 1\n4\n200 100 50 25",
+                "standard_solution_output": "1\n0\n1\n0\n25",
+                "model_output": "1\n0\n1\n0\n25",
+                "error": null
+            },
+            {
+                "input": "3\n4\n3 9 2 8\n3\n1 3 1\n5\n6 6 4 8 2",
+                "standard_solution_output": "1\n0\n0",
+                "model_output": "1\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 5 3\n6\n2 1 3 2 4 3\n4\n7 9 3 1\n2\n1000 1\n3\n8 9 7",
+                "standard_solution_output": "1\n0\n2\n999\n1",
+                "model_output": "1\n0\n2\n999\n1",
+                "error": null
+            },
+            {
+                "input": "7\n3\n1 4 2\n5\n6 3 8 5 2\n8\n9 5 4 2 1 7 3 6\n4\n10 8 9 7\n2\n6 5\n6\n3 1 2 4 5 6\n3\n9 8 7",
+                "standard_solution_output": "1\n1\n1\n1\n1\n1\n1",
+                "model_output": "1\n1\n1\n1\n1\n1\n1",
+                "error": null
+            },
+            {
+                "input": "5\n4\n1 2 3 4\n6\n1 2 3 4 5 6\n3\n8 9 1\n1\n1000\n3\n300 400 500",
+                "standard_solution_output": "1\n1\n1\n10000000000\n100",
+                "model_output": "1\n1\n1\ninf\n100",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 3 2 2\n7\n5 5 2 1 7 4 3\n6\n9 7 3 1 8 8",
+                "standard_solution_output": "0\n0\n0",
+                "model_output": "0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "7\n3\n8 9 5\n8\n2 4 1 6 3 5 9 7\n3\n5 2 7\n2\n10 6\n5\n3 9 1 8 4\n4\n1 2 6 5\n3\n7 3 9",
+                "standard_solution_output": "1\n1\n2\n4\n1\n1\n2",
+                "model_output": "1\n1\n2\n4\n1\n1\n2",
+                "error": null
+            },
+            {
+                "input": "7\n4\n2 2 5 2\n3\n10 9 8\n6\n1 1 1 1 1 1\n5\n5 4 3 2 1\n7\n6 5 4 3 2 1 2\n4\n7 7 7 7\n3\n100 100 100",
+                "standard_solution_output": "0\n1\n0\n1\n0\n0\n0",
+                "model_output": "0\n1\n0\n1\n0\n0\n0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 6,
+        "code": "def min_strength_diff(s):\n    s_sorted = sorted(s)\n    min_diff = float('inf')\n    for i in range(len(s_sorted)):\n        for j in range(i+1, len(s_sorted)):\n            # split into A and B where A is s_sorted[:i+1], B is s_sorted[j:]\n            # but wait, A is the first part, B the second\n            # then max(A) is s_sorted[i], min(B) is s_sorted[j]\n            # the difference is s_sorted[j] - s_sorted[i]\n            current_diff = s_sorted[j] - s_sorted[i]\n            if current_diff < min_diff:\n                min_diff = current_diff\n    return min_diff\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    s = list(map(int, input().split()))\n    print(min_strength_diff(s))",
+        "test_results": [
+            {
+                "input": "8\n6\n14 18 4 2 7 6\n8\n3 3 3 3 3 3 3 3\n9\n5 6 7 8 9 10 11 12 13\n3\n2 2 2\n5\n5 5 5 5 5\n6\n1 1 1 1 1 1\n7\n7 7 7 7 7 7 7\n9\n9 9 9 9 9 9 9 9 9",
+                "standard_solution_output": "1\n0\n1\n0\n0\n0\n0\n0",
+                "model_output": "1\n0\n1\n0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n3\n8 2 9\n7\n4 1 3 2 5 6 4\n5\n10 9 8 7 6\n4\n5 5 5 5\n6\n3 4 1 2 5 3",
+                "standard_solution_output": "1\n0\n1\n0\n0",
+                "model_output": "1\n0\n1\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 2 3\n6\n2 1 3 3 4 2\n7\n9 8 7 6 5 4 3\n2\n1 1\n4\n200 100 50 25",
+                "standard_solution_output": "1\n0\n1\n0\n25",
+                "model_output": "1\n0\n1\n0\n25",
+                "error": null
+            },
+            {
+                "input": "3\n4\n3 9 2 8\n3\n1 3 1\n5\n6 6 4 8 2",
+                "standard_solution_output": "1\n0\n0",
+                "model_output": "1\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 5 3\n6\n2 1 3 2 4 3\n4\n7 9 3 1\n2\n1000 1\n3\n8 9 7",
+                "standard_solution_output": "1\n0\n2\n999\n1",
+                "model_output": "1\n0\n2\n999\n1",
+                "error": null
+            },
+            {
+                "input": "7\n3\n1 4 2\n5\n6 3 8 5 2\n8\n9 5 4 2 1 7 3 6\n4\n10 8 9 7\n2\n6 5\n6\n3 1 2 4 5 6\n3\n9 8 7",
+                "standard_solution_output": "1\n1\n1\n1\n1\n1\n1",
+                "model_output": "1\n1\n1\n1\n1\n1\n1",
+                "error": null
+            },
+            {
+                "input": "5\n4\n1 2 3 4\n6\n1 2 3 4 5 6\n3\n8 9 1\n1\n1000\n3\n300 400 500",
+                "standard_solution_output": "1\n1\n1\n10000000000\n100",
+                "model_output": "1\n1\n1\ninf\n100",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 3 2 2\n7\n5 5 2 1 7 4 3\n6\n9 7 3 1 8 8",
+                "standard_solution_output": "0\n0\n0",
+                "model_output": "0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "7\n3\n8 9 5\n8\n2 4 1 6 3 5 9 7\n3\n5 2 7\n2\n10 6\n5\n3 9 1 8 4\n4\n1 2 6 5\n3\n7 3 9",
+                "standard_solution_output": "1\n1\n2\n4\n1\n1\n2",
+                "model_output": "1\n1\n2\n4\n1\n1\n2",
+                "error": null
+            },
+            {
+                "input": "7\n4\n2 2 5 2\n3\n10 9 8\n6\n1 1 1 1 1 1\n5\n5 4 3 2 1\n7\n6 5 4 3 2 1 2\n4\n7 7 7 7\n3\n100 100 100",
+                "standard_solution_output": "0\n1\n0\n1\n0\n0\n0",
+                "model_output": "0\n1\n0\n1\n0\n0\n0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 7,
+        "code": "def min_diff_split():\n    t = int(input())\n    for _ in range(t):\n        n = int(input())\n        s = list(map(int, input().split()))\n        s_sorted = sorted(s)\n        min_diff = float('inf')\n        for i in range(n):\n            for j in range(i+1, n):\n                # Team A has elements from 0 to i (inclusive)\n                # Team B has elements from j to n-1 (inclusive)\n                # So, A's max is s_sorted[i], B's min is s_sorted[j]\n                current_diff = s_sorted[i] - s_sorted[j]\n                if current_diff < min_diff:\n                    min_diff = current_diff\n        print(min_diff)\n\nmin_diff_split()",
+        "test_results": [
+            {
+                "input": "8\n6\n14 18 4 2 7 6\n8\n3 3 3 3 3 3 3 3\n9\n5 6 7 8 9 10 11 12 13\n3\n2 2 2\n5\n5 5 5 5 5\n6\n1 1 1 1 1 1\n7\n7 7 7 7 7 7 7\n9\n9 9 9 9 9 9 9 9 9",
+                "standard_solution_output": "1\n0\n1\n0\n0\n0\n0\n0",
+                "model_output": "-16\n0\n-8\n0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n3\n8 2 9\n7\n4 1 3 2 5 6 4\n5\n10 9 8 7 6\n4\n5 5 5 5\n6\n3 4 1 2 5 3",
+                "standard_solution_output": "1\n0\n1\n0\n0",
+                "model_output": "-7\n-5\n-4\n0\n-4",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 2 3\n6\n2 1 3 3 4 2\n7\n9 8 7 6 5 4 3\n2\n1 1\n4\n200 100 50 25",
+                "standard_solution_output": "1\n0\n1\n0\n25",
+                "model_output": "-2\n-3\n-6\n0\n-175",
+                "error": null
+            },
+            {
+                "input": "3\n4\n3 9 2 8\n3\n1 3 1\n5\n6 6 4 8 2",
+                "standard_solution_output": "1\n0\n0",
+                "model_output": "-7\n-2\n-6",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 5 3\n6\n2 1 3 2 4 3\n4\n7 9 3 1\n2\n1000 1\n3\n8 9 7",
+                "standard_solution_output": "1\n0\n2\n999\n1",
+                "model_output": "-2\n-3\n-8\n-999\n-2",
+                "error": null
+            },
+            {
+                "input": "7\n3\n1 4 2\n5\n6 3 8 5 2\n8\n9 5 4 2 1 7 3 6\n4\n10 8 9 7\n2\n6 5\n6\n3 1 2 4 5 6\n3\n9 8 7",
+                "standard_solution_output": "1\n1\n1\n1\n1\n1\n1",
+                "model_output": "-3\n-6\n-8\n-3\n-1\n-5\n-2",
+                "error": null
+            },
+            {
+                "input": "5\n4\n1 2 3 4\n6\n1 2 3 4 5 6\n3\n8 9 1\n1\n1000\n3\n300 400 500",
+                "standard_solution_output": "1\n1\n1\n10000000000\n100",
+                "model_output": "-3\n-5\n-8\ninf\n-200",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 3 2 2\n7\n5 5 2 1 7 4 3\n6\n9 7 3 1 8 8",
+                "standard_solution_output": "0\n0\n0",
+                "model_output": "-2\n-6\n-8",
+                "error": null
+            },
+            {
+                "input": "7\n3\n8 9 5\n8\n2 4 1 6 3 5 9 7\n3\n5 2 7\n2\n10 6\n5\n3 9 1 8 4\n4\n1 2 6 5\n3\n7 3 9",
+                "standard_solution_output": "1\n1\n2\n4\n1\n1\n2",
+                "model_output": "-4\n-8\n-5\n-4\n-8\n-5\n-6",
+                "error": null
+            },
+            {
+                "input": "7\n4\n2 2 5 2\n3\n10 9 8\n6\n1 1 1 1 1 1\n5\n5 4 3 2 1\n7\n6 5 4 3 2 1 2\n4\n7 7 7 7\n3\n100 100 100",
+                "standard_solution_output": "0\n1\n0\n1\n0\n0\n0",
+                "model_output": "-3\n-2\n0\n-4\n-5\n0\n0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 8,
+        "code": "def find_min_diff():\n    t = int(input())\n    for _ in range(t):\n        n = int(input())\n        s = list(map(int, input().split()))\n        s.sort()\n        min_diff = float('inf')\n        for i in range(n):\n            for j in range(i+1, n):\n                # split into A and B, where A is left part and B is right part\n                # A = s[0..i], B = s[j..n-1]\n                # max_A = s[i], min_B = s[j]\n                current_diff = s[i] - s[j]\n                if current_diff < min_diff:\n                    min_diff = current_diff\n        print(min_diff)\n        \nfind_min_diff()",
+        "test_results": [
+            {
+                "input": "8\n6\n14 18 4 2 7 6\n8\n3 3 3 3 3 3 3 3\n9\n5 6 7 8 9 10 11 12 13\n3\n2 2 2\n5\n5 5 5 5 5\n6\n1 1 1 1 1 1\n7\n7 7 7 7 7 7 7\n9\n9 9 9 9 9 9 9 9 9",
+                "standard_solution_output": "1\n0\n1\n0\n0\n0\n0\n0",
+                "model_output": "-16\n0\n-8\n0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n3\n8 2 9\n7\n4 1 3 2 5 6 4\n5\n10 9 8 7 6\n4\n5 5 5 5\n6\n3 4 1 2 5 3",
+                "standard_solution_output": "1\n0\n1\n0\n0",
+                "model_output": "-7\n-5\n-4\n0\n-4",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 2 3\n6\n2 1 3 3 4 2\n7\n9 8 7 6 5 4 3\n2\n1 1\n4\n200 100 50 25",
+                "standard_solution_output": "1\n0\n1\n0\n25",
+                "model_output": "-2\n-3\n-6\n0\n-175",
+                "error": null
+            },
+            {
+                "input": "3\n4\n3 9 2 8\n3\n1 3 1\n5\n6 6 4 8 2",
+                "standard_solution_output": "1\n0\n0",
+                "model_output": "-7\n-2\n-6",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 5 3\n6\n2 1 3 2 4 3\n4\n7 9 3 1\n2\n1000 1\n3\n8 9 7",
+                "standard_solution_output": "1\n0\n2\n999\n1",
+                "model_output": "-2\n-3\n-8\n-999\n-2",
+                "error": null
+            },
+            {
+                "input": "7\n3\n1 4 2\n5\n6 3 8 5 2\n8\n9 5 4 2 1 7 3 6\n4\n10 8 9 7\n2\n6 5\n6\n3 1 2 4 5 6\n3\n9 8 7",
+                "standard_solution_output": "1\n1\n1\n1\n1\n1\n1",
+                "model_output": "-3\n-6\n-8\n-3\n-1\n-5\n-2",
+                "error": null
+            },
+            {
+                "input": "5\n4\n1 2 3 4\n6\n1 2 3 4 5 6\n3\n8 9 1\n1\n1000\n3\n300 400 500",
+                "standard_solution_output": "1\n1\n1\n10000000000\n100",
+                "model_output": "-3\n-5\n-8\ninf\n-200",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 3 2 2\n7\n5 5 2 1 7 4 3\n6\n9 7 3 1 8 8",
+                "standard_solution_output": "0\n0\n0",
+                "model_output": "-2\n-6\n-8",
+                "error": null
+            },
+            {
+                "input": "7\n3\n8 9 5\n8\n2 4 1 6 3 5 9 7\n3\n5 2 7\n2\n10 6\n5\n3 9 1 8 4\n4\n1 2 6 5\n3\n7 3 9",
+                "standard_solution_output": "1\n1\n2\n4\n1\n1\n2",
+                "model_output": "-4\n-8\n-5\n-4\n-8\n-5\n-6",
+                "error": null
+            },
+            {
+                "input": "7\n4\n2 2 5 2\n3\n10 9 8\n6\n1 1 1 1 1 1\n5\n5 4 3 2 1\n7\n6 5 4 3 2 1 2\n4\n7 7 7 7\n3\n100 100 100",
+                "standard_solution_output": "0\n1\n0\n1\n0\n0\n0",
+                "model_output": "-3\n-2\n0\n-4\n-5\n0\n0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 9,
+        "code": "def minimal_difference():\n    t = int(input())\n    for _ in range(t):\n        n = int(input())\n        s = list(map(int, input().split()))\n        s.sort()\n        min_diff = float('inf')\n        for i in range(n):\n            for j in range(i+1, n):\n                # Try to split the array into left part (0..i) and right part (j..n-1)\n                # So A is the left part, B is the right part\n                # The max of A is s[i], min of B is s[j]\n                current_diff = s[i] - s[j]\n                if current_diff < min_diff:\n                    min_diff = current_diff\n        print(min_diff)\nminimal_difference()",
+        "test_results": [
+            {
+                "input": "8\n6\n14 18 4 2 7 6\n8\n3 3 3 3 3 3 3 3\n9\n5 6 7 8 9 10 11 12 13\n3\n2 2 2\n5\n5 5 5 5 5\n6\n1 1 1 1 1 1\n7\n7 7 7 7 7 7 7\n9\n9 9 9 9 9 9 9 9 9",
+                "standard_solution_output": "1\n0\n1\n0\n0\n0\n0\n0",
+                "model_output": "-16\n0\n-8\n0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n3\n8 2 9\n7\n4 1 3 2 5 6 4\n5\n10 9 8 7 6\n4\n5 5 5 5\n6\n3 4 1 2 5 3",
+                "standard_solution_output": "1\n0\n1\n0\n0",
+                "model_output": "-7\n-5\n-4\n0\n-4",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 2 3\n6\n2 1 3 3 4 2\n7\n9 8 7 6 5 4 3\n2\n1 1\n4\n200 100 50 25",
+                "standard_solution_output": "1\n0\n1\n0\n25",
+                "model_output": "-2\n-3\n-6\n0\n-175",
+                "error": null
+            },
+            {
+                "input": "3\n4\n3 9 2 8\n3\n1 3 1\n5\n6 6 4 8 2",
+                "standard_solution_output": "1\n0\n0",
+                "model_output": "-7\n-2\n-6",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 5 3\n6\n2 1 3 2 4 3\n4\n7 9 3 1\n2\n1000 1\n3\n8 9 7",
+                "standard_solution_output": "1\n0\n2\n999\n1",
+                "model_output": "-2\n-3\n-8\n-999\n-2",
+                "error": null
+            },
+            {
+                "input": "7\n3\n1 4 2\n5\n6 3 8 5 2\n8\n9 5 4 2 1 7 3 6\n4\n10 8 9 7\n2\n6 5\n6\n3 1 2 4 5 6\n3\n9 8 7",
+                "standard_solution_output": "1\n1\n1\n1\n1\n1\n1",
+                "model_output": "-3\n-6\n-8\n-3\n-1\n-5\n-2",
+                "error": null
+            },
+            {
+                "input": "5\n4\n1 2 3 4\n6\n1 2 3 4 5 6\n3\n8 9 1\n1\n1000\n3\n300 400 500",
+                "standard_solution_output": "1\n1\n1\n10000000000\n100",
+                "model_output": "-3\n-5\n-8\ninf\n-200",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 3 2 2\n7\n5 5 2 1 7 4 3\n6\n9 7 3 1 8 8",
+                "standard_solution_output": "0\n0\n0",
+                "model_output": "-2\n-6\n-8",
+                "error": null
+            },
+            {
+                "input": "7\n3\n8 9 5\n8\n2 4 1 6 3 5 9 7\n3\n5 2 7\n2\n10 6\n5\n3 9 1 8 4\n4\n1 2 6 5\n3\n7 3 9",
+                "standard_solution_output": "1\n1\n2\n4\n1\n1\n2",
+                "model_output": "-4\n-8\n-5\n-4\n-8\n-5\n-6",
+                "error": null
+            },
+            {
+                "input": "7\n4\n2 2 5 2\n3\n10 9 8\n6\n1 1 1 1 1 1\n5\n5 4 3 2 1\n7\n6 5 4 3 2 1 2\n4\n7 7 7 7\n3\n100 100 100",
+                "standard_solution_output": "0\n1\n0\n1\n0\n0\n0",
+                "model_output": "-3\n-2\n0\n-4\n-5\n0\n0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 10,
+        "code": "def minimal_difference():\n    t = int(input())\n    for _ in range(t):\n        n = int(input())\n        s = list(map(int, input().split()))\n        s_sorted = sorted(s)\n        min_diff = float('inf')\n        for i in range(n - 1):\n            current_diff = s_sorted[i+1] - s_sorted[i]\n            if current_diff < min_diff:\n                min_diff = current_diff\n        print(min_diff)\n\nminimal_difference()",
+        "test_results": [
+            {
+                "input": "8\n6\n14 18 4 2 7 6\n8\n3 3 3 3 3 3 3 3\n9\n5 6 7 8 9 10 11 12 13\n3\n2 2 2\n5\n5 5 5 5 5\n6\n1 1 1 1 1 1\n7\n7 7 7 7 7 7 7\n9\n9 9 9 9 9 9 9 9 9",
+                "standard_solution_output": "1\n0\n1\n0\n0\n0\n0\n0",
+                "model_output": "1\n0\n1\n0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n3\n8 2 9\n7\n4 1 3 2 5 6 4\n5\n10 9 8 7 6\n4\n5 5 5 5\n6\n3 4 1 2 5 3",
+                "standard_solution_output": "1\n0\n1\n0\n0",
+                "model_output": "1\n0\n1\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 2 3\n6\n2 1 3 3 4 2\n7\n9 8 7 6 5 4 3\n2\n1 1\n4\n200 100 50 25",
+                "standard_solution_output": "1\n0\n1\n0\n25",
+                "model_output": "1\n0\n1\n0\n25",
+                "error": null
+            },
+            {
+                "input": "3\n4\n3 9 2 8\n3\n1 3 1\n5\n6 6 4 8 2",
+                "standard_solution_output": "1\n0\n0",
+                "model_output": "1\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n3\n4 5 3\n6\n2 1 3 2 4 3\n4\n7 9 3 1\n2\n1000 1\n3\n8 9 7",
+                "standard_solution_output": "1\n0\n2\n999\n1",
+                "model_output": "1\n0\n2\n999\n1",
+                "error": null
+            },
+            {
+                "input": "7\n3\n1 4 2\n5\n6 3 8 5 2\n8\n9 5 4 2 1 7 3 6\n4\n10 8 9 7\n2\n6 5\n6\n3 1 2 4 5 6\n3\n9 8 7",
+                "standard_solution_output": "1\n1\n1\n1\n1\n1\n1",
+                "model_output": "1\n1\n1\n1\n1\n1\n1",
+                "error": null
+            },
+            {
+                "input": "5\n4\n1 2 3 4\n6\n1 2 3 4 5 6\n3\n8 9 1\n1\n1000\n3\n300 400 500",
+                "standard_solution_output": "1\n1\n1\n10000000000\n100",
+                "model_output": "1\n1\n1\ninf\n100",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 3 2 2\n7\n5 5 2 1 7 4 3\n6\n9 7 3 1 8 8",
+                "standard_solution_output": "0\n0\n0",
+                "model_output": "0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "7\n3\n8 9 5\n8\n2 4 1 6 3 5 9 7\n3\n5 2 7\n2\n10 6\n5\n3 9 1 8 4\n4\n1 2 6 5\n3\n7 3 9",
+                "standard_solution_output": "1\n1\n2\n4\n1\n1\n2",
+                "model_output": "1\n1\n2\n4\n1\n1\n2",
+                "error": null
+            },
+            {
+                "input": "7\n4\n2 2 5 2\n3\n10 9 8\n6\n1 1 1 1 1 1\n5\n5 4 3 2 1\n7\n6 5 4 3 2 1 2\n4\n7 7 7 7\n3\n100 100 100",
+                "standard_solution_output": "0\n1\n0\n1\n0\n0\n0",
+                "model_output": "0\n1\n0\n1\n0\n0\n0",
+                "error": null
+            }
+        ]
+    }
+]

@@ -1,0 +1,662 @@
+[
+    {
+        "code_index": 1,
+        "code": "def main():\n    a = int(input())\n    print(2 ** a)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "40",
+                "standard_solution_output": "14",
+                "model_output": "1099511627776",
+                "error": null
+            },
+            {
+                "input": "33",
+                "standard_solution_output": "1",
+                "model_output": "8589934592",
+                "error": null
+            },
+            {
+                "input": "29",
+                "standard_solution_output": "1",
+                "model_output": "536870912",
+                "error": null
+            },
+            {
+                "input": "49",
+                "standard_solution_output": "2",
+                "model_output": "562949953421312",
+                "error": null
+            },
+            {
+                "input": "56",
+                "standard_solution_output": "13",
+                "model_output": "72057594037927936",
+                "error": null
+            },
+            {
+                "input": "12",
+                "standard_solution_output": "5",
+                "model_output": "4096",
+                "error": null
+            },
+            {
+                "input": "16",
+                "standard_solution_output": "14",
+                "model_output": "65536",
+                "error": null
+            },
+            {
+                "input": "39",
+                "standard_solution_output": "2",
+                "model_output": "549755813888",
+                "error": null
+            },
+            {
+                "input": "63",
+                "standard_solution_output": "4",
+                "model_output": "9223372036854775808",
+                "error": null
+            },
+            {
+                "input": "4",
+                "standard_solution_output": "2",
+                "model_output": "16",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 2,
+        "code": "def main():\n    a = int(input())\n    print(bin(a).count('1'))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "40",
+                "standard_solution_output": "14",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "33",
+                "standard_solution_output": "1",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "29",
+                "standard_solution_output": "1",
+                "model_output": "4",
+                "error": null
+            },
+            {
+                "input": "49",
+                "standard_solution_output": "2",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "56",
+                "standard_solution_output": "13",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "12",
+                "standard_solution_output": "5",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "16",
+                "standard_solution_output": "14",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "39",
+                "standard_solution_output": "2",
+                "model_output": "4",
+                "error": null
+            },
+            {
+                "input": "63",
+                "standard_solution_output": "4",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "4",
+                "standard_solution_output": "2",
+                "model_output": "1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 3,
+        "code": "def main():\n    a = int(input())\n    total = a ** 3 + 2 * a ** 2 + 3 * a + 1\n    print(sum(int(d) for d in str(total)))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "40",
+                "standard_solution_output": "14",
+                "model_output": "19",
+                "error": null
+            },
+            {
+                "input": "33",
+                "standard_solution_output": "1",
+                "model_output": "19",
+                "error": null
+            },
+            {
+                "input": "29",
+                "standard_solution_output": "1",
+                "model_output": "23",
+                "error": null
+            },
+            {
+                "input": "49",
+                "standard_solution_output": "2",
+                "model_output": "28",
+                "error": null
+            },
+            {
+                "input": "56",
+                "standard_solution_output": "13",
+                "model_output": "23",
+                "error": null
+            },
+            {
+                "input": "12",
+                "standard_solution_output": "5",
+                "model_output": "10",
+                "error": null
+            },
+            {
+                "input": "16",
+                "standard_solution_output": "14",
+                "model_output": "22",
+                "error": null
+            },
+            {
+                "input": "39",
+                "standard_solution_output": "2",
+                "model_output": "28",
+                "error": null
+            },
+            {
+                "input": "63",
+                "standard_solution_output": "4",
+                "model_output": "28",
+                "error": null
+            },
+            {
+                "input": "4",
+                "standard_solution_output": "2",
+                "model_output": "10",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 4,
+        "code": "def main():\n    a = int(input())\n    binary = bin(a)[2:]  # Convert to binary and remove '0b' prefix\n    count = binary.count('1')\n    print(count)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "40",
+                "standard_solution_output": "14",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "33",
+                "standard_solution_output": "1",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "29",
+                "standard_solution_output": "1",
+                "model_output": "4",
+                "error": null
+            },
+            {
+                "input": "49",
+                "standard_solution_output": "2",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "56",
+                "standard_solution_output": "13",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "12",
+                "standard_solution_output": "5",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "16",
+                "standard_solution_output": "14",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "39",
+                "standard_solution_output": "2",
+                "model_output": "4",
+                "error": null
+            },
+            {
+                "input": "63",
+                "standard_solution_output": "4",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "4",
+                "standard_solution_output": "2",
+                "model_output": "1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 5,
+        "code": "numbers = {\n    0: 'zero',\n    1: 'one',\n    2: 'two',\n    3: 'three',\n    4: 'four',\n    5: 'five',\n    6: 'six',\n    7: 'seven',\n    8: 'eight',\n    9: 'nine',\n    10: 'ten',\n    11: 'eleven',\n    12: 'twelve',\n    13: 'thirteen',\n    14: 'fourteen',\n    15: 'fifteen',\n    16: 'sixteen',\n    17: 'seventeen',\n    18: 'eighteen',\n    19: 'nineteen'\n}\n\ntens = {\n    2: 'twenty',\n    3: 'thirty',\n    4: 'forty',\n    5: 'fifty',\n    6: 'sixty',\n    7: 'seventy',\n    8: 'eighty',\n    9: 'ninety'\n}\n\ndef number_to_words(n):\n    if n < 20:\n        return numbers[n]\n    ten_part = tens[n // 10]\n    unit_part = numbers[n % 10] if (n % 10) != 0 else ''\n    if unit_part:\n        return ten_part + '-' + unit_part\n    else:\n        return ten_part\n\ndef count_letters(word):\n    return len(word)\n\na = int(input())\nword = number_to_words(a)\nprint(count_letters(word))",
+        "test_results": [
+            {
+                "input": "40",
+                "standard_solution_output": "14",
+                "model_output": "5",
+                "error": null
+            },
+            {
+                "input": "33",
+                "standard_solution_output": "1",
+                "model_output": "12",
+                "error": null
+            },
+            {
+                "input": "29",
+                "standard_solution_output": "1",
+                "model_output": "11",
+                "error": null
+            },
+            {
+                "input": "49",
+                "standard_solution_output": "2",
+                "model_output": "10",
+                "error": null
+            },
+            {
+                "input": "56",
+                "standard_solution_output": "13",
+                "model_output": "9",
+                "error": null
+            },
+            {
+                "input": "12",
+                "standard_solution_output": "5",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "16",
+                "standard_solution_output": "14",
+                "model_output": "7",
+                "error": null
+            },
+            {
+                "input": "39",
+                "standard_solution_output": "2",
+                "model_output": "11",
+                "error": null
+            },
+            {
+                "input": "63",
+                "standard_solution_output": "4",
+                "model_output": "11",
+                "error": null
+            },
+            {
+                "input": "4",
+                "standard_solution_output": "2",
+                "model_output": "4",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 6,
+        "code": "def main():\n    a = int(input())\n    print(a * a)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "40",
+                "standard_solution_output": "14",
+                "model_output": "1600",
+                "error": null
+            },
+            {
+                "input": "33",
+                "standard_solution_output": "1",
+                "model_output": "1089",
+                "error": null
+            },
+            {
+                "input": "29",
+                "standard_solution_output": "1",
+                "model_output": "841",
+                "error": null
+            },
+            {
+                "input": "49",
+                "standard_solution_output": "2",
+                "model_output": "2401",
+                "error": null
+            },
+            {
+                "input": "56",
+                "standard_solution_output": "13",
+                "model_output": "3136",
+                "error": null
+            },
+            {
+                "input": "12",
+                "standard_solution_output": "5",
+                "model_output": "144",
+                "error": null
+            },
+            {
+                "input": "16",
+                "standard_solution_output": "14",
+                "model_output": "256",
+                "error": null
+            },
+            {
+                "input": "39",
+                "standard_solution_output": "2",
+                "model_output": "1521",
+                "error": null
+            },
+            {
+                "input": "63",
+                "standard_solution_output": "4",
+                "model_output": "3969",
+                "error": null
+            },
+            {
+                "input": "4",
+                "standard_solution_output": "2",
+                "model_output": "16",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 7,
+        "code": "def main():\n    a = int(input())\n    print(a)\n    return\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "40",
+                "standard_solution_output": "14",
+                "model_output": "40",
+                "error": null
+            },
+            {
+                "input": "33",
+                "standard_solution_output": "1",
+                "model_output": "33",
+                "error": null
+            },
+            {
+                "input": "29",
+                "standard_solution_output": "1",
+                "model_output": "29",
+                "error": null
+            },
+            {
+                "input": "49",
+                "standard_solution_output": "2",
+                "model_output": "49",
+                "error": null
+            },
+            {
+                "input": "56",
+                "standard_solution_output": "13",
+                "model_output": "56",
+                "error": null
+            },
+            {
+                "input": "12",
+                "standard_solution_output": "5",
+                "model_output": "12",
+                "error": null
+            },
+            {
+                "input": "16",
+                "standard_solution_output": "14",
+                "model_output": "16",
+                "error": null
+            },
+            {
+                "input": "39",
+                "standard_solution_output": "2",
+                "model_output": "39",
+                "error": null
+            },
+            {
+                "input": "63",
+                "standard_solution_output": "4",
+                "model_output": "63",
+                "error": null
+            },
+            {
+                "input": "4",
+                "standard_solution_output": "2",
+                "model_output": "4",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 8,
+        "code": "a = int(input())\nsum_ = a * (a + 1) // 2\nresult = sum_ * (2 ** (a - 1))\nprint(result)",
+        "test_results": [
+            {
+                "input": "40",
+                "standard_solution_output": "14",
+                "model_output": "450799767388160",
+                "error": null
+            },
+            {
+                "input": "33",
+                "standard_solution_output": "1",
+                "model_output": "2409476653056",
+                "error": null
+            },
+            {
+                "input": "29",
+                "standard_solution_output": "1",
+                "model_output": "116769423360",
+                "error": null
+            },
+            {
+                "input": "49",
+                "standard_solution_output": "2",
+                "model_output": "344806846470553600",
+                "error": null
+            },
+            {
+                "input": "56",
+                "standard_solution_output": "13",
+                "model_output": "57501960042266492928",
+                "error": null
+            },
+            {
+                "input": "12",
+                "standard_solution_output": "5",
+                "model_output": "159744",
+                "error": null
+            },
+            {
+                "input": "16",
+                "standard_solution_output": "14",
+                "model_output": "4456448",
+                "error": null
+            },
+            {
+                "input": "39",
+                "standard_solution_output": "2",
+                "model_output": "214404767416320",
+                "error": null
+            },
+            {
+                "input": "63",
+                "standard_solution_output": "4",
+                "model_output": "9297159013149614014464",
+                "error": null
+            },
+            {
+                "input": "4",
+                "standard_solution_output": "2",
+                "model_output": "80",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 9,
+        "code": "def main():\n    a = int(input())\n    result = 1\n    for i in range(1, a + 1):\n        result *= i\n    print(result)\n    return\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "40",
+                "standard_solution_output": "14",
+                "model_output": "815915283247897734345611269596115894272000000000",
+                "error": null
+            },
+            {
+                "input": "33",
+                "standard_solution_output": "1",
+                "model_output": "8683317618811886495518194401280000000",
+                "error": null
+            },
+            {
+                "input": "29",
+                "standard_solution_output": "1",
+                "model_output": "8841761993739701954543616000000",
+                "error": null
+            },
+            {
+                "input": "49",
+                "standard_solution_output": "2",
+                "model_output": "608281864034267560872252163321295376887552831379210240000000000",
+                "error": null
+            },
+            {
+                "input": "56",
+                "standard_solution_output": "13",
+                "model_output": "710998587804863451854045647463724949736497978881168458687447040000000000000",
+                "error": null
+            },
+            {
+                "input": "12",
+                "standard_solution_output": "5",
+                "model_output": "479001600",
+                "error": null
+            },
+            {
+                "input": "16",
+                "standard_solution_output": "14",
+                "model_output": "20922789888000",
+                "error": null
+            },
+            {
+                "input": "39",
+                "standard_solution_output": "2",
+                "model_output": "20397882081197443358640281739902897356800000000",
+                "error": null
+            },
+            {
+                "input": "63",
+                "standard_solution_output": "4",
+                "model_output": "1982608315404440064116146708361898137544773690227268628106279599612729753600000000000000",
+                "error": null
+            },
+            {
+                "input": "4",
+                "standard_solution_output": "2",
+                "model_output": "24",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 10,
+        "code": "def main():\n    a = int(input())\n    print(a)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "40",
+                "standard_solution_output": "14",
+                "model_output": "40",
+                "error": null
+            },
+            {
+                "input": "33",
+                "standard_solution_output": "1",
+                "model_output": "33",
+                "error": null
+            },
+            {
+                "input": "29",
+                "standard_solution_output": "1",
+                "model_output": "29",
+                "error": null
+            },
+            {
+                "input": "49",
+                "standard_solution_output": "2",
+                "model_output": "49",
+                "error": null
+            },
+            {
+                "input": "56",
+                "standard_solution_output": "13",
+                "model_output": "56",
+                "error": null
+            },
+            {
+                "input": "12",
+                "standard_solution_output": "5",
+                "model_output": "12",
+                "error": null
+            },
+            {
+                "input": "16",
+                "standard_solution_output": "14",
+                "model_output": "16",
+                "error": null
+            },
+            {
+                "input": "39",
+                "standard_solution_output": "2",
+                "model_output": "39",
+                "error": null
+            },
+            {
+                "input": "63",
+                "standard_solution_output": "4",
+                "model_output": "63",
+                "error": null
+            },
+            {
+                "input": "4",
+                "standard_solution_output": "2",
+                "model_output": "4",
+                "error": null
+            }
+        ]
+    }
+]

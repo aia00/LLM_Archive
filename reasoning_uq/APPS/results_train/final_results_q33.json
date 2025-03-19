@@ -1,0 +1,662 @@
+[
+    {
+        "code_index": 1,
+        "code": "def min_moves(s):\n    stack = []\n    balance = 0\n    moves = 0\n    for char in s:\n        if char == '(':\n            stack.append(char)\n        else:\n            if stack and stack[-1] == '(':\n                stack.pop()\n                moves +=1\n            else:\n                stack.append(char)\n    # Now, the stack contains some extra closing brackets\n    # The number of such brackets is the number of moves needed to add them to the end\n    extra_close = len(stack)\n    moves += extra_close\n    return moves\n\ndef main():\n    import sys\n    t = int(sys.stdin.readline())\n    for _ in range(t):\n        n = int(sys.stdin.readline())\n        s = sys.stdin.readline().strip()\n        print(min_moves(s))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n4\n)((\n8\n())())(())\n6\n))(()))(\n10\n)))(())(())))\n4\n)((",
+                "standard_solution_output": "1\n2\n3\n5\n1",
+                "model_output": "3\n6\n6\n9\n3",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)(())()\n5\n()(())()\n6\n()))(())(()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "4\n4\n7",
+                "error": null
+            },
+            {
+                "input": "3\n6\n)(())()\n5\n(())()\n8\n())()())()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "4\n3\n6",
+                "error": null
+            },
+            {
+                "input": "3\n6\n())())(()\n8\n)))))((((((\n12\n)))(())))))(()))(",
+                "standard_solution_output": "2\n5\n8",
+                "model_output": "6\n11\n13",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)((\n8\n()()()()()\n10\n)))(()((",
+                "standard_solution_output": "1\n0\n3",
+                "model_output": "3\n5\n7",
+                "error": null
+            },
+            {
+                "input": "3\n2\n)(\n4\n))(()(\n10\n))(()))))))(",
+                "standard_solution_output": "1\n2\n7",
+                "model_output": "2\n5\n10",
+                "error": null
+            },
+            {
+                "input": "5\n3\n)((\n7\n()()()(\n11\n)))))(((()(\n15\n())()()()()(\n21\n)))))(((()()()()(",
+                "standard_solution_output": "1\n0\n5\n1\n5",
+                "model_output": "3\n4\n10\n7\n13",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n5\n())((\n9\n)))))()))(\n11\n)(())(())(())(\n15\n)))))())))))((",
+                "standard_solution_output": "2\n1\n7\n1\n10",
+                "model_output": "3\n4\n9\n8\n13",
+                "error": null
+            },
+            {
+                "input": "3\n10\n))(()))(()(\n4\n()()()\n8\n)))(()(())()",
+                "standard_solution_output": "3\n0\n3",
+                "model_output": "8\n3\n8",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n6\n())())(\n8\n))()))))(\n10\n)))))((((((\n12\n)))))())())()))(",
+                "standard_solution_output": "2\n2\n6\n5\n9",
+                "model_output": "3\n5\n8\n11\n13",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 2,
+        "code": "def min_moves(s):\n    # Calculate the minimum number of moves required to make s a regular bracket sequence\n    n = len(s)\n    moves = 0\n    stack = []\n    for c in s:\n        if c == '(':\n            stack.append(c)\n        else:\n            if stack and stack[-1] == '(':\n                stack.pop()\n            else:\n                # We need to move this closing bracket to the end\n                moves += 1\n    # Now, we need to account for the remaining stack and the moved brackets\n    # The stack contains all the unmatched opening brackets that are not part of the regular sequence\n    # The number of such unmatched brackets is len(stack)\n    # Each such bracket must be moved either to the beginning or the end\n    # So, the total moves are moves + (len(stack) // 2)\n    # Because each pair of unmatched brackets can be fixed with two moves\n    return moves + (len(stack) // 2)\n\ndef main():\n    import sys\n    t = int(sys.stdin.readline())\n    for _ in range(t):\n        n = int(sys.stdin.readline())\n        s = sys.stdin.readline().strip()\n        print(min_moves(s))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n4\n)((\n8\n())())(())\n6\n))(()))(\n10\n)))(())(())))\n4\n)((",
+                "standard_solution_output": "1\n2\n3\n5\n1",
+                "model_output": "2\n2\n3\n5\n2",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)(())()\n5\n()(())()\n6\n()))(())(()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "1\n0\n2",
+                "error": null
+            },
+            {
+                "input": "3\n6\n)(())()\n5\n(())()\n8\n())()())()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "1\n0\n2",
+                "error": null
+            },
+            {
+                "input": "3\n6\n())())(()\n8\n)))))((((((\n12\n)))(())))))(()))(",
+                "standard_solution_output": "2\n5\n8",
+                "model_output": "2\n8\n8",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)((\n8\n()()()()()\n10\n)))(()((",
+                "standard_solution_output": "1\n0\n3",
+                "model_output": "2\n0\n4",
+                "error": null
+            },
+            {
+                "input": "3\n2\n)(\n4\n))(()(\n10\n))(()))))))(",
+                "standard_solution_output": "1\n2\n7",
+                "model_output": "1\n3\n7",
+                "error": null
+            },
+            {
+                "input": "5\n3\n)((\n7\n()()()(\n11\n)))))(((()(\n15\n())()()()()(\n21\n)))))(((()()()()(",
+                "standard_solution_output": "1\n0\n5\n1\n5",
+                "model_output": "2\n0\n7\n1\n7",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n5\n())((\n9\n)))))()))(\n11\n)(())(())(())(\n15\n)))))())))))((",
+                "standard_solution_output": "2\n1\n7\n1\n10",
+                "model_output": "2\n2\n7\n1\n11",
+                "error": null
+            },
+            {
+                "input": "3\n10\n))(()))(()(\n4\n()()()\n8\n)))(()(())()",
+                "standard_solution_output": "3\n0\n3",
+                "model_output": "4\n0\n3",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n6\n())())(\n8\n))()))))(\n10\n)))))((((((\n12\n)))))())())()))(",
+                "standard_solution_output": "2\n2\n6\n5\n9",
+                "model_output": "2\n2\n6\n8\n9",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 3,
+        "code": "def min_moves(s):\n    moves = 0\n    n = len(s)\n    stack = []\n    for c in s:\n        if c == '(':\n            stack.append(c)\n        else:\n            if stack:\n                stack.pop()\n            else:\n                stack.append(c)\n    # Now, the stack contains the minimal number of brackets that need to be moved\n    # The correct brackets are those that form the regular sequence\n    # So, the stack represents the incorrect part that needs to be moved\n    # Now, we need to find how many brackets are not part of the regular sequence\n    # So, the number of moves is the size of the stack plus the number of brackets that are not part of the correct sequence\n    # Wait, maybe I'm getting this wrong. Let's think differently.\n    # The minimal number of moves is the number of brackets that are not part of the correct regular sequence.\n    # But how?\n    # Another approach: The correct regular bracket sequence can be found by considering the correct opening and closing brackets.\n    # Let's find the longest possible correct substring and then calculate the moves based on that.\n    # Alternatively, perhaps we can model this as a problem where we need to find the maximum number of correctly nested brackets, and then the moves required are n minus twice that number.\n    # Wait, perhaps not. Let's think about the stack approach again.\n    # The stack represents the incorrect brackets that are not properly nested. So, the size of the stack is the number of moves needed to fix the sequence.\n    # Because each incorrect bracket would require a move.\n    # Wait, but that's not necessarily the case. For example, if the stack has two '(', then each would require a move to the end, but perhaps we can fix them in fewer steps.\n    # Hmm, perhaps the stack size is the number of moves. Because each incorrect bracket in the stack can be moved either to the beginning or the end, but we need to find the minimal number of moves.\n\n    # Let's take an example. Suppose s = \")()(\".\n    # The stack after processing would be [')', '('], so size 2. The minimal number of moves is 2.\n    # Because, moving the first ')' to the end, and the '(' to the beginning, or vice versa.\n\n    # Another example: s = \"())(\".\n    # The stack is [')', '('], so size 2. The minimal moves are 2.\n\n    # So, perhaps the stack size is the number of moves needed.\n\n    # So, the minimal number of moves is the size of the stack.\n\n    # But wait, let's test another example. Suppose s = \")()\".\n    # The stack is [')', '('], size 2. So minimal moves would be 2.\n\n    # But let's see: s = \")()(\".\n    # We can move the first ')' to the end, resulting in \"()(\", then move the '(' to the beginning, resulting in \"()\", which is two moves. So the stack size is correct.\n\n    # Another example: s = \"()())\".\n    # Let's process it:\n    # c = '(', stack becomes ['(']\n    # c = ')', stack pops, becomes empty.\n    # c = '(', stack becomes ['(']\n    # c = ')', stack pops, becomes empty.\n    # c = ')', stack appends.\n    # So stack is [')'].\n\n    # So the stack size is 1. So minimal moves is 1.\n\n    # Let's see: the string is \"()())\".\n\n    # We can move the last ')' to the front, making \")()()\", which is not correct. Wait, no. Alternatively, perhaps moving the last ')' to the front would result in \")()()\".\n\n    # Wait, original string is \"()())\". Let's see: the correct regular bracket sequence would be \"()()\", which is the first four characters. So the last character is an extra ')'. So we need to move that to the end or the beginning. If we move it to the end, the string becomes \"()()\", which is correct. So that's one move. So the stack size is 1, which is correct.\n\n    # So, the stack approach seems to correctly compute the minimal number of moves.\n\n    # So, the algorithm is: compute the stack as you process the string, then the number of moves is the size of the stack.\n\n    # So, the function min_moves(s) will process the string and return the size of the stack.\n\n    # So, let's implement this.\n\n    # Now, the code:\n\n    # Initialize stack as empty.\n    stack = []\n    for c in s:\n        if c == '(':\n            stack.append(c)\n        else:\n            if stack:\n                stack.pop()\n            else:\n                stack.append(c)\n    # The size of the stack is the number of moves.\n    return len(stack)\n    # Wait, but in the example where s = \"())(\", the stack is [')', '('], which is size 2, which is correct.\n\n    # So, the code is correct.\n\ndef main():\n    import sys\n    input = sys.stdin.read().split()\n    t = int(input[0])\n    idx = 1\n    for _ in range(t):\n        n = int(input[idx])\n        idx += 1\n        s = input[idx]\n        idx +=1\n        print(min_moves(s))\n        \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n4\n)((\n8\n())())(())\n6\n))(()))(\n10\n)))(())(())))\n4\n)((",
+                "standard_solution_output": "1\n2\n3\n5\n1",
+                "model_output": "3\n0\n2\n1\n3",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)(())()\n5\n()(())()\n6\n()))(())(()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "1\n0\n1",
+                "error": null
+            },
+            {
+                "input": "3\n6\n)(())()\n5\n(())()\n8\n())()())()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "1\n0\n0",
+                "error": null
+            },
+            {
+                "input": "3\n6\n())())(()\n8\n)))))((((((\n12\n)))(())))))(()))(",
+                "standard_solution_output": "2\n5\n8",
+                "model_output": "1\n7\n1",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)((\n8\n()()()()()\n10\n)))(()((",
+                "standard_solution_output": "1\n0\n3",
+                "model_output": "3\n0\n4",
+                "error": null
+            },
+            {
+                "input": "3\n2\n)(\n4\n))(()(\n10\n))(()))))))(",
+                "standard_solution_output": "1\n2\n7",
+                "model_output": "2\n2\n2",
+                "error": null
+            },
+            {
+                "input": "5\n3\n)((\n7\n()()()(\n11\n)))))(((()(\n15\n())()()()()(\n21\n)))))(((()()()()(",
+                "standard_solution_output": "1\n0\n5\n1\n5",
+                "model_output": "3\n1\n5\n2\n5",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n5\n())((\n9\n)))))()))(\n11\n)(())(())(())(\n15\n)))))())))))((",
+                "standard_solution_output": "2\n1\n7\n1\n10",
+                "model_output": "1\n3\n2\n2\n2",
+                "error": null
+            },
+            {
+                "input": "3\n10\n))(()))(()(\n4\n()()()\n8\n)))(()(())()",
+                "standard_solution_output": "3\n0\n3",
+                "model_output": "3\n0\n2",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n6\n())())(\n8\n))()))))(\n10\n)))))((((((\n12\n)))))())())()))(",
+                "standard_solution_output": "2\n2\n6\n5\n9",
+                "model_output": "1\n1\n1\n7\n2",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 4,
+        "code": "def main():\n    t = int(input())\n    for _ in range(t):\n        n = int(input())\n        s = input().strip()\n        # Compute the minimal number of moves\n        # We need to find the longest valid substring that can be the center of the regular bracket sequence\n        # Then, the minimal moves is n minus 2 times the length of this substring\n        # So, the approach is to find the maximum possible length of a valid substring that is a regular bracket sequence\n        # Then, the minimal moves would be n - 2 * max_len\n        # How to find this max_len?\n\n        # Let's think about the valid substrings in s\n        # For each possible substring, check if it is a regular bracket sequence\n        # The maximum length will give us the required information\n        max_len = 0\n        for i in range(len(s)):\n            for j in range(i+1, len(s)):\n                substring = s[i:j+1]\n                if is_regular(substring):\n                    current_len = j - i + 1\n                    if current_len > max_len:\n                        max_len = current_len\n        # Now, the minimal moves is n - 2 * max_len\n        print(n - 2 * max_len)\n\ndef is_regular(sub):\n    balance = 0\n    for c in sub:\n        if c == '(':\n            balance +=1\n        else:\n            balance -=1\n            if balance <0:\n                return False\n    return balance ==0\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n4\n)((\n8\n())())(())\n6\n))(()))(\n10\n)))(())(())))\n4\n)((",
+                "standard_solution_output": "1\n2\n3\n5\n1",
+                "model_output": "4\n0\n-2\n-6\n4",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)(())()\n5\n()(())()\n6\n()))(())(()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "-8\n-11\n-2",
+                "error": null
+            },
+            {
+                "input": "3\n6\n)(())()\n5\n(())()\n8\n())()())()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "-6\n-7\n0",
+                "error": null
+            },
+            {
+                "input": "3\n6\n())())(()\n8\n)))))((((((\n12\n)))(())))))(()))(",
+                "standard_solution_output": "2\n5\n8",
+                "model_output": "2\n8\n4",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)((\n8\n()()()()()\n10\n)))(()((",
+                "standard_solution_output": "1\n0\n3",
+                "model_output": "4\n-12\n6",
+                "error": null
+            },
+            {
+                "input": "3\n2\n)(\n4\n))(()(\n10\n))(()))))))(",
+                "standard_solution_output": "1\n2\n7",
+                "model_output": "2\n0\n2",
+                "error": null
+            },
+            {
+                "input": "5\n3\n)((\n7\n()()()(\n11\n)))))(((()(\n15\n())()()()()(\n21\n)))))(((()()()()(",
+                "standard_solution_output": "1\n0\n5\n1\n5",
+                "model_output": "3\n-5\n7\n-1\n5",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n5\n())((\n9\n)))))()))(\n11\n)(())(())(())(\n15\n)))))())))))((",
+                "standard_solution_output": "2\n1\n7\n1\n10",
+                "model_output": "3\n1\n5\n-13\n11",
+                "error": null
+            },
+            {
+                "input": "3\n10\n))(()))(()(\n4\n()()()\n8\n)))(()(())()",
+                "standard_solution_output": "3\n0\n3",
+                "model_output": "2\n-8\n-8",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n6\n())())(\n8\n))()))))(\n10\n)))))((((((\n12\n)))))())())()))(",
+                "standard_solution_output": "2\n2\n6\n5\n9",
+                "model_output": "3\n2\n4\n10\n8",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 5,
+        "code": "def min_moves(s):\n    # Your code here\n    return 0\n\ndef main():\n    import sys\n    t = int(sys.stdin.readline())\n    for _ in range(t):\n        n = int(sys.stdin.readline())\n        s = sys.stdin.readline().strip()\n        print(min_moves(s))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n4\n)((\n8\n())())(())\n6\n))(()))(\n10\n)))(())(())))\n4\n)((",
+                "standard_solution_output": "1\n2\n3\n5\n1",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)(())()\n5\n()(())()\n6\n()))(())(()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "3\n6\n)(())()\n5\n(())()\n8\n())()())()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "3\n6\n())())(()\n8\n)))))((((((\n12\n)))(())))))(()))(",
+                "standard_solution_output": "2\n5\n8",
+                "model_output": "0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)((\n8\n()()()()()\n10\n)))(()((",
+                "standard_solution_output": "1\n0\n3",
+                "model_output": "0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "3\n2\n)(\n4\n))(()(\n10\n))(()))))))(",
+                "standard_solution_output": "1\n2\n7",
+                "model_output": "0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n3\n)((\n7\n()()()(\n11\n)))))(((()(\n15\n())()()()()(\n21\n)))))(((()()()()(",
+                "standard_solution_output": "1\n0\n5\n1\n5",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n5\n())((\n9\n)))))()))(\n11\n)(())(())(())(\n15\n)))))())))))((",
+                "standard_solution_output": "2\n1\n7\n1\n10",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "3\n10\n))(()))(()(\n4\n()()()\n8\n)))(()(())()",
+                "standard_solution_output": "3\n0\n3",
+                "model_output": "0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n6\n())())(\n8\n))()))))(\n10\n)))))((((((\n12\n)))))())())()))(",
+                "standard_solution_output": "2\n2\n6\n5\n9",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 6,
+        "code": "def min_moves(s):\n    # Calculate the number of moves needed to make the string a regular bracket sequence.\n    # The minimum number of moves is the number of positions where the current balance is incorrect.\n    # We can calculate the required balance at each position and track how many times the balance is wrong.\n    balance = 0\n    moves = 0\n    for i, c in enumerate(s):\n        if c == '(':\n            balance += 1\n        else:\n            balance -= 1\n        # If the balance is negative, it means we have a ')', which is not allowed here.\n        # So, the number of such cases is the number of moves needed.\n        if balance < 0:\n            moves += 1\n            # To fix this, we need to move this closing bracket to the end.\n            # Alternatively, moving an opening bracket to the front could help, but that might not always be optimal.\n            # For the sake of simplicity, let's assume that moving the closing bracket to the end is the optimal choice.\n            # So, we increment the move count.\n    # After processing all characters, the total moves is the number of times the balance was negative.\n    return moves\n\ndef main():\n    import sys\n    input = sys.stdin.read().split()\n    t = int(input[0])\n    idx = 1\n    for _ in range(t):\n        n = int(input[idx])\n        idx += 1\n        s = input[idx]\n        idx += 1\n        print(min_moves(s))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n4\n)((\n8\n())())(())\n6\n))(()))(\n10\n)))(())(())))\n4\n)((",
+                "standard_solution_output": "1\n2\n3\n5\n1",
+                "model_output": "1\n6\n7\n13\n1",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)(())()\n5\n()(())()\n6\n()))(())(()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "3\n0\n7",
+                "error": null
+            },
+            {
+                "input": "3\n6\n)(())()\n5\n(())()\n8\n())()())()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "3\n0\n6",
+                "error": null
+            },
+            {
+                "input": "3\n6\n())())(()\n8\n)))))((((((\n12\n)))(())))))(()))(",
+                "standard_solution_output": "2\n5\n8",
+                "model_output": "5\n9\n17",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)((\n8\n()()()()()\n10\n)))(()((",
+                "standard_solution_output": "1\n0\n3",
+                "model_output": "1\n0\n7",
+                "error": null
+            },
+            {
+                "input": "3\n2\n)(\n4\n))(()(\n10\n))(()))))))(",
+                "standard_solution_output": "1\n2\n7",
+                "model_output": "1\n4\n11",
+                "error": null
+            },
+            {
+                "input": "5\n3\n)((\n7\n()()()(\n11\n)))))(((()(\n15\n())()()()()(\n21\n)))))(((()()()()(",
+                "standard_solution_output": "1\n0\n5\n1\n5",
+                "model_output": "1\n0\n11\n5\n17",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n5\n())((\n9\n)))))()))(\n11\n)(())(())(())(\n15\n)))))())))))((",
+                "standard_solution_output": "2\n1\n7\n1\n10",
+                "model_output": "3\n1\n10\n4\n14",
+                "error": null
+            },
+            {
+                "input": "3\n10\n))(()))(()(\n4\n()()()\n8\n)))(()(())()",
+                "standard_solution_output": "3\n0\n3",
+                "model_output": "10\n0\n11",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n6\n())())(\n8\n))()))))(\n10\n)))))((((((\n12\n)))))())())()))(",
+                "standard_solution_output": "2\n2\n6\n5\n9",
+                "model_output": "3\n4\n9\n9\n16",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 7,
+        "code": "def min_moves(s):\n    n = len(s)\n    stack = []\n    balance = 0\n    min_removals = float('inf')\n    for c in s:\n        if c == '(':\n            stack.append(c)\n        else:\n            if stack:\n                stack.pop()\n            else:\n                balance -= 1\n    # Now, for each position where the balance is negative, we can consider moving some closing brackets to the end\n    # We need to find the maximum number of closing brackets that can be kept at the beginning\n    # The minimal moves would be the total number of closing brackets minus this maximum\n    # So, let's find the maximum number of closing brackets that can be kept at the beginning\n    # We can iterate through the string and for each prefix, calculate the number of closing brackets\n    # and see if the balance is possible\n    # Alternatively, let's think about the minimal number of closing brackets that need to be moved to the end\n    # The minimal moves is the total number of closing brackets minus the maximum number of closing brackets that can be at the beginning\n    # Let's compute the maximum number of closing brackets that can be at the initial part\n    # So, for each possible k, where k is the number of closing brackets at the beginning, can we have a valid sequence?\n    # The maximum k is the maximum number of closing brackets that can be kept without making the balance negative\n\n    # So, let's find the maximum k where the first k characters are closing brackets, and the rest form a valid sequence\n    max_closing = 0\n    for i in range(1, n+1):\n        prefix = s[:i]\n        if prefix.count(')') > max_closing:\n            # Check if the prefix is valid\n            balance = 0\n            valid = True\n            for c in prefix:\n                if c == '(':\n                    balance +=1\n                else:\n                    balance -=1\n                    if balance <0:\n                        valid = False\n                        break\n            if valid:\n                max_closing = max(max_closing, prefix.count(')'))\n    \n    total_closing = s.count(')')\n    moves = total_closing - max_closing\n    return moves\n\ndef main():\n    import sys\n    input = sys.stdin.read().split()\n    t = int(input[0])\n    idx = 1\n    for _ in range(t):\n        n = int(input[idx])\n        idx +=1\n        s = input[idx]\n        idx +=1\n        print(min_moves(s))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n4\n)((\n8\n())())(())\n6\n))(()))(\n10\n)))(())(())))\n4\n)((",
+                "standard_solution_output": "1\n2\n3\n5\n1",
+                "model_output": "1\n5\n5\n9\n1",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)(())()\n5\n()(())()\n6\n()))(())(()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "4\n0\n5",
+                "error": null
+            },
+            {
+                "input": "3\n6\n)(())()\n5\n(())()\n8\n())()())()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "4\n0\n5",
+                "error": null
+            },
+            {
+                "input": "3\n6\n())())(()\n8\n)))))((((((\n12\n)))(())))))(()))(",
+                "standard_solution_output": "2\n5\n8",
+                "model_output": "4\n5\n12",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)((\n8\n()()()()()\n10\n)))(()((",
+                "standard_solution_output": "1\n0\n3",
+                "model_output": "1\n0\n4",
+                "error": null
+            },
+            {
+                "input": "3\n2\n)(\n4\n))(()(\n10\n))(()))))))(",
+                "standard_solution_output": "1\n2\n7",
+                "model_output": "1\n3\n9",
+                "error": null
+            },
+            {
+                "input": "5\n3\n)((\n7\n()()()(\n11\n)))))(((()(\n15\n())()()()()(\n21\n)))))(((()()()()(",
+                "standard_solution_output": "1\n0\n5\n1\n5",
+                "model_output": "1\n0\n6\n5\n9",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n5\n())((\n9\n)))))()))(\n11\n)(())(())(())(\n15\n)))))())))))((",
+                "standard_solution_output": "2\n1\n7\n1\n10",
+                "model_output": "2\n1\n8\n7\n11",
+                "error": null
+            },
+            {
+                "input": "3\n10\n))(()))(()(\n4\n()()()\n8\n)))(()(())()",
+                "standard_solution_output": "3\n0\n3",
+                "model_output": "6\n0\n7",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n6\n())())(\n8\n))()))))(\n10\n)))))((((((\n12\n)))))())())()))(",
+                "standard_solution_output": "2\n2\n6\n5\n9",
+                "model_output": "2\n3\n7\n5\n12",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 8,
+        "code": "def min_moves(s):\n    # Your code here\n    # return the minimum number of moves required\n    # ...\n    pass\n\ndef main():\n    t = int(input())\n    for _ in range(t):\n        n = int(input())\n        s = input().strip()\n        print(min_moves(s))\n        \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n4\n)((\n8\n())())(())\n6\n))(()))(\n10\n)))(())(())))\n4\n)((",
+                "standard_solution_output": "1\n2\n3\n5\n1",
+                "model_output": "None\nNone\nNone\nNone\nNone",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)(())()\n5\n()(())()\n6\n()))(())(()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "None\nNone\nNone",
+                "error": null
+            },
+            {
+                "input": "3\n6\n)(())()\n5\n(())()\n8\n())()())()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "None\nNone\nNone",
+                "error": null
+            },
+            {
+                "input": "3\n6\n())())(()\n8\n)))))((((((\n12\n)))(())))))(()))(",
+                "standard_solution_output": "2\n5\n8",
+                "model_output": "None\nNone\nNone",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)((\n8\n()()()()()\n10\n)))(()((",
+                "standard_solution_output": "1\n0\n3",
+                "model_output": "None\nNone\nNone",
+                "error": null
+            },
+            {
+                "input": "3\n2\n)(\n4\n))(()(\n10\n))(()))))))(",
+                "standard_solution_output": "1\n2\n7",
+                "model_output": "None\nNone\nNone",
+                "error": null
+            },
+            {
+                "input": "5\n3\n)((\n7\n()()()(\n11\n)))))(((()(\n15\n())()()()()(\n21\n)))))(((()()()()(",
+                "standard_solution_output": "1\n0\n5\n1\n5",
+                "model_output": "None\nNone\nNone\nNone\nNone",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n5\n())((\n9\n)))))()))(\n11\n)(())(())(())(\n15\n)))))())))))((",
+                "standard_solution_output": "2\n1\n7\n1\n10",
+                "model_output": "None\nNone\nNone\nNone\nNone",
+                "error": null
+            },
+            {
+                "input": "3\n10\n))(()))(()(\n4\n()()()\n8\n)))(()(())()",
+                "standard_solution_output": "3\n0\n3",
+                "model_output": "None\nNone\nNone",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n6\n())())(\n8\n))()))))(\n10\n)))))((((((\n12\n)))))())())()))(",
+                "standard_solution_output": "2\n2\n6\n5\n9",
+                "model_output": "None\nNone\nNone\nNone\nNone",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 9,
+        "code": "def minimal_moves(s):\n    n = len(s)\n    stack = []\n    moves = 0\n    for char in s:\n        if char == '(':\n            stack.append(char)\n        else:\n            if stack:\n                stack.pop()\n            else:\n                moves +=1\n            # moves +=1\n    # Now, we need to find the maximum number of correctly nested brackets\n    # For each position, compute the maximum possible correct sequence\n    # Then, the minimal moves is n - 2*max_correct\n    # So, let's find the maximum correct.\n    max_correct = 0\n    for i in range(len(s)):\n        current_stack = []\n        current_correct = 0\n        for j in range(i, len(s)):\n            if s[j] == '(':\n                current_stack.append(s[j])\n            else:\n                if current_stack:\n                    current_stack.pop()\n                    current_correct +=1\n                else:\n                    break\n        max_correct = max(max_correct, current_correct)\n    return n - 2 * max_correct\n\ndef main():\n    import sys\n    input = sys.stdin.read().split()\n    t = int(input[0])\n    ptr = 1\n    for _ in range(t):\n        n = int(input[ptr])\n        ptr +=1\n        s = input[ptr]\n        ptr +=1\n        print(minimal_moves(s))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n4\n)((\n8\n())())(())\n6\n))(()))(\n10\n)))(())(())))\n4\n)((",
+                "standard_solution_output": "1\n2\n3\n5\n1",
+                "model_output": "3\n6\n4\n5\n3",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)(())()\n5\n()(())()\n6\n()))(())(()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "1\n0\n5",
+                "error": null
+            },
+            {
+                "input": "3\n6\n)(())()\n5\n(())()\n8\n())()())()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "1\n0\n6",
+                "error": null
+            },
+            {
+                "input": "3\n6\n())())(()\n8\n)))))((((((\n12\n)))(())))))(()))(",
+                "standard_solution_output": "2\n5\n8",
+                "model_output": "7\n11\n13",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)((\n8\n()()()()()\n10\n)))(()((",
+                "standard_solution_output": "1\n0\n3",
+                "model_output": "3\n0\n6",
+                "error": null
+            },
+            {
+                "input": "3\n2\n)(\n4\n))(()(\n10\n))(()))))))(",
+                "standard_solution_output": "1\n2\n7",
+                "model_output": "2\n4\n8",
+                "error": null
+            },
+            {
+                "input": "5\n3\n)((\n7\n()()()(\n11\n)))))(((()(\n15\n())()()()()(\n21\n)))))(((()()()()(",
+                "standard_solution_output": "1\n0\n5\n1\n5",
+                "model_output": "3\n1\n9\n4\n9",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n5\n())((\n9\n)))))()))(\n11\n)(())(())(())(\n15\n)))))())))))((",
+                "standard_solution_output": "2\n1\n7\n1\n10",
+                "model_output": "3\n3\n8\n2\n12",
+                "error": null
+            },
+            {
+                "input": "3\n10\n))(()))(()(\n4\n()()()\n8\n)))(()(())()",
+                "standard_solution_output": "3\n0\n3",
+                "model_output": "7\n0\n4",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n6\n())())(\n8\n))()))))(\n10\n)))))((((((\n12\n)))))())())()))(",
+                "standard_solution_output": "2\n2\n6\n5\n9",
+                "model_output": "3\n5\n7\n11\n14",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 10,
+        "code": "def min_moves_to_regular(s):\n    left = 0\n    right = 0\n    moves = 0\n    stack = []\n    min_moves = float('inf')\n    for c in s:\n        if c == '(':\n            stack.append(c)\n        else:\n            if stack:\n                stack.pop()\n                right += 1\n            else:\n                stack.append(c)\n    # Now, calculate the minimum moves\n    # The total number of moves is the number of steps where the balance goes negative\n    # plus the number of unmatched '(' at the end\n    # Wait, that's not correct. Hmm.\n    # Alternative approach:\n    # The minimum number of moves is the number of times the current balance goes negative\n    # plus the number of unmatched '(' at the end.\n    # So, let's compute the balance as we iterate through the string.\n    # Also, track the points where the balance goes negative, which indicate the need for a move.\n    # Additionally, after the entire string, the balance must be zero, but any excess '(' at the end will require moves.\n    balance = 0\n    moves_needed = 0\n    for c in s:\n        if c == '(':\n            balance += 1\n        else:\n            balance -= 1\n        if balance < 0:\n            # Need to move a '(' to the beginning to fix this\n            moves_needed += 1\n            balance += 1  # Because moving a '(' to the front adds 1 to balance\n    # After processing all characters, the balance must be zero, but any remaining '(' will require moves\n    # Wait, but the total number of '(' and ')' is equal, so the final balance is zero.\n    # So, the moves_needed is the number of times the balance went negative, which indicates the need to move a '(' to the front.\n    # But wait, the moves_needed is actually the number of times we had to do that, but each such move fixes one imbalance.\n    # So, the minimal number of moves is moves_needed plus the number of unmatched '(' at the end.\n\n    # Wait, but the unmatched '(' at the end can be moved to the end. Each such move takes 1 step.\n    # So, the total minimal moves is moves_needed plus the number of unmatched '(' at the end.\n\n    # Wait, but how to compute the number of unmatched '(' at the end?\n\n    # Let's think differently. The minimal number of moves is the number of times the balance goes negative plus the number of unmatched '(' at the end.\n\n    # So, let's compute the number of times balance went negative, which is the number of 'moves_needed' steps.\n\n    # Additionally, after processing the entire string, the balance is zero, but there might be some '(' left in the stack.\n\n    # Wait, in the initial approach, the stack is being used to track the balance, but in the code above, the stack is being modified. Maybe that's not the right way.\n\n    # Let's try to think of another approach.\n\n    # The minimal number of moves is the number of times the balance goes negative plus the number of unmatched '(' at the end.\n\n    # So, let's compute the balance as we iterate through the string.\n\n    # For each character:\n    # if '(', balance +=1\n    # else, balance -=1\n    # if balance < 0: we need to make a move (add to moves_needed) and add 1 to balance (since we moved a '(' to the front, which adds 1 to balance)\n    # else, do nothing.\n\n    # After processing all characters, the balance is zero (since total '(' and ')' are equal), but any remaining '(' in the stack would require moving them to the end.\n\n    # Wait, but the stack approach in the initial code may not be the right way.\n\n    # Maybe the correct way is to simulate the process:\n\n    # Initialize a stack. For each character in s:\n    # if it's '(', push to stack.\n    # else, if stack is not empty, pop from stack (matching the current ')'), else push to stack.\n    # After processing, the stack contains all the unmatched '('.\n\n    # The number of such unmatched '(' is the number of moves needed to move them to the end.\n\n    # Additionally, during the processing, every time the stack is empty and we encounter a ')', we have to push it to the stack, which indicates a point where the balance is negative, requiring a move.\n\n    # So, the total moves is the number of times we had to push to the stack (when the stack was empty and we had a ')') plus the number of unmatched '(' at the end.\n\n    # So, let's implement this.\n\n    # Let's initialize a stack and a variable to track the number of moves.\n    stack = []\n    moves = 0\n    for c in s:\n        if c == '(':\n            stack.append(c)\n        else:\n            if stack:\n                stack.pop()\n            else:\n                # We have to push this ')', which means we need to move a '(' to the front.\n                moves +=1\n                stack.append(c)\n    # After processing all characters, the stack contains the remaining '('.\n    # Each such '(' requires a move to the end.\n    moves += len(stack)\n    return moves\n\ndef main():\n    t = int(input())\n    for _ in range(t):\n        n = int(input())\n        s = input().strip()\n        print(min_moves_to_regular(s))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n4\n)((\n8\n())())(())\n6\n))(()))(\n10\n)))(())(())))\n4\n)((",
+                "standard_solution_output": "1\n2\n3\n5\n1",
+                "model_output": "4\n1\n4\n4\n4",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)(())()\n5\n()(())()\n6\n()))(())(()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "2\n0\n2",
+                "error": null
+            },
+            {
+                "input": "3\n6\n)(())()\n5\n(())()\n8\n())()())()",
+                "standard_solution_output": "1\n0\n2",
+                "model_output": "2\n0\n1",
+                "error": null
+            },
+            {
+                "input": "3\n6\n())())(()\n8\n)))))((((((\n12\n)))(())))))(()))(",
+                "standard_solution_output": "2\n5\n8",
+                "model_output": "2\n10\n5",
+                "error": null
+            },
+            {
+                "input": "3\n4\n)((\n8\n()()()()()\n10\n)))(()((",
+                "standard_solution_output": "1\n0\n3",
+                "model_output": "4\n0\n6",
+                "error": null
+            },
+            {
+                "input": "3\n2\n)(\n4\n))(()(\n10\n))(()))))))(",
+                "standard_solution_output": "1\n2\n7",
+                "model_output": "3\n3\n6",
+                "error": null
+            },
+            {
+                "input": "5\n3\n)((\n7\n()()()(\n11\n)))))(((()(\n15\n())()()()()(\n21\n)))))(((()()()()(",
+                "standard_solution_output": "1\n0\n5\n1\n5",
+                "model_output": "4\n1\n8\n3\n8",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n5\n())((\n9\n)))))()))(\n11\n)(())(())(())(\n15\n)))))())))))((",
+                "standard_solution_output": "2\n1\n7\n1\n10",
+                "model_output": "2\n4\n6\n3\n7",
+                "error": null
+            },
+            {
+                "input": "3\n10\n))(()))(()(\n4\n()()()\n8\n)))(()(())()",
+                "standard_solution_output": "3\n0\n3",
+                "model_output": "5\n0\n4",
+                "error": null
+            },
+            {
+                "input": "5\n3\n))(\n6\n())())(\n8\n))()))))(\n10\n)))))((((((\n12\n)))))())())()))(",
+                "standard_solution_output": "2\n2\n6\n5\n9",
+                "model_output": "2\n2\n4\n10\n7",
+                "error": null
+            }
+        ]
+    }
+]

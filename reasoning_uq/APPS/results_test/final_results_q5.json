@@ -1,0 +1,662 @@
+[
+    {
+        "code_index": 1,
+        "code": "def main():\n    # Read the input\n    x1, y1, x2, y2 = map(int, input().split())\n    x3, y3, x4, y4 = map(int, input().split())\n    x5, y5, x6, y6 = map(int, input().split())\n    \n    # Function to check if a point is inside a rectangle\n    def is_inside(rect):\n        x, y = rect\n        return (x >= x1 and x <= x2 and y >= y1 and y <= y2)\n    \n    # Function to check if a point is inside both black sheets\n    def is_inside_black(rect):\n        x, y = rect\n        return (x >= x3 and x <= x4 and y >= y3 and y <= y4) and (x >= x5 and x <= x6 and y >= y5 and y <= y6)\n    \n    # Check the four corners of the white sheet\n    corners = [(x1, y1), (x2, y1), (x1, y2), (x2, y2)]\n    for corner in corners:\n        if not is_inside_black(corner):\n            print(\"YES\")\n            return\n    \n    # Check the edges of the white sheet\n    # Check left edge (x == x1)\n    y_min = max(y1, y3, y5)\n    y_max = min(y2, y4, y6)\n    if y_min < y_max:\n        print(\"YES\")\n        return\n    \n    # Check right edge (x == x2)\n    y_min = max(y1, y3, y5)\n    y_max = min(y2, y4, y6)\n    if y_min < y_max:\n        print(\"YES\")\n        return\n    \n    # Check top edge (y == y2)\n    x_min = min(x1, x3, x5)\n    x_max = max(x2, x4, x6)\n    if x_min < x_max:\n        print(\"YES\")\n        return\n    \n    # Check bottom edge (y == y1)\n    x_min = min(x1, x3, x5)\n    x_max = max(x2, x4, x6)\n    if x_min < x_max:\n        print(\"YES\")\n        return\n    \n    # If none of the edges or corners are visible, check if the white sheet is completely covered\n    # Else, output NO\n    print(\"NO\")\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "2 2 4 4\n8 8 9 9\n7 7 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "8 8 9 10\n2 3 6 9\n4 4 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "1 1 3 3\n9 9 10 10\n8 8 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "8 6 9 9\n6 7 8 9\n1 2 6 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "2 6 4 8\n9 11 11 14\n1 7 3 10",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "9 9 10 10\n5 6 7 8\n4 4 6 6",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "6 3 8 8\n8 9 9 10\n5 5 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "4 6 6 8\n10 5 12 7\n5 2 7 4",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "9 6 10 10\n8 5 9 9\n3 3 5 5",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "1 8 5 10\n7 1 9 9\n6 4 8 8",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 2,
+        "code": "def is_white_visible():\n    # Read input\n    w_x1, w_y1, w_x2, w_y2 = map(int, input().split())\n    b1_x3, b1_y3, b1_x4, b1_y4 = map(int, input().split())\n    b2_x5, b2_y5, b2_x6, b2_y6 = map(int, input().split())\n    \n    # Determine if any part of white is visible\n    # Check if white is completely covered by both black sheets\n    # If not, output YES\n    \n    # Check if white is completely covered by both black sheets\n    # So, the union of both black sheets covers white\n    # So, if the union does not cover white, then white is visible\n    # So, the problem reduces to checking if the union of black1 and black2 covers white\n    \n    # So, the condition is: white is completely covered by the union of the two black sheets\n    \n    # If not, output YES\n    \n    # So, we need to check whether the white rectangle is entirely inside the union of black1 and black2\n    \n    # So, we can compute the union of black1 and black2, and then check if white is entirely within that\n    \n    # But computing the union is a bit involved, but perhaps we can find the minimal rectangle that covers both black1 and black2, and then check if white is entirely inside that\n    \n    # Alternatively, for each axis, compute the coverage\n    \n    # Let's try to find the minimal rectangle that covers both black sheets\n    \n    # For x-axis:\n    # The minimal x is min(b1_x3, b2_x5)\n    # The maximal x is max(b1_x4, b2_x6)\n    # Similarly for y-axis\n    # So, the union is a rectangle from (min_x, min_y) to (max_x, max_y)\n    \n    # So, if the white rectangle is entirely within this union, then it's covered\n    \n    # So, let's compute the union's x range:\n    min_b_x = min(b1_x3, b2_x5)\n    max_b_x = max(b1_x4, b2_x6)\n    \n    min_b_y = min(b1_y3, b2_y5)\n    max_b_y = max(b1_y4, b2_y6)\n    \n    # Now, check if the white rectangle is completely inside the union\n    # So, check if:\n    # w_x1 >= min_b_x and w_x2 <= max_b_x\n    # and w_y1 >= min_b_y and w_y2 <= max_b_y\n    \n    if (w_x1 >= min_b_x and w_x2 <= max_b_x and\n        w_y1 >= min_b_y and w_y2 <= max_b_y):\n        # Then white is completely covered\n        print(\"NO\")\n    else:\n        print(\"YES\")\n    \nif __name__ == \"__main__\":\n    is_white_visible()",
+        "test_results": [
+            {
+                "input": "2 2 4 4\n8 8 9 9\n7 7 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "8 8 9 10\n2 3 6 9\n4 4 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "1 1 3 3\n9 9 10 10\n8 8 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "8 6 9 9\n6 7 8 9\n1 2 6 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "2 6 4 8\n9 11 11 14\n1 7 3 10",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "9 9 10 10\n5 6 7 8\n4 4 6 6",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "6 3 8 8\n8 9 9 10\n5 5 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "4 6 6 8\n10 5 12 7\n5 2 7 4",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "9 6 10 10\n8 5 9 9\n3 3 5 5",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "1 8 5 10\n7 1 9 9\n6 4 8 8",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 3,
+        "code": "def main():\n    # Read input\n    x1, y1, x2, y2 = map(int, input().split())\n    x3, y3, x4, y4 = map(int, input().split())\n    x5, y5, x6, y6 = map(int, input().split())\n    \n    # Function to check if a point is inside a rectangle\n    def is_inside(rect):\n        x, y = rect\n        return x < point[0] < x2 and y < point[1] < y2\n    \n    # Function to check if a point is inside both black rectangles\n    def is_inside_both(rect1, rect2, point):\n        return is_inside(rect1) and is_inside(rect2)\n    \n    # Check if there exists a point that is outside both black rectangles and inside the white rectangle\n    # To find such a point, check the regions not covered by the black rectangles but within the white\n    # We can consider the white rectangle's edges and see if any part is not covered by the black sheets\n    # Another approach is to calculate the area of the white rectangle not covered by either black rectangle\n    # If the area is greater than zero, then output YES\n    \n    # Compute the area of the white rectangle\n    white_area = (x2 - x1) * (y2 - y1)\n    \n    # Compute the area of the white rectangle covered by the first black rectangle\n    # The area is the intersection of white and black1\n    # To compute the intersection area, find the overlap in x and y\n    x_overlap1 = max(0, min(x2, x4) - max(x1, x3))\n    y_overlap1 = max(0, min(y2, y4) - max(y1, y3))\n    black1_area = x_overlap1 * y_overlap1\n    \n    # Compute the area of the white rectangle covered by the second black rectangle\n    x_overlap2 = max(0, min(x2, x6) - max(x1, x5))\n    y_overlap2 = max(0, min(y2, y6) - max(y1, y5))\n    black2_area = x_overlap2 * y_overlap2\n    \n    # Compute the area covered by both black rectangles on the white sheet\n    total_covered = black1_area + black2_area\n    # But we need to subtract the overlapping area between black1 and black2 on the white sheet\n    # Because otherwise, we might be double-counting the area where both black sheets overlap\n    # So, compute the intersection area between black1 and black2 on the white sheet\n    x_overlap_both = max(0, min(x4, x6) - max(x3, x5))\n    y_overlap_both = max(0, min(y4, y6) - max(y3, y5))\n    overlap_area = x_overlap_both * y_overlap_both\n    total_covered -= overlap_area\n    \n    # The remaining area is the part of the white sheet not covered by either black sheet\n    remaining_area = white_area - total_covered\n    if remaining_area > 0:\n        print(\"YES\")\n    else:\n        print(\"NO\")\n    \nmain()",
+        "test_results": [
+            {
+                "input": "2 2 4 4\n8 8 9 9\n7 7 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "8 8 9 10\n2 3 6 9\n4 4 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "1 1 3 3\n9 9 10 10\n8 8 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "8 6 9 9\n6 7 8 9\n1 2 6 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "2 6 4 8\n9 11 11 14\n1 7 3 10",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "9 9 10 10\n5 6 7 8\n4 4 6 6",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "6 3 8 8\n8 9 9 10\n5 5 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "4 6 6 8\n10 5 12 7\n5 2 7 4",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "9 6 10 10\n8 5 9 9\n3 3 5 5",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "1 8 5 10\n7 1 9 9\n6 4 8 8",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 4,
+        "code": "def solve():\n    # Read input\n    x1, y1, x2, y2 = map(int, input().split())\n    x3, y3, x4, y4 = map(int, input().split())\n    x5, y5, x6, y6 = map(int, input().split())\n\n    # Function to find the intersection of two rectangles\n    def intersect(a, b):\n        x_left = max(a[0], b[0])\n        x_right = min(a[2], b[2])\n        y_bottom = max(a[1], b[1])\n        y_top = min(a[3], b[3])\n        if x_left >= x_right or y_bottom >= y_top:\n            return None  # No intersection\n        return (x_left, y_bottom, x_right, y_top)\n\n    # Check if the white rectangle is covered by both black rectangles\n    # So, if any part of the white rectangle is not covered by either, return YES\n    # Otherwise, NO\n\n    # Find the area not covered by the first black rectangle\n    white = (x1, y1, x2, y2)\n    black1 = (x3, y3, x4, y4)\n    black2 = (x5, y5, x6, y6)\n\n    # Check if the white rectangle is completely covered by both black rectangles\n    # If any part is not covered by either, output YES\n    # Else, output NO\n\n    # Find the area not covered by black1\n    not_covered1 = intersect(white, black1)\n    not_covered2 = intersect(white, black2)\n    not_covered = intersect(not_covered1, not_covered2)\n\n    if not_covered is None:\n        print(\"NO\")\n    else:\n        # There exists a point that is in white and not covered by either black\n        print(\"YES\")\n\nsolve()",
+        "test_results": [
+            {
+                "input": "2 2 4 4\n8 8 9 9\n7 7 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpy7ya9k9w.py\", line 41, in <module>\n    solve()\n  File \"/tmp/tmpy7ya9k9w.py\", line 33, in solve\n    not_covered = intersect(not_covered1, not_covered2)\n  File \"/tmp/tmpy7ya9k9w.py\", line 9, in intersect\n    x_left = max(a[0], b[0])\nTypeError: 'NoneType' object is not subscriptable\n"
+            },
+            {
+                "input": "8 8 9 10\n2 3 6 9\n4 4 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp63eeal1z.py\", line 41, in <module>\n    solve()\n  File \"/tmp/tmp63eeal1z.py\", line 33, in solve\n    not_covered = intersect(not_covered1, not_covered2)\n  File \"/tmp/tmp63eeal1z.py\", line 9, in intersect\n    x_left = max(a[0], b[0])\nTypeError: 'NoneType' object is not subscriptable\n"
+            },
+            {
+                "input": "1 1 3 3\n9 9 10 10\n8 8 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpqdk7tg8i.py\", line 41, in <module>\n    solve()\n  File \"/tmp/tmpqdk7tg8i.py\", line 33, in solve\n    not_covered = intersect(not_covered1, not_covered2)\n  File \"/tmp/tmpqdk7tg8i.py\", line 9, in intersect\n    x_left = max(a[0], b[0])\nTypeError: 'NoneType' object is not subscriptable\n"
+            },
+            {
+                "input": "8 6 9 9\n6 7 8 9\n1 2 6 9",
+                "standard_solution_output": "YES",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpn627yvp1.py\", line 41, in <module>\n    solve()\n  File \"/tmp/tmpn627yvp1.py\", line 33, in solve\n    not_covered = intersect(not_covered1, not_covered2)\n  File \"/tmp/tmpn627yvp1.py\", line 9, in intersect\n    x_left = max(a[0], b[0])\nTypeError: 'NoneType' object is not subscriptable\n"
+            },
+            {
+                "input": "2 6 4 8\n9 11 11 14\n1 7 3 10",
+                "standard_solution_output": "YES",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmps39suvkw.py\", line 41, in <module>\n    solve()\n  File \"/tmp/tmps39suvkw.py\", line 33, in solve\n    not_covered = intersect(not_covered1, not_covered2)\n  File \"/tmp/tmps39suvkw.py\", line 9, in intersect\n    x_left = max(a[0], b[0])\nTypeError: 'NoneType' object is not subscriptable\n"
+            },
+            {
+                "input": "9 9 10 10\n5 6 7 8\n4 4 6 6",
+                "standard_solution_output": "YES",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp593j0uiy.py\", line 41, in <module>\n    solve()\n  File \"/tmp/tmp593j0uiy.py\", line 33, in solve\n    not_covered = intersect(not_covered1, not_covered2)\n  File \"/tmp/tmp593j0uiy.py\", line 9, in intersect\n    x_left = max(a[0], b[0])\nTypeError: 'NoneType' object is not subscriptable\n"
+            },
+            {
+                "input": "6 3 8 8\n8 9 9 10\n5 5 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpd0havshm.py\", line 41, in <module>\n    solve()\n  File \"/tmp/tmpd0havshm.py\", line 33, in solve\n    not_covered = intersect(not_covered1, not_covered2)\n  File \"/tmp/tmpd0havshm.py\", line 9, in intersect\n    x_left = max(a[0], b[0])\nTypeError: 'NoneType' object is not subscriptable\n"
+            },
+            {
+                "input": "4 6 6 8\n10 5 12 7\n5 2 7 4",
+                "standard_solution_output": "YES",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpegja8s7_.py\", line 41, in <module>\n    solve()\n  File \"/tmp/tmpegja8s7_.py\", line 33, in solve\n    not_covered = intersect(not_covered1, not_covered2)\n  File \"/tmp/tmpegja8s7_.py\", line 9, in intersect\n    x_left = max(a[0], b[0])\nTypeError: 'NoneType' object is not subscriptable\n"
+            },
+            {
+                "input": "9 6 10 10\n8 5 9 9\n3 3 5 5",
+                "standard_solution_output": "YES",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpibga6su5.py\", line 41, in <module>\n    solve()\n  File \"/tmp/tmpibga6su5.py\", line 33, in solve\n    not_covered = intersect(not_covered1, not_covered2)\n  File \"/tmp/tmpibga6su5.py\", line 9, in intersect\n    x_left = max(a[0], b[0])\nTypeError: 'NoneType' object is not subscriptable\n"
+            },
+            {
+                "input": "1 8 5 10\n7 1 9 9\n6 4 8 8",
+                "standard_solution_output": "YES",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmppimii98h.py\", line 41, in <module>\n    solve()\n  File \"/tmp/tmppimii98h.py\", line 33, in solve\n    not_covered = intersect(not_covered1, not_covered2)\n  File \"/tmp/tmppimii98h.py\", line 9, in intersect\n    x_left = max(a[0], b[0])\nTypeError: 'NoneType' object is not subscriptable\n"
+            }
+        ]
+    },
+    {
+        "code_index": 5,
+        "code": "def main():\n    import sys\n    input = sys.stdin.read().split()\n    x1 = int(input[0])\n    y1 = int(input[1])\n    x2 = int(input[2])\n    y2 = int(input[3])\n    \n    x3 = int(input[4])\n    y3 = int(input[5])\n    x4 = int(input[6])\n    y4 = int(input[7])\n    \n    x5 = int(input[8])\n    y5 = int(input[9])\n    x6 = int(input[10])\n    y6 = int(input[11])\n    \n    # Define the white rectangle\n    white = (x1, y1, x2, y2)\n    \n    # Define the first black rectangle\n    black1 = (x3, y3, x4, y4)\n    \n    # Define the second black rectangle\n    black2 = (x5, y5, x6, y6)\n    \n    # Function to check if a point is inside a rectangle\n    def is_inside(rect, x, y):\n        return (rect[0] < x < rect[2] and rect[1] < y < rect[3])\n    \n    # Function to check if a point is inside both black rectangles\n    def is_inside_both(black1, black2, x, y):\n        return is_inside(black1, x, y) and is_inside(black2, x, y)\n    \n    # Check all four corners of the white rectangle\n    corners = [\n        (x1, y1),\n        (x2, y1),\n        (x2, y2),\n        (x1, y2)\n    ]\n    \n    # Check if any corner is not strictly inside either black rectangle\n    for corner in corners:\n        if not is_inside_both(black1, black2, corner[0], corner[1]):\n            print(\"YES\")\n            return\n    \n    # Now check the edges of the white rectangle\n    # Check the left edge (x == x1)\n    for y in range(y1, y2):\n        if not is_inside_both(black1, black2, x1, y):\n            print(\"YES\")\n            return\n    \n    # Check the right edge (x == x2)\n    for y in range(y1, y2):\n        if not is_inside_both(black1, black2, x2, y):\n            print(\"YES\")\n            return\n    \n    # Check the bottom edge (y == y1)\n    for x in range(x1, x2):\n        if not is_inside_both(black1, black2, x, y1):\n            print(\"YES\")\n            return\n    \n    # Check the top edge (y == y2)\n    for x in range(x1, x2):\n        if not is_inside_both(black1, black2, x, y2):\n            print(\"YES\")\n            return\n    \n    # If none of the above, then check if the white rectangle is completely covered\n    # This is a bit more complex, but let's see\n    # Check if the union of the two black rectangles covers the entire white rectangle\n    # To do this, we need to check if the white rectangle is entirely inside the union of the two black rectangles\n    \n    # First, check if the entire white rectangle is covered by either black1 or black2\n    # We can do this by checking if white is a subset of black1 or black2, or their union\n    \n    # Check if white is a subset of black1\n    is_subset_black1 = True\n    for x in range(x1, x2):\n        for y in range(y1, y2):\n            if not is_inside(black1, x, y):\n                is_subset_black1 = False\n                break\n        if not is_subset_black1:\n            break\n    \n    # Check if white is a subset of black2\n    is_subset_black2 = True\n    for x in range(x1, x2):\n        for y in range(y1, y2):\n            if not is_inside(black2, x, y):\n                is_subset_black2 = False\n                break\n        if not is_subset_black2:\n            break\n    \n    # If the white is a subset of either, then it's completely covered\n    if is_subset_black1 or is_subset_black2:\n        print(\"NO\")\n        return\n    \n    # Now check if the union of black1 and black2 covers the entire white rectangle\n    # For this, the white must be covered by the union of the two black rectangles\n    \n    # To check this, we can create a merged rectangle that is the union of black1 and black2\n    # Then check if the merged rectangle covers the entire white rectangle\n    \n    # Function to merge two rectangles into one, if they overlap\n    def merge_rectangles(r1, r2):\n        # r1 and r2 are tuples (x1, y1, x2, y2)\n        # Compute the merged rectangle\n        x_min = min(r1[0], r2[0])\n        y_min = min(r1[1], r2[1])\n        x_max = max(r1[2], r2[2])\n        y_max = max(r1[3], r2[3])\n        return (x_min, y_min, x_max, y_max)\n    \n    merged = merge_rectangles(black1, black2)\n    \n    # Now check if the merged rectangle covers the entire white rectangle\n    # So, white must be a subset of merged\n    # Check if x1 >= merged[0], y1 >= merged[1], x2 <= merged[2], y2 <= merged[3]\n    if (x1 >= merged[0] and y1 >= merged[1] and x2 <= merged[2] and y2 <= merged[3]):\n        print(\"NO\")\n        return\n    \n    # If none of the above, then some part of the white is visible\n    print(\"YES\")\n    \nmain()",
+        "test_results": [
+            {
+                "input": "2 2 4 4\n8 8 9 9\n7 7 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "8 8 9 10\n2 3 6 9\n4 4 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "1 1 3 3\n9 9 10 10\n8 8 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "8 6 9 9\n6 7 8 9\n1 2 6 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "2 6 4 8\n9 11 11 14\n1 7 3 10",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "9 9 10 10\n5 6 7 8\n4 4 6 6",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "6 3 8 8\n8 9 9 10\n5 5 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "4 6 6 8\n10 5 12 7\n5 2 7 4",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "9 6 10 10\n8 5 9 9\n3 3 5 5",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "1 8 5 10\n7 1 9 9\n6 4 8 8",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 6,
+        "code": "def main():\n    # Read input\n    import sys\n    input = sys.stdin.read().split()\n    x1, y1, x2, y2 = map(int, input[:4])\n    x3, y3, x4, y4 = map(int, input[4:8])\n    x5, y5, x6, y6 = map(int, input[8:12])\n\n    # Function to check if a point is inside a rectangle\n    def is_inside_rectangle(x, y, rect):\n        return rect[0] < x < rect[1] and rect[2] < y < rect[3]\n\n    # Function to check if a point is inside both black sheets\n    def is_inside_both_black(x, y):\n        return is_inside_rectangle(x, y, (x3, y3, x4, y4)) and is_inside_rectangle(x, y, (x5, y5, x6, y6))\n\n    # Function to check if a point is inside the white sheet\n    def is_inside_white(x, y):\n        return x1 < x < x2 and y1 < y < y2\n\n    # Check all four corners of the white sheet\n    corners = [(x1, y1), (x2, y2), (x1, y2), (x1, y1)]\n    for point in corners:\n        if not is_inside_both_black(point[0], point[1]):\n            if is_inside_white(point[0], point[1]):\n                print(\"YES\")\n                return\n\n    # Check edges of the white sheet\n    # Check left edge (x = x1)\n    # We need to check from y1+epsilon to y2-epsilon\n    # Similarly for other edges\n    # Since the points are edges, they are not strictly inside the black sheets, but may be on their borders\n    # So, we need to check if any part of the white's edges is not covered by the black sheets.\n\n    # Check left edge (x = x1)\n    left_start = y1\n    left_end = y2\n    for y in range(left_start, left_end):\n        x = x1\n        if not (x3 <= x < x4 or x5 <= x < x6):\n            if y1 < y < y2:\n                print(\"YES\")\n                return\n\n    # Check right edge (x = x2)\n    right_start = y1\n    right_end = y2\n    for y in range(right_start, right_end):\n        x = x2\n        if not (x3 <= x < x4 or x5 <= x < x6):\n            if y1 < y < y2:\n                print(\"YES\")\n                return\n\n    # Check bottom edge (y = y1)\n    bottom_start = x1\n    bottom_end = x2\n    for x in range(bottom_start, bottom_end):\n        y = y1\n        if not (y3 <= y < y4 or y5 <= y < y6):\n            if x1 < x < x2:\n                print(\"YES\")\n                return\n\n    # Check top edge (y = y2)\n    top_start = x1\n    top_end = x2\n    for x in range(top_start, top_end):\n        y = y2\n        if not (y3 <= y < y4 or y5 <= y < y6):\n            if x1 < x < x2:\n                print(\"YES\")\n                return\n\n    # Check if the white rectangle is completely covered\n    # If none of the above checks passed, then output NO\n    print(\"NO\")\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "2 2 4 4\n8 8 9 9\n7 7 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "8 8 9 10\n2 3 6 9\n4 4 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "1 1 3 3\n9 9 10 10\n8 8 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "8 6 9 9\n6 7 8 9\n1 2 6 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "2 6 4 8\n9 11 11 14\n1 7 3 10",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "9 9 10 10\n5 6 7 8\n4 4 6 6",
+                "standard_solution_output": "YES",
+                "model_output": "NO",
+                "error": null
+            },
+            {
+                "input": "6 3 8 8\n8 9 9 10\n5 5 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "4 6 6 8\n10 5 12 7\n5 2 7 4",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "9 6 10 10\n8 5 9 9\n3 3 5 5",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "1 8 5 10\n7 1 9 9\n6 4 8 8",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 7,
+        "code": "def main():\n    # Read input\n    x1, y1, x2, y2 = map(int, input().split())\n    x3, y3, x4, y4 = map(int, input().split())\n    x5, y5, x6, y6 = map(int, input().split())\n    \n    # Calculate the area of the white rectangle\n    area_white = (x2 - x1) * (y2 - y1)\n    \n    # Calculate the area of the first black rectangle\n    area_black1 = (x4 - x3) * (y4 - y3)\n    # Calculate the area of the second black rectangle\n    area_black2 = (x6 - x5) * (y6 - y5)\n    \n    # Calculate the intersection area of the two black rectangles\n    x_int_left = max(x3, x5)\n    x_int_right = min(x4, x6)\n    y_int_bottom = max(y3, y5)\n    y_int_top = min(y4, y6)\n    \n    if x_int_left >= x_int_right or y_int_bottom >= y_int_top:\n        area_intersection = 0\n    else:\n        area_intersection = (x_int_right - x_int_left) * (y_int_top - y_int_bottom)\n    \n    # Calculate the union area of the two black rectangles\n    area_union = area_black1 + area_black2 - area_intersection\n    \n    # Check if any part of the white rectangle is visible\n    if area_white > area_union:\n        print(\"YES\")\n    else:\n        print(\"NO\")\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "2 2 4 4\n8 8 9 9\n7 7 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "NO",
+                "error": null
+            },
+            {
+                "input": "8 8 9 10\n2 3 6 9\n4 4 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "NO",
+                "error": null
+            },
+            {
+                "input": "1 1 3 3\n9 9 10 10\n8 8 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "8 6 9 9\n6 7 8 9\n1 2 6 9",
+                "standard_solution_output": "YES",
+                "model_output": "NO",
+                "error": null
+            },
+            {
+                "input": "2 6 4 8\n9 11 11 14\n1 7 3 10",
+                "standard_solution_output": "YES",
+                "model_output": "NO",
+                "error": null
+            },
+            {
+                "input": "9 9 10 10\n5 6 7 8\n4 4 6 6",
+                "standard_solution_output": "YES",
+                "model_output": "NO",
+                "error": null
+            },
+            {
+                "input": "6 3 8 8\n8 9 9 10\n5 5 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "4 6 6 8\n10 5 12 7\n5 2 7 4",
+                "standard_solution_output": "YES",
+                "model_output": "NO",
+                "error": null
+            },
+            {
+                "input": "9 6 10 10\n8 5 9 9\n3 3 5 5",
+                "standard_solution_output": "YES",
+                "model_output": "NO",
+                "error": null
+            },
+            {
+                "input": "1 8 5 10\n7 1 9 9\n6 4 8 8",
+                "standard_solution_output": "YES",
+                "model_output": "NO",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 8,
+        "code": "def solve():\n    # Read the inputs\n    x1, y1, x2, y2 = map(int, input().split())\n    x3, y3, x4, y4 = map(int, input().split())\n    x5, y5, x6, y6 = map(int, input().split())\n    \n    # Define the white rectangle\n    white = (x1, y1, x2, y2)\n    # Define the first black rectangle\n    black1 = (x3, y3, x4, y4)\n    # Define the second black rectangle\n    black2 = (x5, y5, x6, y6)\n    \n    # Function to check if a point is inside a rectangle\n    def is_inside(rect, x, y):\n        x_min, y_min, x_max, y_max = rect\n        return x_min <= x < x_max and y_min <= y < y_max\n    \n    # Function to check if a point is inside both black sheets\n    def inside_black(x, y):\n        return is_inside(black1, x, y) and is_inside(black2, x, y)\n    \n    # Function to check if a point is inside white and outside both blacks\n    def visible_point(x, y):\n        return is_inside(white, x, y) and not inside_black(x, y)\n    \n    # Now, we need to find if any point in the white rectangle is not strictly inside the white and strictly outside both blacks\n    # But checking all points is impossible, so we need to find regions in white that are not covered by the blacks\n    \n    # Find the intersection of the two black rectangles\n    # First, compute the overlap between black1 and black2\n    black_overlap = (\n        max(x3, x5),\n        max(y3, y5),\n        min(x4, x6),\n        min(y4, y6)\n    )\n    \n    # Now, find the area of the white rectangle that is not covered by either black1 or black2\n    # To compute this, we can compute the area of white minus the area of the union of white \u2229 black1 and white \u2229 black2\n    # But it's easier to compute the regions of white that are not covered by either black\n    \n    # Compute the area of the white rectangle\n    area_white = (x2 - x1) * (y2 - y1)\n    \n    # Compute the area of the part of white covered by black1\n    overlap_black1_white = 0\n    x1_b1w = max(x1, x3)\n    y1_b1w = max(y1, y3)\n    x2_b1w = min(x2, x4)\n    y2_b1w = min(y2, y4)\n    if x1_b1w < x2_b1w and y1_b1w < y2_b1w:\n        overlap_black1_white = (x2_b1w - x1_b1w) * (y2_b1w - y1_b1w)\n    \n    # Compute the area of the part of white covered by black2\n    overlap_black2_white = 0\n    x1_b2w = max(x1, x5)\n    y1_b2w = max(y1, y5)\n    x2_b2w = min(x2, x6)\n    y2_b2w = min(y2, y6)\n    if x1_b2w < x2_b2w and y1_b2w < y2_b2w:\n        overlap_black2_white = (x2_b2w - x1_b2w) * (y2_b2w - y1_b2w)\n    \n    # Compute the area of the part of white covered by both blacks\n    overlap_both = 0\n    x1_both = max(x1, x3, x5)\n    y1_both = max(y1, y3, y5)\n    x2_both = min(x2, x4, x6)\n    y2_both = min(y2, y4, y6)\n    if x1_both < x2_both and y1_both < y2_both:\n        overlap_both = (x2_both - x1_both) * (y2_both - y1_both)\n    \n    # Compute the area of white not covered by either black\n    area_visible = area_white - overlap_black1_white - overlap_black2_white + overlap_both\n    if area_visible > 0:\n        print(\"YES\")\n    else:\n        print(\"NO\")\n    \nsolve()",
+        "test_results": [
+            {
+                "input": "2 2 4 4\n8 8 9 9\n7 7 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "8 8 9 10\n2 3 6 9\n4 4 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "1 1 3 3\n9 9 10 10\n8 8 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "8 6 9 9\n6 7 8 9\n1 2 6 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "2 6 4 8\n9 11 11 14\n1 7 3 10",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "9 9 10 10\n5 6 7 8\n4 4 6 6",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "6 3 8 8\n8 9 9 10\n5 5 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "4 6 6 8\n10 5 12 7\n5 2 7 4",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "9 6 10 10\n8 5 9 9\n3 3 5 5",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "1 8 5 10\n7 1 9 9\n6 4 8 8",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 9,
+        "code": "def solve():\n    # Read the white sheet coordinates\n    x1, y1, x2, y2 = map(int, input().split())\n    # Read the first black sheet\n    x3, y3, x4, y4 = map(int, input().split())\n    # Read the second black sheet\n    x5, y5, x6, y6 = map(int, input().split())\n    \n    # Define a function to check if a point is inside a rectangle\n    def is_inside(rect):\n        x, y = rect\n        return (x >= 0 and x <= x2 and y >= 0 and y <= y2)\n    \n    # Check if the white sheet is completely covered by the two black sheets\n    # We need to find any point in the white sheet that is not inside either black sheet\n    # One approach is to check the four corners of the white sheet\n    # Alternatively, find the union of the two black sheets and check if their union covers the white sheet\n    # But for simplicity, let's check the four corners and see if any is not covered\n    \n    # Check the four corners of the white sheet\n    white_corners = [(x1, y1), (x1, y2), (x2, y1), (x2, y2)]\n    \n    # Check each corner against both black sheets\n    for corner in white_corners:\n        # Check if the corner is inside the first black sheet\n        if (corner[0] >= x3 and corner[0] <= x4 and\n            corner[1] >= y3 and corner[1] <= y4):\n            # Check if it's also inside the second black sheet\n            if (corner[0] >= x5 and corner[0] <= x6 and\n                corner[1] >= y5 and corner[1] <= y6):\n                # The corner is covered by both, so continue\n                continue\n            else:\n                # The corner is not covered by both, so it's visible\n                print(\"YES\")\n                return\n        else:\n            # Check the second black sheet\n            if (corner[0] >= x5 and corner[0] <= x6 and\n                corner[1] >= y5 and corner[1] <= y6):\n                # Corner is covered by second black sheet\n                continue\n            else:\n                # Corner is not covered by either, so visible\n                print(\"YES\")\n                return\n    \n    # If all four corners are covered by the two black sheets, check if any part of the white sheet is still visible\n    # This is necessary because the four corners might be covered, but some central part is not\n    # For example, imagine the white sheet is a square, and the two black sheets cover the four corners, but leave a hole in the center\n    \n    # To check this, we can see if the union of the two black sheets covers the entire white sheet\n    # Alternatively, we can check if the white sheet is completely covered by the union of the two black sheets\n    \n    # Let's calculate the union of the two black sheets\n    # But calculating the union is complicated, so perhaps it's easier to find if there exists a region in the white sheet that is not covered by either black sheet\n    \n    # Another approach is to find the area of the white sheet not covered by either black sheet\n    # If this area is greater than zero, output YES\n    \n    # To find if any part of the white sheet is uncovered, perhaps it's easier to check the edges or find the intersection\n    \n    # Let's find the area of the white sheet that is not covered by either black sheet\n    \n    # Calculate the area of the white sheet\n    area_white = (x2 - x1) * (y2 - y1)\n    \n    # Calculate the area covered by the first black sheet on the white sheet\n    overlap1 = max(0, min(x4, x2) - max(x3, x1)) * max(0, min(y4, y2) - max(y3, y1))\n    \n    # Calculate the area covered by the second black sheet on the white sheet\n    overlap2 = max(0, min(x6, x2) - max(x5, x1)) * max(0, min(y6, y2) - max(y5, y1))\n    \n    # Calculate the total covered area\n    total_covered = overlap1 + overlap2\n    \n    # If the total_covered is less than area_white, then there is some uncovered area\n    if total_covered < area_white:\n        print(\"YES\")\n    else:\n        print(\"NO\")\n    \n    return\n\nsolve()",
+        "test_results": [
+            {
+                "input": "2 2 4 4\n8 8 9 9\n7 7 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "8 8 9 10\n2 3 6 9\n4 4 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "1 1 3 3\n9 9 10 10\n8 8 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "8 6 9 9\n6 7 8 9\n1 2 6 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "2 6 4 8\n9 11 11 14\n1 7 3 10",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "9 9 10 10\n5 6 7 8\n4 4 6 6",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "6 3 8 8\n8 9 9 10\n5 5 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "4 6 6 8\n10 5 12 7\n5 2 7 4",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "9 6 10 10\n8 5 9 9\n3 3 5 5",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "1 8 5 10\n7 1 9 9\n6 4 8 8",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 10,
+        "code": "def main():\n    # Read input\n    x1, y1, x2, y2 = map(int, input().split())\n    x3, y3, x4, y4 = map(int, input().split())\n    x5, y5, x6, y6 = map(int, input().split())\n    \n    # Check if the white sheet is completely covered by the two black sheets\n    # If any part of the white sheet is not covered, output \"YES\"\n    \n    # Check all four corners of the white sheet\n    # If any corner is not covered, return \"YES\"\n    \n    # Alternatively, check if the union of the two black sheets covers the white sheet completely\n    \n    # Let's define a function to check if a point is covered by a rectangle\n    def is_covered_by_rect(point, rect):\n        x, y = point\n        return (x >= rect[0] and x <= rect[1] and\n                y >= rect[2] and y <= rect[3])\n    \n    # Check if all four corners are covered\n    corners = [(x1, y1), (x2, y2), (x1, y2), (x2, y1)]\n    all_covered = True\n    for (x, y) in corners:\n        covered = False\n        if is_covered_by_rect((x, y), (x3, y3, x4, y4)):\n            covered = True\n        if is_covered_by_rect((x, y), (x5, y5, x6, y6)):\n            covered = True\n        if not covered:\n            all_covered = False\n            break\n    if not all_covered:\n        print(\"YES\")\n    else:\n        print(\"NO\")\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "2 2 4 4\n8 8 9 9\n7 7 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "8 8 9 10\n2 3 6 9\n4 4 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "1 1 3 3\n9 9 10 10\n8 8 9 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "8 6 9 9\n6 7 8 9\n1 2 6 9",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "2 6 4 8\n9 11 11 14\n1 7 3 10",
+                "standard_solution_output": "YES",
+                "model_output": "NO",
+                "error": null
+            },
+            {
+                "input": "9 9 10 10\n5 6 7 8\n4 4 6 6",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "6 3 8 8\n8 9 9 10\n5 5 7 7",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "4 6 6 8\n10 5 12 7\n5 2 7 4",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "9 6 10 10\n8 5 9 9\n3 3 5 5",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            },
+            {
+                "input": "1 8 5 10\n7 1 9 9\n6 4 8 8",
+                "standard_solution_output": "YES",
+                "model_output": "YES",
+                "error": null
+            }
+        ]
+    }
+]

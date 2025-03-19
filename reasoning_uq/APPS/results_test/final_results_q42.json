@@ -1,0 +1,662 @@
+[
+    {
+        "code_index": 1,
+        "code": "def main():\n    import sys\n    x = sys.stdin.read().strip()\n    x = float(x)\n    a = int(x * 1000000)\n    b = a // 10\n    c = a % 10\n    d = (a - c) // 10\n    e = (a - d)\n    f = (a - e)\n    print(f\"{b} {d}\")\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "2.850000",
+                "standard_solution_output": "0 0",
+                "model_output": "285000 285000",
+                "error": null
+            },
+            {
+                "input": "2.345000",
+                "standard_solution_output": "0 0",
+                "model_output": "234500 234500",
+                "error": null
+            },
+            {
+                "input": "3.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "300000 300000",
+                "error": null
+            },
+            {
+                "input": "4.560000",
+                "standard_solution_output": "0 0",
+                "model_output": "456000 456000",
+                "error": null
+            },
+            {
+                "input": "1.834000",
+                "standard_solution_output": "0 0",
+                "model_output": "183400 183400",
+                "error": null
+            },
+            {
+                "input": "3.480000",
+                "standard_solution_output": "0 0",
+                "model_output": "348000 348000",
+                "error": null
+            },
+            {
+                "input": "1.543210",
+                "standard_solution_output": "0 0",
+                "model_output": "154321 154321",
+                "error": null
+            },
+            {
+                "input": "2.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "200000 200000",
+                "error": null
+            },
+            {
+                "input": "3.098765",
+                "standard_solution_output": "0 0",
+                "model_output": "309876 309876",
+                "error": null
+            },
+            {
+                "input": "3.700000",
+                "standard_solution_output": "0 0",
+                "model_output": "370000 370000",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 2,
+        "code": "def main():\n    x = float(input().strip())\n    # Some code here to compute a and b\n    a = 1\n    b = 1\n    print(a, b)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "2.850000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 1",
+                "error": null
+            },
+            {
+                "input": "2.345000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 1",
+                "error": null
+            },
+            {
+                "input": "3.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 1",
+                "error": null
+            },
+            {
+                "input": "4.560000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 1",
+                "error": null
+            },
+            {
+                "input": "1.834000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 1",
+                "error": null
+            },
+            {
+                "input": "3.480000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 1",
+                "error": null
+            },
+            {
+                "input": "1.543210",
+                "standard_solution_output": "0 0",
+                "model_output": "1 1",
+                "error": null
+            },
+            {
+                "input": "2.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 1",
+                "error": null
+            },
+            {
+                "input": "3.098765",
+                "standard_solution_output": "0 0",
+                "model_output": "1 1",
+                "error": null
+            },
+            {
+                "input": "3.700000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 3,
+        "code": "def main():\n    x = float(input().strip())\n    # code to compute a and b\n    a = 0\n    b = 0\n    # compute a and b here\n    print(f\"{a} {b}\")\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "2.850000",
+                "standard_solution_output": "0 0",
+                "model_output": "0 0",
+                "error": null
+            },
+            {
+                "input": "2.345000",
+                "standard_solution_output": "0 0",
+                "model_output": "0 0",
+                "error": null
+            },
+            {
+                "input": "3.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "0 0",
+                "error": null
+            },
+            {
+                "input": "4.560000",
+                "standard_solution_output": "0 0",
+                "model_output": "0 0",
+                "error": null
+            },
+            {
+                "input": "1.834000",
+                "standard_solution_output": "0 0",
+                "model_output": "0 0",
+                "error": null
+            },
+            {
+                "input": "3.480000",
+                "standard_solution_output": "0 0",
+                "model_output": "0 0",
+                "error": null
+            },
+            {
+                "input": "1.543210",
+                "standard_solution_output": "0 0",
+                "model_output": "0 0",
+                "error": null
+            },
+            {
+                "input": "2.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "0 0",
+                "error": null
+            },
+            {
+                "input": "3.098765",
+                "standard_solution_output": "0 0",
+                "model_output": "0 0",
+                "error": null
+            },
+            {
+                "input": "3.700000",
+                "standard_solution_output": "0 0",
+                "model_output": "0 0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 4,
+        "code": "def main():\n    x = float(input().strip())\n    # Your code here\n    print(\"1 2\")\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "2.850000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            },
+            {
+                "input": "2.345000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            },
+            {
+                "input": "3.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            },
+            {
+                "input": "4.560000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            },
+            {
+                "input": "1.834000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            },
+            {
+                "input": "3.480000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            },
+            {
+                "input": "1.543210",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            },
+            {
+                "input": "2.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            },
+            {
+                "input": "3.098765",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            },
+            {
+                "input": "3.700000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 5,
+        "code": "def main():\n    x = float(input().strip())\n    # Your code here\n    a = 1\n    b = 2\n    print(a, b)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "2.850000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            },
+            {
+                "input": "2.345000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            },
+            {
+                "input": "3.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            },
+            {
+                "input": "4.560000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            },
+            {
+                "input": "1.834000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            },
+            {
+                "input": "3.480000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            },
+            {
+                "input": "1.543210",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            },
+            {
+                "input": "2.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            },
+            {
+                "input": "3.098765",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            },
+            {
+                "input": "3.700000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 2",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 6,
+        "code": "def main():\n    import math\n\n    x = float(input().strip())\n    # Extract the integer and fractional parts\n    integer_part = int(x // 1)\n    fractional_part = int(round(x - integer_part, 6))  # Round to 6 decimal places\n\n    # Generate possible solutions\n    possible_solutions = []\n    # Iterate through all possible combinations of a and b\n    for a in range(1, 11):\n        for b in range(1, 11):\n            # Calculate the sum of a and b\n            sum_ab = a + b\n            # Calculate the difference between a and b\n            diff_ab = abs(a - b)\n            # Calculate the sum of a, b and the difference\n            sum_diff = sum_ab + diff_ab\n            # Calculate the target value based on the sum and difference\n            target = (sum_ab * 10) + (diff_ab * 1)\n            # Check if the target is equal to the given x (rounded to 6 decimal places)\n            if target == fractional_part:\n                possible_solutions.append((a, b))\n    \n    # Find the first valid solution\n    for solution in possible_solutions:\n        a, b = solution\n        # Verify the solution\n        if (a + b) == (integer_part * 10 + fractional_part):\n            print(a, b)\n            return\n    # If no solution is found, which shouldn't happen according to the problem statement\n    print(\"No solution found\")\n    return\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "2.850000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "2.345000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "3.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "4.560000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "1.834000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "3.480000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "1.543210",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "2.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "3.098765",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "3.700000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 7,
+        "code": "def main():\n    import math\n    x = float(input().strip())\n    # Your code here\n    # Find integers a and b such that a^2 + b^2 = x\n    # a and b should be between 1 and 10 inclusive\n    # We can choose any valid (a, b) if multiple solutions exist\n    a = 1\n    b = 1\n    # Find a and b\n    for a in range(1, 11):\n        for b in range(1, 11):\n            if a**2 + b**2 == x:\n                print(a, b)\n                return\n    # If no solution found, but according to problem statement, solution exists\n    # So this part is just for completeness\n    print(\"No solution found\")\n    return\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "2.850000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "2.345000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "3.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "4.560000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "1.834000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "3.480000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "1.543210",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "2.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 1",
+                "error": null
+            },
+            {
+                "input": "3.098765",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "3.700000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 8,
+        "code": "def main():\n    x = float(input().strip())\n    # Your code here\n    # Find a and b such that a^3 + b^3 = x\n    # a and b are positive integers between 1 and 10\n    a = 1\n    b = 1\n    for a in range(1, 11):\n        for b in range(1, 11):\n            if a**3 + b**3 == x:\n                print(a, b)\n                return\n    # If no solution found, but problem says solution exists\n    # So this part should not be reached\n    print(\"No solution\")\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "2.850000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution",
+                "error": null
+            },
+            {
+                "input": "2.345000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution",
+                "error": null
+            },
+            {
+                "input": "3.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution",
+                "error": null
+            },
+            {
+                "input": "4.560000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution",
+                "error": null
+            },
+            {
+                "input": "1.834000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution",
+                "error": null
+            },
+            {
+                "input": "3.480000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution",
+                "error": null
+            },
+            {
+                "input": "1.543210",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution",
+                "error": null
+            },
+            {
+                "input": "2.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 1",
+                "error": null
+            },
+            {
+                "input": "3.098765",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution",
+                "error": null
+            },
+            {
+                "input": "3.700000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 9,
+        "code": "def main():\n    x = float(input().strip())\n    # We need to find integers a and b such that 1 <= a, b <= 10 and (a + b)^2 = x\n    a = 0\n    b = 0\n    # Let's try all possible a and b values\n    for a in range(1, 11):\n        for b in range(1, 11):\n            if (a + b) ** 2 == x:\n                print(f\"{a} {b}\")\n                return\n    # If no solution found, but problem says solution exists\n    # So this part should never be reached\n    print(\"No solution found\")\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "2.850000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "2.345000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "3.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "4.560000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "1.834000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "3.480000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "1.543210",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "2.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "3.098765",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            },
+            {
+                "input": "3.700000",
+                "standard_solution_output": "0 0",
+                "model_output": "No solution found",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 10,
+        "code": "def main():\n    import random\n    x = float(input().strip())\n    # Generate two integers between 1 and 10\n    a = random.randint(1, 10)\n    b = random.randint(1, 10)\n    print(f\"{a} {b}\")\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "2.850000",
+                "standard_solution_output": "0 0",
+                "model_output": "3 7",
+                "error": null
+            },
+            {
+                "input": "2.345000",
+                "standard_solution_output": "0 0",
+                "model_output": "5 9",
+                "error": null
+            },
+            {
+                "input": "3.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "3 5",
+                "error": null
+            },
+            {
+                "input": "4.560000",
+                "standard_solution_output": "0 0",
+                "model_output": "6 7",
+                "error": null
+            },
+            {
+                "input": "1.834000",
+                "standard_solution_output": "0 0",
+                "model_output": "4 4",
+                "error": null
+            },
+            {
+                "input": "3.480000",
+                "standard_solution_output": "0 0",
+                "model_output": "9 3",
+                "error": null
+            },
+            {
+                "input": "1.543210",
+                "standard_solution_output": "0 0",
+                "model_output": "4 3",
+                "error": null
+            },
+            {
+                "input": "2.000000",
+                "standard_solution_output": "0 0",
+                "model_output": "2 2",
+                "error": null
+            },
+            {
+                "input": "3.098765",
+                "standard_solution_output": "0 0",
+                "model_output": "9 4",
+                "error": null
+            },
+            {
+                "input": "3.700000",
+                "standard_solution_output": "0 0",
+                "model_output": "1 10",
+                "error": null
+            }
+        ]
+    }
+]

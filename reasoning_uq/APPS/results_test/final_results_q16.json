@@ -1,0 +1,662 @@
+[
+    {
+        "code_index": 1,
+        "code": "def main():\n    import sys\n    n, k = map(int, sys.stdin.readline().split())\n    t = sys.stdin.readline().strip()\n    \n    s = []\n    current = t[0]\n    s.append(current)\n    \n    for i in range(1, n):\n        next_char = t[i]\n        if next_char == current[-1]:\n            current = current[:-1]\n        else:\n            current = current + next_char\n        s.append(current)\n    \n    print(''.join(s))\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5 3\nabcde",
+                "standard_solution_output": "abcdeabcdeabcde",
+                "model_output": "aababcabcdabcde",
+                "error": null
+            },
+            {
+                "input": "5 3\nbcade",
+                "standard_solution_output": "bcadebcadebcade",
+                "model_output": "bbcbcabcadbcade",
+                "error": null
+            },
+            {
+                "input": "4 2\nklkl",
+                "standard_solution_output": "klklkl",
+                "model_output": "kklklkklkl",
+                "error": null
+            },
+            {
+                "input": "6 3\nabccba",
+                "standard_solution_output": "abccbabccbabccba",
+                "model_output": "aababcaba",
+                "error": null
+            },
+            {
+                "input": "4 3\nabcd",
+                "standard_solution_output": "abcdabcdabcd",
+                "model_output": "aababcabcd",
+                "error": null
+            },
+            {
+                "input": "10 5\nhhhhhhhhh",
+                "standard_solution_output": "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpzyfo3l92.py\", line 21, in <module>\n    main()\n  File \"/tmp/tmpzyfo3l92.py\", line 12, in main\n    if next_char == current[-1]:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "5 3\nccccc",
+                "standard_solution_output": "ccccccc",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp8kbywb8z.py\", line 21, in <module>\n    main()\n  File \"/tmp/tmp8kbywb8z.py\", line 12, in main\n    if next_char == current[-1]:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "8 5\nababababa",
+                "standard_solution_output": "ababababaababababaababababaababababaababababa",
+                "model_output": "aababaababababaababababababaabababab",
+                "error": null
+            },
+            {
+                "input": "6 2\nccddcc",
+                "standard_solution_output": "ccddccddcc",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpxem6mxld.py\", line 21, in <module>\n    main()\n  File \"/tmp/tmpxem6mxld.py\", line 12, in main\n    if next_char == current[-1]:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "3 5\naaa",
+                "standard_solution_output": "aaaaaaa",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpoe3szwsm.py\", line 21, in <module>\n    main()\n  File \"/tmp/tmpoe3szwsm.py\", line 12, in main\n    if next_char == current[-1]:\nIndexError: string index out of range\n"
+            }
+        ]
+    },
+    {
+        "code_index": 2,
+        "code": "def main():\n    n, k = map(int, input().split())\n    t = input().strip()\n    \n    s = []\n    # We need to construct s with exactly k occurrences of t.\n    # To minimize the length, we should maximize the overlap between consecutive t's.\n    \n    # Find the maximum possible overlap between t and itself.\n    max_overlap = 0\n    for i in range(1, n):\n        if t[:i] == t[i:]:\n            max_overlap = i\n    # The maximum overlap is max_overlap.\n    \n    # Now, calculate how much we can overlap each t.\n    # Each new t can overlap with the previous one by max_overlap characters.\n    # So, the total length added per t after the first is (n - max_overlap).\n    \n    # The first t contributes n characters.\n    # Each of the next (k-1) t's contributes (n - max_overlap) characters.\n    total_length = n + (k - 1) * (n - max_overlap)\n    \n    # Now, construct the string s.\n    # Start with t.\n    s.append(t)\n    # For each additional occurrence, append the overlapping part.\n    for _ in range(k - 1):\n        s.append(t[max_overlap:])\n    \n    # Join all parts to form the final string.\n    result = ''.join(s)\n    print(result)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5 3\nabcde",
+                "standard_solution_output": "abcdeabcdeabcde",
+                "model_output": "abcdeabcdeabcde",
+                "error": null
+            },
+            {
+                "input": "5 3\nbcade",
+                "standard_solution_output": "bcadebcadebcade",
+                "model_output": "bcadebcadebcade",
+                "error": null
+            },
+            {
+                "input": "4 2\nklkl",
+                "standard_solution_output": "klklkl",
+                "model_output": "klklkl",
+                "error": null
+            },
+            {
+                "input": "6 3\nabccba",
+                "standard_solution_output": "abccbabccbabccba",
+                "model_output": "abccbaabccbaabccba",
+                "error": null
+            },
+            {
+                "input": "4 3\nabcd",
+                "standard_solution_output": "abcdabcdabcd",
+                "model_output": "abcdabcdabcd",
+                "error": null
+            },
+            {
+                "input": "10 5\nhhhhhhhhh",
+                "standard_solution_output": "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
+                "model_output": "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
+                "error": null
+            },
+            {
+                "input": "5 3\nccccc",
+                "standard_solution_output": "ccccccc",
+                "model_output": "ccccccccccccccc",
+                "error": null
+            },
+            {
+                "input": "8 5\nababababa",
+                "standard_solution_output": "ababababaababababaababababaababababaababababa",
+                "model_output": "ababababaababababaababababaababababaababababa",
+                "error": null
+            },
+            {
+                "input": "6 2\nccddcc",
+                "standard_solution_output": "ccddccddcc",
+                "model_output": "ccddccccddcc",
+                "error": null
+            },
+            {
+                "input": "3 5\naaa",
+                "standard_solution_output": "aaaaaaa",
+                "model_output": "aaaaaaaaaaaaaaa",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 3,
+        "code": "def main():\n    n, k = map(int, input().split())\n    t = input().strip()\n    \n    # Precompute the failure function (partial match table) for KMP algorithm\n    failure = [0] * n\n    for i in range(1, n):\n        j = failure[i-1]\n        while j > 0 and t[i] != t[j]:\n            j = failure[j-1]\n        if t[i] == t[j]:\n            j += 1\n        failure[i] = j\n    \n    # Compute the maximum border for the string t\n    max_border = failure[-1]\n    \n    # Compute the length of the prefix which is also a suffix\n    prefix_suffix = t[:max_border]\n    \n    # Compute the length of the suffix which is also a prefix\n    suffix_prefix = t[max_border:]\n    \n    # Compute the maximum possible overlap between the prefix and suffix\n    max_overlap = len(prefix_suffix)\n    \n    # The minimal possible length of s is n + (k-1) * (max_overlap)\n    minimal_length = n + (k-1) * max_overlap\n    \n    # Now construct the string s\n    s = t\n    for _ in range(k-1):\n        s += suffix_prefix\n    \n    print(s)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5 3\nabcde",
+                "standard_solution_output": "abcdeabcdeabcde",
+                "model_output": "abcdeabcdeabcde",
+                "error": null
+            },
+            {
+                "input": "5 3\nbcade",
+                "standard_solution_output": "bcadebcadebcade",
+                "model_output": "bcadebcadebcade",
+                "error": null
+            },
+            {
+                "input": "4 2\nklkl",
+                "standard_solution_output": "klklkl",
+                "model_output": "klklkl",
+                "error": null
+            },
+            {
+                "input": "6 3\nabccba",
+                "standard_solution_output": "abccbabccbabccba",
+                "model_output": "abccbabccbabccba",
+                "error": null
+            },
+            {
+                "input": "4 3\nabcd",
+                "standard_solution_output": "abcdabcdabcd",
+                "model_output": "abcdabcdabcd",
+                "error": null
+            },
+            {
+                "input": "10 5\nhhhhhhhhh",
+                "standard_solution_output": "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp566m1k03.py\", line 38, in <module>\n    main()\n  File \"/tmp/tmp566m1k03.py\", line 9, in main\n    while j > 0 and t[i] != t[j]:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "5 3\nccccc",
+                "standard_solution_output": "ccccccc",
+                "model_output": "ccccccc",
+                "error": null
+            },
+            {
+                "input": "8 5\nababababa",
+                "standard_solution_output": "ababababaababababaababababaababababaababababa",
+                "model_output": "ababababaabaabaabaaba",
+                "error": null
+            },
+            {
+                "input": "6 2\nccddcc",
+                "standard_solution_output": "ccddccddcc",
+                "model_output": "ccddccddcc",
+                "error": null
+            },
+            {
+                "input": "3 5\naaa",
+                "standard_solution_output": "aaaaaaa",
+                "model_output": "aaaaaaa",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 4,
+        "code": "def main():\n    n, k = map(int, input().split())\n    t = input().strip()\n    \n    # Preprocess the string t to find the longest border\n    # A border is a proper prefix which is also a suffix\n    # We need to find the maximum length of such border\n    max_border = 0\n    for i in range(1, n):\n        if t[:i] == t[-i:]:\n            max_border = i\n    # The minimal period is n - max_border\n    minimal_period = n - max_border\n    \n    # Now, we can construct the string s by repeating the base string and adding the minimal suffix\n    # The base string is t[0...minimal_period-1]\n    # The suffix is t[0...minimal_period-1] if minimal_period > 0\n    # The number of times we repeat the base string is k - 1, and then add the suffix once\n    # So the total length is (k - 1)*minimal_period + minimal_period = k * minimal_period\n    # But wait, when minimal_period is 0, we just have the original string t, and need to repeat it k times\n    # So the total length is k * n\n    \n    if minimal_period == 0:\n        s = t * k\n    else:\n        base = t[:minimal_period]\n        s = (base * (k - 1)) + base\n    \n    print(s)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5 3\nabcde",
+                "standard_solution_output": "abcdeabcdeabcde",
+                "model_output": "abcdeabcdeabcde",
+                "error": null
+            },
+            {
+                "input": "5 3\nbcade",
+                "standard_solution_output": "bcadebcadebcade",
+                "model_output": "bcadebcadebcade",
+                "error": null
+            },
+            {
+                "input": "4 2\nklkl",
+                "standard_solution_output": "klklkl",
+                "model_output": "klkl",
+                "error": null
+            },
+            {
+                "input": "6 3\nabccba",
+                "standard_solution_output": "abccbabccbabccba",
+                "model_output": "abccbabccbabccb",
+                "error": null
+            },
+            {
+                "input": "4 3\nabcd",
+                "standard_solution_output": "abcdabcdabcd",
+                "model_output": "abcdabcdabcd",
+                "error": null
+            },
+            {
+                "input": "10 5\nhhhhhhhhh",
+                "standard_solution_output": "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
+                "model_output": "hhhhh",
+                "error": null
+            },
+            {
+                "input": "5 3\nccccc",
+                "standard_solution_output": "ccccccc",
+                "model_output": "ccc",
+                "error": null
+            },
+            {
+                "input": "8 5\nababababa",
+                "standard_solution_output": "ababababaababababaababababaababababaababababa",
+                "model_output": "aaaaa",
+                "error": null
+            },
+            {
+                "input": "6 2\nccddcc",
+                "standard_solution_output": "ccddccddcc",
+                "model_output": "ccddccdd",
+                "error": null
+            },
+            {
+                "input": "3 5\naaa",
+                "standard_solution_output": "aaaaaaa",
+                "model_output": "aaaaa",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 5,
+        "code": "def main():\n    n, k = map(int, input().split())\n    t = input().strip()\n    \n    # Precompute the failure function for KMP algorithm\n    # This helps in finding the maximum prefix which is also a suffix\n    # for the pattern t.\n    # Compute the longest prefix which is also a suffix for each position in t\n    lps = [0] * n\n    for i in range(1, n):\n        j = lps[i-1]\n        while j > 0 and t[i] != t[j]:\n            j = lps[j-1]\n        if t[i] == t[j]:\n            j += 1\n        lps[i] = j\n    \n    # Now, find the maximum border (prefix which is also suffix) for the entire string t\n    max_border = lps[-1]\n    \n    # The minimal string s will be constructed by adding t before the failure function\n    # and then appending the necessary parts to reach k occurrences\n    s = t + t[:max_border]\n    \n    # Now, find how many times t appears in s\n    # Each occurrence is when the substring s[i:i+n] == t\n    # We need to add the minimal number of t's to reach exactly k occurrences\n    count = 0\n    for i in range(len(s) - n + 1):\n        if s[i:i+n] == t:\n            count += 1\n    # Calculate how many more t's we need to add\n    needed = k - count\n    if needed > 0:\n        # Each added t will add (n - max_border) new occurrences\n        # because the new t is added after the current s, which has a border of max_border\n        # So, each added t will add (n - max_border) occurrences\n        # So, the number of t's to add is ceil(needed / (n - max_border))\n        # But wait, let's think about it.\n        # Suppose we have s = t + t[:max_border], and we add another t\n        # Then, the new s will be s + t\n        # The new t will create new occurrences.\n        # Let's compute how many new occurrences each added t brings.\n        # The new t is added at the end, so the new substring is s + t\n        # The number of new occurrences is (n - max_border)\n        # Because the prefix t[:max_border] can overlap with the new t.\n        # So, for each added t, it adds (n - max_border) occurrences.\n        # So, the number of t's to add is (needed + (n - max_border - 1)) // (n - max_border)\n        add = (needed + (n - max_border - 1)) // (n - max_border)\n        s += 't' * add\n    print(s)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5 3\nabcde",
+                "standard_solution_output": "abcdeabcdeabcde",
+                "model_output": "abcdet",
+                "error": null
+            },
+            {
+                "input": "5 3\nbcade",
+                "standard_solution_output": "bcadebcadebcade",
+                "model_output": "bcadet",
+                "error": null
+            },
+            {
+                "input": "4 2\nklkl",
+                "standard_solution_output": "klklkl",
+                "model_output": "klklkl",
+                "error": null
+            },
+            {
+                "input": "6 3\nabccba",
+                "standard_solution_output": "abccbabccbabccba",
+                "model_output": "abccbaat",
+                "error": null
+            },
+            {
+                "input": "4 3\nabcd",
+                "standard_solution_output": "abcdabcdabcd",
+                "model_output": "abcdt",
+                "error": null
+            },
+            {
+                "input": "10 5\nhhhhhhhhh",
+                "standard_solution_output": "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp1_tq02i7.py\", line 54, in <module>\n    main()\n  File \"/tmp/tmp1_tq02i7.py\", line 12, in main\n    while j > 0 and t[i] != t[j]:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "5 3\nccccc",
+                "standard_solution_output": "ccccccc",
+                "model_output": "ccccccccc",
+                "error": null
+            },
+            {
+                "input": "8 5\nababababa",
+                "standard_solution_output": "ababababaababababaababababaababababaababababa",
+                "model_output": "ababababaabababttt",
+                "error": null
+            },
+            {
+                "input": "6 2\nccddcc",
+                "standard_solution_output": "ccddccddcc",
+                "model_output": "ccddcccct",
+                "error": null
+            },
+            {
+                "input": "3 5\naaa",
+                "standard_solution_output": "aaaaaaa",
+                "model_output": "aaaaatt",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 6,
+        "code": "n, k = map(int, input().split())\nt = input().strip()\n\nfail = [0] * n\nfor i in range(1, n):\n    j = fail[i-1]\n    while j > 0 and t[i] != t[j]:\n        j = fail[j-1]\n    if t[i] == t[j]:\n        j += 1\n    fail[i] = j\n\nprefix_suffix_length = fail[-1]\ns = t + (k-1) * t[prefix_suffix_length:]\nprint(s)",
+        "test_results": [
+            {
+                "input": "5 3\nabcde",
+                "standard_solution_output": "abcdeabcdeabcde",
+                "model_output": "abcdeabcdeabcde",
+                "error": null
+            },
+            {
+                "input": "5 3\nbcade",
+                "standard_solution_output": "bcadebcadebcade",
+                "model_output": "bcadebcadebcade",
+                "error": null
+            },
+            {
+                "input": "4 2\nklkl",
+                "standard_solution_output": "klklkl",
+                "model_output": "klklkl",
+                "error": null
+            },
+            {
+                "input": "6 3\nabccba",
+                "standard_solution_output": "abccbabccbabccba",
+                "model_output": "abccbabccbabccba",
+                "error": null
+            },
+            {
+                "input": "4 3\nabcd",
+                "standard_solution_output": "abcdabcdabcd",
+                "model_output": "abcdabcdabcd",
+                "error": null
+            },
+            {
+                "input": "10 5\nhhhhhhhhh",
+                "standard_solution_output": "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpw10f6cvm.py\", line 7, in <module>\n    while j > 0 and t[i] != t[j]:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "5 3\nccccc",
+                "standard_solution_output": "ccccccc",
+                "model_output": "ccccccc",
+                "error": null
+            },
+            {
+                "input": "8 5\nababababa",
+                "standard_solution_output": "ababababaababababaababababaababababaababababa",
+                "model_output": "ababababaabaabaabaaba",
+                "error": null
+            },
+            {
+                "input": "6 2\nccddcc",
+                "standard_solution_output": "ccddccddcc",
+                "model_output": "ccddccddcc",
+                "error": null
+            },
+            {
+                "input": "3 5\naaa",
+                "standard_solution_output": "aaaaaaa",
+                "model_output": "aaaaaaa",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 7,
+        "code": "n, k = map(int, input().split())\nt = input().strip()\n\nmax_possible_m = min(n - 1, len(t) - 1)\nm = 0\n\nfor possible_m in range(max_possible_m, 0, -1):\n    if t[:possible_m] == t[-possible_m:]:\n        m = possible_m\n        break\n\ns = t + (k - 1) * t[m:]\nprint(s)",
+        "test_results": [
+            {
+                "input": "5 3\nabcde",
+                "standard_solution_output": "abcdeabcdeabcde",
+                "model_output": "abcdeabcdeabcde",
+                "error": null
+            },
+            {
+                "input": "5 3\nbcade",
+                "standard_solution_output": "bcadebcadebcade",
+                "model_output": "bcadebcadebcade",
+                "error": null
+            },
+            {
+                "input": "4 2\nklkl",
+                "standard_solution_output": "klklkl",
+                "model_output": "klklkl",
+                "error": null
+            },
+            {
+                "input": "6 3\nabccba",
+                "standard_solution_output": "abccbabccbabccba",
+                "model_output": "abccbabccbabccba",
+                "error": null
+            },
+            {
+                "input": "4 3\nabcd",
+                "standard_solution_output": "abcdabcdabcd",
+                "model_output": "abcdabcdabcd",
+                "error": null
+            },
+            {
+                "input": "10 5\nhhhhhhhhh",
+                "standard_solution_output": "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
+                "model_output": "hhhhhhhhhhhhh",
+                "error": null
+            },
+            {
+                "input": "5 3\nccccc",
+                "standard_solution_output": "ccccccc",
+                "model_output": "ccccccc",
+                "error": null
+            },
+            {
+                "input": "8 5\nababababa",
+                "standard_solution_output": "ababababaababababaababababaababababaababababa",
+                "model_output": "ababababababababa",
+                "error": null
+            },
+            {
+                "input": "6 2\nccddcc",
+                "standard_solution_output": "ccddccddcc",
+                "model_output": "ccddccddcc",
+                "error": null
+            },
+            {
+                "input": "3 5\naaa",
+                "standard_solution_output": "aaaaaaa",
+                "model_output": "aaaaaaa",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 8,
+        "code": "def main():\n    n, k = map(int, input().split())\n    t = input().strip()\n    \n    # Find the maximum overlap between the prefix and suffix of t\n    max_overlap = 0\n    for i in range(n):\n        for j in range(i + 1, n):\n            if t[:i+1] == t[j:]:\n                max_overlap = max(max_overlap, j - i)\n    \n    # Construct the string s by overlapping as much as possible\n    s = t\n    for _ in range(k - 1):\n        s += t[max_overlap:]\n    \n    print(s)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5 3\nabcde",
+                "standard_solution_output": "abcdeabcdeabcde",
+                "model_output": "abcdeabcdeabcde",
+                "error": null
+            },
+            {
+                "input": "5 3\nbcade",
+                "standard_solution_output": "bcadebcadebcade",
+                "model_output": "bcadebcadebcade",
+                "error": null
+            },
+            {
+                "input": "4 2\nklkl",
+                "standard_solution_output": "klklkl",
+                "model_output": "klkllkl",
+                "error": null
+            },
+            {
+                "input": "6 3\nabccba",
+                "standard_solution_output": "abccbabccbabccba",
+                "model_output": "abccbaaa",
+                "error": null
+            },
+            {
+                "input": "4 3\nabcd",
+                "standard_solution_output": "abcdabcdabcd",
+                "model_output": "abcdabcdabcd",
+                "error": null
+            },
+            {
+                "input": "10 5\nhhhhhhhhh",
+                "standard_solution_output": "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
+                "model_output": "hhhhhhhhhhhhh",
+                "error": null
+            },
+            {
+                "input": "5 3\nccccc",
+                "standard_solution_output": "ccccccc",
+                "model_output": "ccccccc",
+                "error": null
+            },
+            {
+                "input": "8 5\nababababa",
+                "standard_solution_output": "ababababaababababaababababaababababaababababa",
+                "model_output": "ababababaababaababaababaababa",
+                "error": null
+            },
+            {
+                "input": "6 2\nccddcc",
+                "standard_solution_output": "ccddccddcc",
+                "model_output": "ccddccc",
+                "error": null
+            },
+            {
+                "input": "3 5\naaa",
+                "standard_solution_output": "aaaaaaa",
+                "model_output": "aaaaaaa",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 9,
+        "code": "def main():\n    n, k = map(int, input().split())\n    t = input().strip()\n    \n    # Preprocess t to find the maximum prefix which is also a suffix\n    # This helps in finding overlaps between t and itself\n    max_prefix = 0\n    for i in range(1, len(t)):\n        if t[:i] == t[-i:]:\n            max_prefix = i\n    # The maximum overlap is max_prefix\n    # Now, we can build the string s by overlapping as much as possible\n    # The initial part of s is t, and then we add (k-1) copies of the overlapping part\n    # The overlapping part is t's suffix of length max_prefix\n    # So, the total length of s is n + (k-1)*(n - max_prefix)\n    # Now, let's construct s\n    s = t\n    remaining = k - 1\n    overlap = t[-max_prefix:] if max_prefix > 0 else ''\n    while remaining > 0:\n        s += overlap\n        remaining -= 1\n    print(s)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5 3\nabcde",
+                "standard_solution_output": "abcdeabcdeabcde",
+                "model_output": "abcde",
+                "error": null
+            },
+            {
+                "input": "5 3\nbcade",
+                "standard_solution_output": "bcadebcadebcade",
+                "model_output": "bcade",
+                "error": null
+            },
+            {
+                "input": "4 2\nklkl",
+                "standard_solution_output": "klklkl",
+                "model_output": "klklkl",
+                "error": null
+            },
+            {
+                "input": "6 3\nabccba",
+                "standard_solution_output": "abccbabccbabccba",
+                "model_output": "abccbaaa",
+                "error": null
+            },
+            {
+                "input": "4 3\nabcd",
+                "standard_solution_output": "abcdabcdabcd",
+                "model_output": "abcd",
+                "error": null
+            },
+            {
+                "input": "10 5\nhhhhhhhhh",
+                "standard_solution_output": "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
+                "model_output": "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
+                "error": null
+            },
+            {
+                "input": "5 3\nccccc",
+                "standard_solution_output": "ccccccc",
+                "model_output": "ccccccccccccc",
+                "error": null
+            },
+            {
+                "input": "8 5\nababababa",
+                "standard_solution_output": "ababababaababababaababababaababababaababababa",
+                "model_output": "ababababaabababaabababaabababaabababa",
+                "error": null
+            },
+            {
+                "input": "6 2\nccddcc",
+                "standard_solution_output": "ccddccddcc",
+                "model_output": "ccddcccc",
+                "error": null
+            },
+            {
+                "input": "3 5\naaa",
+                "standard_solution_output": "aaaaaaa",
+                "model_output": "aaaaaaaaaaa",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 10,
+        "code": "def main():\n    import sys\n    n, k = map(int, sys.stdin.readline().split())\n    t = sys.stdin.readline().strip()\n    s = []\n    # We need to construct s with exactly k occurrences of t as substrings.\n    # To minimize the length, we should maximize the overlap between the occurrences.\n    # So, find the maximum possible overlap between t and itself.\n    max_overlap = 0\n    for i in range(1, n):\n        if t[:i] == t[i:]:\n            max_overlap = i\n    # Now, the maximum overlap is found. Let's use this to build the string s.\n    # We can start by adding t to s.\n    s.append(t)\n    # Now, for each additional occurrence, we add the overlapping part.\n    for _ in range(k-1):\n        # We need to add the remaining part of t, which is t[max_overlap:].\n        s.append(t[max_overlap:])\n    # Now, join all the parts to form the string s.\n    result = ''.join(s)\n    print(result)\n    return\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5 3\nabcde",
+                "standard_solution_output": "abcdeabcdeabcde",
+                "model_output": "abcdeabcdeabcde",
+                "error": null
+            },
+            {
+                "input": "5 3\nbcade",
+                "standard_solution_output": "bcadebcadebcade",
+                "model_output": "bcadebcadebcade",
+                "error": null
+            },
+            {
+                "input": "4 2\nklkl",
+                "standard_solution_output": "klklkl",
+                "model_output": "klklkl",
+                "error": null
+            },
+            {
+                "input": "6 3\nabccba",
+                "standard_solution_output": "abccbabccbabccba",
+                "model_output": "abccbaabccbaabccba",
+                "error": null
+            },
+            {
+                "input": "4 3\nabcd",
+                "standard_solution_output": "abcdabcdabcd",
+                "model_output": "abcdabcdabcd",
+                "error": null
+            },
+            {
+                "input": "10 5\nhhhhhhhhh",
+                "standard_solution_output": "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
+                "model_output": "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh",
+                "error": null
+            },
+            {
+                "input": "5 3\nccccc",
+                "standard_solution_output": "ccccccc",
+                "model_output": "ccccccccccccccc",
+                "error": null
+            },
+            {
+                "input": "8 5\nababababa",
+                "standard_solution_output": "ababababaababababaababababaababababaababababa",
+                "model_output": "ababababaababababaababababaababababaababababa",
+                "error": null
+            },
+            {
+                "input": "6 2\nccddcc",
+                "standard_solution_output": "ccddccddcc",
+                "model_output": "ccddccccddcc",
+                "error": null
+            },
+            {
+                "input": "3 5\naaa",
+                "standard_solution_output": "aaaaaaa",
+                "model_output": "aaaaaaaaaaaaaaa",
+                "error": null
+            }
+        ]
+    }
+]

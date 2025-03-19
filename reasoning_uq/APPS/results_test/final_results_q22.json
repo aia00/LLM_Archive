@@ -1,0 +1,662 @@
+[
+    {
+        "code_index": 1,
+        "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    n = int(data[0])\n    segments = []\n    for i in range(n):\n        l = int(data[1 + 2*i])\n        r = int(data[2 + 2*i])\n        segments.append( (l, r) )\n    \n    # Compute prefix and suffix maximums for the left and right endpoints\n    # For each position, we need to know the maximum left and the minimum right up to that point\n    # Similarly, for the suffix, the maximum left and minimum right from that point onwards\n    prefix_max_l = [0]*(n+1)\n    prefix_min_r = [0]*(n+1)\n    for i in range(n):\n        prefix_max_l[i+1] = max(prefix_max_l[i], segments[i][0])\n        prefix_min_r[i+1] = min(prefix_min_r[i], segments[i][1])\n    \n    suffix_max_l = [0]*(n+1)\n    suffix_min_r = [0]*(n+1)\n    for i in range(n-1, -1, -1):\n        suffix_max_l[i] = max(suffix_max_l[i+1], segments[i][0])\n        suffix_min_r[i] = min(suffix_min_r[i+1], segments[i][1])\n    \n    # Now, for each segment, if we remove it, the new intersection is the intersection of all segments except this one\n    max_length = 0\n    for i in range(n):\n        # The new intersection is the intersection of prefix up to i and suffix from i+1\n        new_l = max(prefix_max_l[i], suffix_max_l[i+1])\n        new_r = min(prefix_min_r[i], suffix_min_r[i+1])\n        if new_l > new_r:\n            continue\n        current_length = new_r - new_l\n        if current_length > max_length:\n            max_length = current_prefix_length\n    \n    print(max_length)\n    \nmain()",
+        "test_results": [
+            {
+                "input": "5\n7 9\n8 9\n9 9\n2 9\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n3 8\n2 9\n1 6\n4 9\n7 8",
+                "standard_solution_output": "2",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "7\n3 8\n6 9\n4 9\n9 9\n2 5\n0 1\n5 6\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "10\n6 7\n2 2\n4 9\n3 5\n9 8\n5 6\n7 8\n9 9\n0 0\n8 8\n1 1",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n9 9\n1 8\n9 9\n9 9\n9 9",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n7 9\n5 5\n9 9\n8 9\n4 8\n3 6",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n7 7\n3 5\n9 9\n6 6\n4 8\n2 2\n1 1\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "10\n6 2\n1 9\n8 8\n4 7\n5 4\n3 3\n9 9\n7 1\n0 0\n2 6\n9 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "7\n4 8\n1 5\n7 9\n2 7\n9 10\n9 10\n4 10",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n5 6\n2 3\n9 8\n4 9\n7 5\n1 8\n3 7\n6 4",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 2,
+        "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    n = int(data[0])\n    segments = []\n    for i in range(n):\n        l = int(data[1 + 2*i])\n        r = int(data[2 + 2*i])\n        segments.append((l, r))\n    \n    # Compute the maximum possible intersection after removing one segment\n    max_length = 0\n    for i in range(n):\n        # Compute the intersection of all segments except the i-th\n        current_l = segments[0][0]\n        current_r = segments[0][1]\n        for j in range(1, n):\n            if j == i:\n                continue\n            # Update current_l to the maximum of current_l and the j-th segment's left\n            current_l = max(current_l, segments[j][0])\n            # Update current_r to the minimum of current_r and the j-th segment's right\n            current_r = min(current_r, segments[j][1])\n        # The intersection is [current_l, current_r], its length is current_r - current_l\n        # But if current_l > current_r, the intersection is empty, so length is 0\n        if current_r > current_l:\n            length = current_r - current_l\n        else:\n            length = 0\n        if length > max_length:\n            max_length = length\n    print(max_length)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n7 9\n8 9\n9 9\n2 9\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n3 8\n2 9\n1 6\n4 9\n7 8",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "7\n3 8\n6 9\n4 9\n9 9\n2 5\n0 1\n5 6\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "10\n6 7\n2 2\n4 9\n3 5\n9 8\n5 6\n7 8\n9 9\n0 0\n8 8\n1 1",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n9 9\n1 8\n9 9\n9 9\n9 9",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n7 9\n5 5\n9 9\n8 9\n4 8\n3 6",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n7 7\n3 5\n9 9\n6 6\n4 8\n2 2\n1 1\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "10\n6 2\n1 9\n8 8\n4 7\n5 4\n3 3\n9 9\n7 1\n0 0\n2 6\n9 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "7\n4 8\n1 5\n7 9\n2 7\n9 10\n9 10\n4 10",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n5 6\n2 3\n9 8\n4 9\n7 5\n1 8\n3 7\n6 4",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 3,
+        "code": "def main():\n    import sys\n    input = sys.stdin.read().split()\n    n = int(input[0])\n    segments = []\n    idx = 1\n    for _ in range(n):\n        l = int(input[idx])\n        r = int(input[idx+1])\n        segments.append((l, r))\n        idx += 2\n    if n == 1:\n        print(0)\n        return\n    max_length = 0\n    for i in range(n):\n        # Compute the intersection of all segments except the i-th\n        # To compute this, we need to find the maximum of all lefts and the minimum of all rights\n        # But wait, that's not correct. Because when we remove a segment, the new left is the maximum of the remaining lefts, and the new right is the minimum of the remaining rights.\n        # But that's only true if all segments except i are considered.\n        # So for each i, we need to find the max of lefts excluding i, and min of rights excluding i.\n        # But how to do this efficiently?\n        # Since n can be up to 3e5, we need an O(n) solution.\n        # So we can precompute prefix and suffix max for lefts and prefix and suffix min for rights.\n        # Let's precompute prefix_max_l, suffix_max_l, prefix_min_r, suffix_min_r.\n        # Then for each i, the new left is max of prefix_max_l[i-1] and suffix_max_l[i+1], and similarly for right.\n        # Wait, but for i=0, prefix_max_l is not available. Similarly for i=n-1.\n\n        # So let's think about prefix and suffix arrays.\n\n        # Compute prefix_max_l: for each i, the maximum l from 0 to i.\n        # Compute suffix_max_l: for each i, the maximum l from i to n-1.\n        # Similarly for prefix_min_r and suffix_min_r.\n\n        # Then, for each i, the new left is the maximum of the prefix_max_l up to i-1 and suffix_max_l from i+1.\n        # Similarly, the new right is the minimum of prefix_min_r up to i-1 and suffix_min_r from i+1.\n\n        # So let's compute these prefix and suffix arrays.\n\n        # So, for the current i, the left is the maximum of all l's except the i-th. Which is the maximum between the maximum of the first i-1 segments and the maximum of the segments after i.\n\n        # Similarly, the right is the minimum between the minimum of the first i-1 segments and the minimum of the segments after i.\n\n        # So the steps are:\n        # 1. Precompute prefix_max_l, suffix_max_l, prefix_min_r, suffix_min_r.\n        # 2. For each i, compute new_left = max(prefix_max_l[i-1], suffix_max_l[i+1]) if i is not the first or last element.\n        #    If i is the first element, new_left is suffix_max_l[i+1].\n        #    If i is the last element, new_left is prefix_max_l[i-1].\n        #    Similarly for new_right.\n        # 3. The intersection is max(0, new_right - new_left). We take the maximum over all i.\n\n        # Now, let's think about how to compute prefix_max_l and suffix_max_l.\n\n        # Initialize prefix_max_l as an array where prefix_max_l[i] is the maximum l from 0 to i.\n        # Similarly, suffix_max_l[i] is the maximum l from i to n-1.\n\n        # So, for prefix_max_l:\n        # prefix_max_l[0] = segments[0][0]\n        # for i in 1 to n-1: prefix_max_l[i] = max(prefix_max_l[i-1], segments[i][0])\n\n        # For suffix_max_l:\n        # suffix_max_l[n-1] = segments[n-1][0]\n        # for i in n-2 down to 0: suffix_max_l[i] = max(suffix_max_l[i+1], segments[i][0])\n\n        # Similarly for prefix_min_r and suffix_min_r.\n\n        # Once we have these, for each i, new_left is:\n        # if i == 0: suffix_max_l[1]\n        # elif i == n-1: prefix_max_l[n-2]\n        # else: max(prefix_max_l[i-1], suffix_max_l[i+1])\n\n        # Similarly for new_right:\n        # if i == 0: suffix_min_r[1]\n        # elif i == n-1: prefix_min_r[n-2]\n        # else: min(prefix_min_r[i-1], suffix_min_r[i+1])\n\n        # So, the code can be structured as:\n\n        # Compute prefix_max_l, suffix_max_l, prefix_min_r, suffix_min_r.\n\n        # Then, for each i, compute new_left and new_right as above.\n\n        # Then, compute the length as max(0, new_right - new_left).\n\n        # Keep track of the maximum such length.\n\n        # Now, the problem is how to compute prefix_max_l, suffix_max_l, prefix_min_r, suffix_min_r.\n\n        # Let's implement this.\n\n        # Compute prefix_max_l:\n        prefix_max_l = [0] * n\n        prefix_max_l[0] = segments[0][0]\n        for i in range(1, n):\n            prefix_max_l[i] = max(prefix_max_l[i-1], segments[i][0])\n\n        # Compute suffix_max_l:\n        suffix_max_l = [0] * n\n        suffix_max_l[-1] = segments[-1][0]\n        for i in range(n-2, -1, -1):\n            suffix_max_l[i] = max(suffix_max_l[i+1], segments[i][0])\n\n        # Compute prefix_min_r:\n        prefix_min_r = [0] * n\n        prefix_min_r[0] = segments[0][1]\n        for i in range(1, n):\n            prefix_min_r[i] = min(prefix_min_r[i-1], segments[i][1])\n\n        # Compute suffix_min_r:\n        suffix_min_r = [0] * n\n        suffix_min_r[-1] = segments[-1][1]\n        for i in range(n-2, -1, -1):\n            suffix_min_r[i] = min(suffix_min_r[i+1], segments[i][1])\n\n        # Now, for each i, compute new_left and new_right.\n\n        # But wait, when i is 0, prefix_max_l is not available. So for i=0, new_left is suffix_max_l[1], but only if n>1. Similarly for i=n-1, new_left is prefix_max_l[n-2].\n\n        # So let's handle each case.\n\n        # Compute new_left:\n        if n == 1:\n            new_left = 0\n        else:\n            if i == 0:\n                new_left = suffix_max_l[1]\n            elif i == n-1:\n                new_left = prefix_max_l[n-2]\n            else:\n                new_left = max(prefix_max_l[i-1], suffix_max_l[i+1])\n\n        # Similarly for new_right:\n        if n == 1:\n            new_right = 0\n        else:\n            if i == 0:\n                new_right = suffix_min_r[1]\n            elif i == n-1:\n                new_right = prefix_min_r[n-2]\n            else:\n                new_right = min(prefix_min_r[i-1], suffix_min_r[i+1])\n\n        # Now, compute the length:\n        current_length = max(0, new_right - new_left)\n        if current_length > max_length:\n            max_length = current_length\n\n    print(max_length)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n7 9\n8 9\n9 9\n2 9\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n3 8\n2 9\n1 6\n4 9\n7 8",
+                "standard_solution_output": "2",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "7\n3 8\n6 9\n4 9\n9 9\n2 5\n0 1\n5 6\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "10\n6 7\n2 2\n4 9\n3 5\n9 8\n5 6\n7 8\n9 9\n0 0\n8 8\n1 1",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n9 9\n1 8\n9 9\n9 9\n9 9",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n7 9\n5 5\n9 9\n8 9\n4 8\n3 6",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n7 7\n3 5\n9 9\n6 6\n4 8\n2 2\n1 1\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "10\n6 2\n1 9\n8 8\n4 7\n5 4\n3 3\n9 9\n7 1\n0 0\n2 6\n9 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "7\n4 8\n1 5\n7 9\n2 7\n9 10\n9 10\n4 10",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n5 6\n2 3\n9 8\n4 9\n7 5\n1 8\n3 7\n6 4",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 4,
+        "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    n = int(data[0])\n    segments = []\n    index = 1\n    for _ in range(n):\n        l = int(data[index])\n        r = int(data[index + 1])\n        segments.append((l, r))\n        index += 2\n\n    # Compute the intersection of all segments except the i-th\n    max_length = 0\n    for i in range(n):\n        # Compute the new left and right for all segments except i\n        left = segments[0][0]\n        right = segments[0][1]\n        for j in range(n):\n            if j == i:\n                continue\n            if segments[j][0] < left:\n                left = segments[j][0]\n            if segments[j][1] > right:\n                right = segments[j][1]\n        current_length = right - left\n        if current_length > max_length:\n            max_length = current_length\n    print(max_length)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n7 9\n8 9\n9 9\n2 9\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "7",
+                "error": null
+            },
+            {
+                "input": "5\n3 8\n2 9\n1 6\n4 9\n7 8",
+                "standard_solution_output": "2",
+                "model_output": "8",
+                "error": null
+            },
+            {
+                "input": "7\n3 8\n6 9\n4 9\n9 9\n2 5\n0 1\n5 6\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "9",
+                "error": null
+            },
+            {
+                "input": "10\n6 7\n2 2\n4 9\n3 5\n9 8\n5 6\n7 8\n9 9\n0 0\n8 8\n1 1",
+                "standard_solution_output": "0",
+                "model_output": "9",
+                "error": null
+            },
+            {
+                "input": "5\n9 9\n1 8\n9 9\n9 9\n9 9",
+                "standard_solution_output": "0",
+                "model_output": "8",
+                "error": null
+            },
+            {
+                "input": "6\n7 9\n5 5\n9 9\n8 9\n4 8\n3 6",
+                "standard_solution_output": "0",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "8\n7 7\n3 5\n9 9\n6 6\n4 8\n2 2\n1 1\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "8",
+                "error": null
+            },
+            {
+                "input": "10\n6 2\n1 9\n8 8\n4 7\n5 4\n3 3\n9 9\n7 1\n0 0\n2 6\n9 8",
+                "standard_solution_output": "0",
+                "model_output": "9",
+                "error": null
+            },
+            {
+                "input": "7\n4 8\n1 5\n7 9\n2 7\n9 10\n9 10\n4 10",
+                "standard_solution_output": "0",
+                "model_output": "9",
+                "error": null
+            },
+            {
+                "input": "8\n5 6\n2 3\n9 8\n4 9\n7 5\n1 8\n3 7\n6 4",
+                "standard_solution_output": "0",
+                "model_output": "8",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 5,
+        "code": "def main():\n    import sys\n    n = int(sys.stdin.readline())\n    segments = []\n    for _ in range(n):\n        l, r = map(int, sys.stdin.readline().split())\n        segments.append( (l, r) )\n    \n    # Compute the maximum possible intersection after removing one segment\n    max_length = 0\n    # To compute the intersection of all but one segment, we can find the maximum of the left ends and the minimum of the right ends\n    # But since we have to exclude one segment, we need to find for each segment, the left and right max/min of the others.\n    # This can be done by precomputing prefix and suffix max for lefts and mins for rights.\n    \n    # Precompute prefix and suffix for lefts\n    prefix_left = [0]*n\n    suffix_left = [0]*n\n    prefix_left[0] = segments[0][0]\n    for i in range(1, n):\n        prefix_left[i] = max(prefix_left[i-1], segments[i][0])\n    \n    suffix_left[n-1] = segments[n-1][0]\n    for i in range(n-2, -1, -1):\n        suffix_left[i] = max(suffix_left[i+1], segments[i][0])\n    \n    # Precompute prefix and suffix for rights\n    prefix_right = [0]*n\n    suffix_right = [0]*n\n    prefix_right[0] = segments[0][1]\n    for i in range(1, n):\n        prefix_right[i] = min(prefix_right[i-1], segments[i][1])\n    \n    suffix_right[n-1] = segments[n-1][1]\n    for i in range(n-2, -1, -1):\n        suffix_right[i] = min(suffix_right[i+1], segments[i][1])\n    \n    # Now for each segment i, compute the intersection of all except i\n    for i in range(n):\n        current_left = max( prefix_left[i-1] if i > 0 else 0, suffix_left[i+1] if i < n-1 else 0 )\n        current_right = min( prefix_right[i-1] if i > 0 else 0, suffix_right[i+1] if i < n-1 else 0 )\n        # Wait, no. Because when we exclude segment i, the prefix_left is up to i-1, and the suffix_left starts from i+1. So the max of the lefts is max of prefix_left[i-1] and suffix_left[i+1]. Similarly for the right.\n        # So for current_left, it's the maximum of the lefts of all segments except i. Which is the maximum of the prefix_left up to i-1 and the suffix_left from i+1.\n        # Similarly for current_right, it's the minimum of prefix_right up to i-1 and suffix_right from i+1.\n        # So compute:\n        if i == 0:\n            left = suffix_left[1]\n        elif i == n-1:\n            left = prefix_left[n-2]\n        else:\n            left = max(prefix_left[i-1], suffix_left[i+1])\n        \n        if i == 0:\n            right = prefix_right[1]\n        elif i == n-1:\n            right = suffix_right[n-1-1]\n        else:\n            right = min(prefix_right[i-1], suffix_right[i+1])\n        \n        # Now, the intersection is [current_left, current_right]\n        # The length is max(0, current_right - current_left)\n        current_length = max(0, right - left)\n        if current_length > max_length:\n            max_length = current_length\n    \n    print(max_length)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n7 9\n8 9\n9 9\n2 9\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n3 8\n2 9\n1 6\n4 9\n7 8",
+                "standard_solution_output": "2",
+                "model_output": "4",
+                "error": null
+            },
+            {
+                "input": "7\n3 8\n6 9\n4 9\n9 9\n2 5\n0 1\n5 6\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "10\n6 7\n2 2\n4 9\n3 5\n9 8\n5 6\n7 8\n9 9\n0 0\n8 8\n1 1",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n9 9\n1 8\n9 9\n9 9\n9 9",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n7 9\n5 5\n9 9\n8 9\n4 8\n3 6",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n7 7\n3 5\n9 9\n6 6\n4 8\n2 2\n1 1\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "10\n6 2\n1 9\n8 8\n4 7\n5 4\n3 3\n9 9\n7 1\n0 0\n2 6\n9 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "7\n4 8\n1 5\n7 9\n2 7\n9 10\n9 10\n4 10",
+                "standard_solution_output": "0",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "8\n5 6\n2 3\n9 8\n4 9\n7 5\n1 8\n3 7\n6 4",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 6,
+        "code": "def main():\n    import sys\n    input = sys.stdin.read().split()\n    n = int(input[0])\n    segments = []\n    idx = 1\n    for _ in range(n):\n        l = int(input[idx])\n        r = int(input[idx+1])\n        segments.append( (l, r) )\n        idx +=2\n    \n    # Compute prefix maximums for left endpoints\n    prefix_l = [0]*(n+1)\n    prefix_r = [0]*(n+1)\n    for i in range(n):\n        prefix_l[i+1] = max(prefix_l[i], segments[i][0])\n        prefix_r[i+1] = max(prefix_r[i], segments[i][1])\n    \n    # Compute suffix maximums for left endpoints\n    suffix_l = [0]*(n+1)\n    suffix_r = [0]*(n+1)\n    for i in range(n-1, -1, -1):\n        suffix_l[i] = max(suffix_l[i+1], segments[i][0])\n        suffix_r[i] = max(suffix_r[i+1], segments[i][1])\n    \n    max_len = 0\n    for i in range(n):\n        # Remove the i-th segment\n        current_l = max(prefix_l[i] if i ==0 else prefix_l[i-1], suffix_l[i+1] if i ==n-1 else suffix_l[i+1])\n        current_r = max(prefix_r[i] if i ==0 else prefix_r[i-1], suffix_r[i+1] if i ==n-1 else suffix_r[i+1])\n        # The intersection is [current_l, current_r], but only if current_l <= current_r\n        if current_l > current_r:\n            continue\n        current_length = current_r - current_l\n        if current_length > max_len:\n            max_len = current_l - current_r\n            # Wait, no, wait. It's current_r - current_l. So the length is current_r - current_l.\n            # So if current_l <= current_r, the length is current_r - current_l.\n            # Else, 0.\n            # So the code above is incorrect.\n            # So correct the max_len calculation.\n            # So the code should be:\n            # current_length = max(0, current_r - current_l)\n            # So the code inside the loop is:\n            current_length = current_r - current_l\n            if current_length > max_len:\n                max_len = current_length\n        else:\n            current_length = 0\n        # So the correct code is:\n        # current_l = max(prefix_l[i], suffix_l[i+1]) if i is not 0 or n-1\n        # Wait, no. Let's think about the prefix and suffix arrays.\n        # For prefix_l, it's the maximum of the left endpoints up to i.\n        # For suffix_l, it's the maximum of the left endpoints from i onwards.\n        # So when we remove the i-th segment, the new left is the max of the prefix up to i-1 and the suffix starting at i+1.\n        # Similarly for the right.\n        # So for the left endpoint, it's the maximum of prefix_l[i] (if i>0) and suffix_l[i+1] (if i <n-1).\n        # Wait, no. Wait, the prefix_l is up to i, but if we remove i, then the prefix is up to i-1, and the suffix is from i+1 onwards.\n\n        # So for the left endpoint after removing i, it's the maximum between the prefix up to i-1 and the suffix starting at i+1.\n\n        # So for i=0, the prefix is nothing, so it's the suffix starting at i+1.\n\n        # Similarly for i=n-1, the suffix is nothing, so it's the prefix up to i-1.\n\n        # So the code should be:\n\n        # current_l = max( (prefix_l[i-1] if i>0 else -infinity), (suffix_l[i+1] if i <n-1 else -infinity) )\n        # Similarly for current_r.\n\n        # But how to represent -infinity? Maybe using a very small number, but perhaps in the code, it's better to handle it with conditionals.\n\n        # So, in code:\n\n        # if i ==0:\n        #     left_part = -infinity\n        # else:\n        #     left_part = prefix_l[i-1]\n        # if i ==n-1:\n        #     right_part = -infinity\n        # else:\n        #     right_part = suffix_l[i+1]\n        # current_l = max(left_part, right_part)\n        # Similarly for current_r.\n\n        # So in code:\n\n        left_part = prefix_l[i-1] if i > 0 else -float('inf')\n        right_part = suffix_l[i+1] if i < n-1 else -float('inf')\n        current_l = max(left_part, right_part)\n\n        left_part = prefix_r[i-1] if i >0 else -float('inf')\n        right_part = suffix_r[i+1] if i <n-1 else -float('inf')\n        current_r = max(left_part, right_part)\n\n        # Now, if current_l > current_r, the intersection is empty, so length is 0.\n        # Else, it's current_r - current_l.\n\n        if current_l > current_r:\n            current_length = 0\n        else:\n            current_length = current_r - current_l\n\n        if current_length > max_len:\n            max_len = current_length\n\n    print(max_len)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n7 9\n8 9\n9 9\n2 9\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "5\n3 8\n2 9\n1 6\n4 9\n7 8",
+                "standard_solution_output": "2",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "7\n3 8\n6 9\n4 9\n9 9\n2 5\n0 1\n5 6\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "10\n6 7\n2 2\n4 9\n3 5\n9 8\n5 6\n7 8\n9 9\n0 0\n8 8\n1 1",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n9 9\n1 8\n9 9\n9 9\n9 9",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n7 9\n5 5\n9 9\n8 9\n4 8\n3 6",
+                "standard_solution_output": "0",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "8\n7 7\n3 5\n9 9\n6 6\n4 8\n2 2\n1 1\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "10\n6 2\n1 9\n8 8\n4 7\n5 4\n3 3\n9 9\n7 1\n0 0\n2 6\n9 8",
+                "standard_solution_output": "0",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "7\n4 8\n1 5\n7 9\n2 7\n9 10\n9 10\n4 10",
+                "standard_solution_output": "0",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8\n5 6\n2 3\n9 8\n4 9\n7 5\n1 8\n3 7\n6 4",
+                "standard_solution_output": "0",
+                "model_output": "2",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 7,
+        "code": "def main():\n    import sys\n    input = sys.stdin.read().split()\n    n = int(input[0])\n    segments = []\n    idx = 1\n    for _ in range(n):\n        l = int(input[idx])\n        r = int(input[idx + 1])\n        segments.append((l, r))\n        idx += 2\n\n    max_length = 0\n    current_l = segments[0][0]\n    current_r = segments[0][1]\n    for i in range(1, n):\n        # Update the current maximum left and right\n        current_l = max(current_l, segments[i][0])\n        current_r = min(current_l, segments[i][1])\n        if current_r < current_l:\n            # If the intersection is empty, reset\n            current_l = segments[i][0]\n            current_r = segments[i][1]\n        # Calculate the length\n        length = current_r - current_l\n        if length > max_length:\n            max_length = length\n            # Record the best current segment and its index\n            best_segment = i\n            best_length = length\n\n    # Now, iterate through each possible segment to remove\n    for i in range(n):\n        # Compute the intersection of all segments except the i-th\n        # We need to find the maximum left and minimum right\n        # But this is O(n^2), which is too slow for n=3e5\n        # So we need a smarter approach\n        # We can precompute prefix and suffix maximums for lefts and minimums for rights\n        # Then for each i, the max_left is the max of prefix up to i-1 and suffix from i+1\n        # Similarly, min_right is the min of suffix from i+1 and prefix from i-1\n        # Wait, no. Wait, the segments are all the segments except i, so the max_left is the maximum of all l's except i's, and min_right is the minimum of all r's except i's.\n        # So to compute for each i, the max of l's except i, and min of r's except i.\n        # So we can precompute prefix max of l, suffix max of l, prefix min of r, suffix min of r.\n\n        # Compute prefix_max_l, suffix_max_l, prefix_min_r, suffix_min_r\n        # Then for each i, the max_l is max(prefix_max_l[i-1], suffix_max_l[i+1])\n        # Similarly, min_r is min(prefix_min_r[i-1], suffix_min_r[i+1])\n        # Then, if max_l <= min_r, the length is min_r - max_l, else 0.\n\n        # But how to compute this efficiently.\n\n        # Let's create prefix_max_l and suffix_max_l\n        # prefix_max_l[i] is the maximum l from 0 to i\n        # suffix_max_l[i] is the maximum l from i to n-1\n        prefix_max_l = [0] * n\n        suffix_max_l = [0] * n\n        prefix_min_r = [0] * n\n        suffix_min_r = [0] * n\n\n        prefix_max_l[0] = segments[0][0]\n        for i in range(1, n):\n            prefix_max_l[i] = max(prefix_max_l[i-1], segments[i][0])\n\n        suffix_max_l[-1] = segments[-1][0]\n        for i in range(n-2, -1, -1):\n            suffix_max_l[i] = max(suffix_max_l[i+1], segments[i][0])\n\n        prefix_min_r[0] = segments[0][1]\n        for i in range(1, n):\n            prefix_min_r[i] = min(prefix_min_r[i-1], segments[i][1])\n\n        suffix_min_r[-1] = segments[-1][1]\n        for i in range(n-2, -1, -1):\n            suffix_min_r[i] = min(suffix_min_r[i+1], segments[i][1])\n\n        # Now, for each i, compute max_l and min_r\n        max_l = max(prefix_max_l[i-1], suffix_max_l[i+1]) if i > 0 else suffix_max_l[i+1]\n        min_r = min(prefix_min_r[i-1], suffix_min_r[i+1]) if i < n-1 else prefix_min_r[i-1]\n\n        if max_l > min_r:\n            current_length = 0\n        else:\n            current_length = min_r - max_l\n\n        if current_length > max_length:\n            max_length = current_length\n\n    print(max_length)\n\nmain()",
+        "test_results": [
+            {
+                "input": "5\n7 9\n8 9\n9 9\n2 9\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n3 8\n2 9\n1 6\n4 9\n7 8",
+                "standard_solution_output": "2",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "7\n3 8\n6 9\n4 9\n9 9\n2 5\n0 1\n5 6\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "10\n6 7\n2 2\n4 9\n3 5\n9 8\n5 6\n7 8\n9 9\n0 0\n8 8\n1 1",
+                "standard_solution_output": "0",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "5\n9 9\n1 8\n9 9\n9 9\n9 9",
+                "standard_solution_output": "0",
+                "model_output": "7",
+                "error": null
+            },
+            {
+                "input": "6\n7 9\n5 5\n9 9\n8 9\n4 8\n3 6",
+                "standard_solution_output": "0",
+                "model_output": "4",
+                "error": null
+            },
+            {
+                "input": "8\n7 7\n3 5\n9 9\n6 6\n4 8\n2 2\n1 1\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "10\n6 2\n1 9\n8 8\n4 7\n5 4\n3 3\n9 9\n7 1\n0 0\n2 6\n9 8",
+                "standard_solution_output": "0",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "7\n4 8\n1 5\n7 9\n2 7\n9 10\n9 10\n4 10",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n5 6\n2 3\n9 8\n4 9\n7 5\n1 8\n3 7\n6 4",
+                "standard_solution_output": "0",
+                "model_output": "1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 8,
+        "code": "def main():\n    n = int(input())\n    segments = []\n    for _ in range(n):\n        l, r = map(int, input().split())\n        segments.append( (l, r) )\n    \n    # To find the maximum intersection after removing one segment\n    max_length = 0\n    # For each segment, remove it and compute the intersection of the rest\n    for i in range(n):\n        # Compute the intersection of all segments except the i-th\n        current_left = segments[0][0]\n        current_right = segments[0][1]\n        for j in range(1, n):\n            if j == i:\n                continue\n            l, r = segments[j]\n            if l > current_left:\n                current_left = l\n            if r < current_right:\n                current_right = r\n        # Compute the length\n        length = current_right - current_left\n        if length > max_length:\n            max_length = length\n    print(max_length)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n7 9\n8 9\n9 9\n2 9\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n3 8\n2 9\n1 6\n4 9\n7 8",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "7\n3 8\n6 9\n4 9\n9 9\n2 5\n0 1\n5 6\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "10\n6 7\n2 2\n4 9\n3 5\n9 8\n5 6\n7 8\n9 9\n0 0\n8 8\n1 1",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n9 9\n1 8\n9 9\n9 9\n9 9",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n7 9\n5 5\n9 9\n8 9\n4 8\n3 6",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n7 7\n3 5\n9 9\n6 6\n4 8\n2 2\n1 1\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "10\n6 2\n1 9\n8 8\n4 7\n5 4\n3 3\n9 9\n7 1\n0 0\n2 6\n9 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "7\n4 8\n1 5\n7 9\n2 7\n9 10\n9 10\n4 10",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n5 6\n2 3\n9 8\n4 9\n7 5\n1 8\n3 7\n6 4",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 9,
+        "code": "def main():\n    n = int(input())\n    segments = []\n    for _ in range(n):\n        l, r = map(int, input().split())\n        segments.append((l, r))\n    \n    max_length = 0\n    current_left = float('inf')\n    current_right = -float('inf')\n    \n    for i in range(n):\n        # Remove the i-th segment\n        # Update current_left and current_right\n        if i == 0:\n            current_left = segments[i][0]\n            current_right = segments[i][1]\n        else:\n            # Check if the current segment is the one being removed\n            # So, we need to see if the previous current_left and current_right\n            # are influenced by this segment\n            # Wait, this approach isn't correct. Because when you remove a segment,\n            # the new current_left and current_right are the maximum of all lefts and\n            # the minimum of all rights, but only considering the remaining segments.\n            # So, the approach of iterating and removing each segment and then recomputing is O(n^2), which is too slow for n=3e5.\n            # So, we need a smarter way.\n            # Hmm, perhaps we can precompute prefix and suffix max for lefts and min for rights.\n            # Let's think about it.\n            # For each segment, the maximum left is the max of all segments except the current one.\n            # Similarly, the minimum right is the min of all segments except the current one.\n            # Then, for each i, compute the intersection as max_left[i] and min_right[i], and the length is max(0, min_right[i] - max_left[i]).\n            # So, the problem reduces to precomputing these prefix and suffix arrays.\n            # So, the plan is:\n            # 1. Compute prefix_max_left: prefix_max_left[i] is the maximum of l_1 to l_i.\n            # 2. Compute suffix_max_left: suffix_max_left[i] is the maximum of l_i to l_n.\n            # 3. Compute prefix_min_right: prefix_min_right[i] is the minimum of r_1 to r_i.\n            # 4. Compute suffix_min_right: suffix_min_right[i] = min(r_i, r_{i+1}, ..., r_n).\n            # Then, for each i, the max left is max of prefix_max_left[i-1] and suffix_max_left[i+1].\n            # The min right is min of prefix_min_right[i-1] and suffix_min_right[i+1].\n            # The intersection is max(0, min_right - max_left).\n            # Then, find the maximum of these values over all i.\n            # This approach is O(n) time and O(n) space.\n            # So, let's implement this.\n            pass\n    # After computing for each i, the max_left and min_right, compute the maximum length.\n    # Then, output the maximum.\n    \n    # Now, implement the prefix and suffix arrays.\n    # Let's compute prefix_max_left and prefix_min_right.\n    prefix_max_left = [0] * n\n    prefix_min_right = [0] * n\n    suffix_max_left = [0] * n\n    suffix_min_right = [0] * n\n    \n    prefix_max_left[0] = segments[0][0]\n    prefix_min_right[0] = segments[0][1]\n    \n    for i in range(1, n):\n        prefix_max_left[i] = max(prefix_max_left[i-1], segments[i][0])\n        prefix_min_right[i] = min(prefix_min_right[i-1], segments[i][1])\n    \n    suffix_max_left[-1] = segments[-1][0]\n    suffix_min_right[-1] = segments[-1][1]\n    \n    for i in range(n-2, -1, -1):\n        suffix_max_left[i] = max(suffix_max_left[i+1], segments[i][0])\n        suffix_min_right[i] = min(suffix_min_right[i+1], segments[i][1])\n    \n    # Now, for each i, compute the max_left and min_right when removing i.\n    # max_left = max of all l's except i.\n    # min_right = min of all r's except i.\n    # So, max_left is max of prefix_max_left[i-1] and suffix_max_left[i+1]\n    # Similarly, min_right is min of prefix_min_right[i-1] and suffix_min_right[i+1]\n    # Then, compute the length.\n    max_length = 0\n    for i in range(n):\n        if i == 0:\n            current_max_left = suffix_max_left[1]\n            current_min_right = suffix_min_right[1]\n        elif i == n-1:\n            current_max_left = prefix_max_left[n-2]\n            current_min_right = prefix_min_right[n-2]\n        else:\n            current_max_left = max(prefix_max_left[i-1], suffix_max_left[i+1])\n            current_min_right = min(prefix_min_right[i-1], suffix_min_right[i+1])\n        length = current_min_right - current_max_left\n        if length > max_length:\n            max_length = length\n    print(max_length if max_length > 0 else 0)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n7 9\n8 9\n9 9\n2 9\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n3 8\n2 9\n1 6\n4 9\n7 8",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "7\n3 8\n6 9\n4 9\n9 9\n2 5\n0 1\n5 6\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "10\n6 7\n2 2\n4 9\n3 5\n9 8\n5 6\n7 8\n9 9\n0 0\n8 8\n1 1",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n9 9\n1 8\n9 9\n9 9\n9 9",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n7 9\n5 5\n9 9\n8 9\n4 8\n3 6",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n7 7\n3 5\n9 9\n6 6\n4 8\n2 2\n1 1\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "10\n6 2\n1 9\n8 8\n4 7\n5 4\n3 3\n9 9\n7 1\n0 0\n2 6\n9 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "7\n4 8\n1 5\n7 9\n2 7\n9 10\n9 10\n4 10",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n5 6\n2 3\n9 8\n4 9\n7 5\n1 8\n3 7\n6 4",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 10,
+        "code": "def main():\n    import sys\n    n = int(sys.stdin.readline())\n    segments = []\n    for _ in range(n):\n        l, r = map(int, sys.stdin.readline().split())\n        segments.append( (l, r) )\n    \n    # Compute the maximum possible intersection by removing exactly one segment.\n    max_length = 0\n    current_l = segments[0][0]\n    current_r = segments[0][1]\n    for i in range(1, n):\n        # Update current_l and current_r with the next segment\n        new_l = max(current_l, segments[i][0])\n        new_r = min(current_r, segments[i][1])\n        if new_l > new_r:\n            current_l = segments[i][0]\n            current_r = segments[i][1]\n        else:\n            current_l = new_l\n            current_r = new_r\n    # Now, for each possible segment to remove, compute the intersection of the rest\n    for i in range(n):\n        # Take all segments except the i-th\n        temp_segments = segments[:i] + segments[i+1:]\n        if not temp_segments:\n            continue\n        # Compute the intersection of temp_segments\n        current_l = temp_segments[0][0]\n        current_r = temp_segments[0][1]\n        for j in range(1, len(temp_segments)):\n            new_l = max(current_l, temp_segments[j][0])\n            new_r = min(current_r, temp_segments[j][1])\n            if new_l > new_r:\n                current_l = temp_segments[j][0]\n                current_r = temp_segments[j][1]\n            else:\n                current_l = new_l\n                current_r = new_r\n        length = max(0, current_r - current_l)\n        if length > max_length:\n            max_length = length\n    print(max_length)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n7 9\n8 9\n9 9\n2 9\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n3 8\n2 9\n1 6\n4 9\n7 8",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "7\n3 8\n6 9\n4 9\n9 9\n2 5\n0 1\n5 6\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "10\n6 7\n2 2\n4 9\n3 5\n9 8\n5 6\n7 8\n9 9\n0 0\n8 8\n1 1",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n9 9\n1 8\n9 9\n9 9\n9 9",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n7 9\n5 5\n9 9\n8 9\n4 8\n3 6",
+                "standard_solution_output": "0",
+                "model_output": "4",
+                "error": null
+            },
+            {
+                "input": "8\n7 7\n3 5\n9 9\n6 6\n4 8\n2 2\n1 1\n8 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "10\n6 2\n1 9\n8 8\n4 7\n5 4\n3 3\n9 9\n7 1\n0 0\n2 6\n9 8",
+                "standard_solution_output": "0",
+                "model_output": "4",
+                "error": null
+            },
+            {
+                "input": "7\n4 8\n1 5\n7 9\n2 7\n9 10\n9 10\n4 10",
+                "standard_solution_output": "0",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "8\n5 6\n2 3\n9 8\n4 9\n7 5\n1 8\n3 7\n6 4",
+                "standard_solution_output": "0",
+                "model_output": "4",
+                "error": null
+            }
+        ]
+    }
+]

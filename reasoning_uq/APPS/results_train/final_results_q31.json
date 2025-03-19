@@ -1,0 +1,662 @@
+[
+    {
+        "code_index": 1,
+        "code": "def main():\n    import sys\n    q = int(sys.stdin.readline())\n    for _ in range(q):\n        n, m = map(int, sys.stdin.readline().split())\n        # Compute the sum of last digits of numbers divisible by m up to n\n        # Let's find all multiples of m up to n\n        # The count is k = n // m\n        k = n // m\n        if k == 0:\n            print(0)\n            continue\n        # The last digits of m, 2m, 3m, ... km\n        # The last digit cycles every 10 numbers\n        # So, for m, m*2, m*3, ..., m*k\n        # The last digits of m, 2m, ..., (m*k) mod 10\n        # So, the last digits are (m mod 10), (2m mod 10), ..., (k*m mod 10)\n        # The last digits cycle every 20? Let's think about the pattern.\n        # For example, m=5: multiples are 5,10,15,20,... last digits 5,0,5,0,... repeating every 2.\n        # For m=7: multiples are 7,14,21,28,35,42,49,56,63,70,77,... last digits 7,4,1,8,5,2,9,6,3,0,7,... repeating every 10.\n        # So, the pattern for last digits repeats every 20 (since 20 is the LCM of 2 and 10?).\n        # So, for any m, the last digits of the multiples cycle every 20.\n        # So, to find the sum, we can compute how many full cycles there are and the remaining terms.\n\n        # Compute the last digit of m\n        last_digit = m % 10\n        # The pattern of last digits for m, 2m, 3m, ... (m*k) mod 10\n        # Let's generate the pattern for the first 20 terms\n        pattern = []\n        for i in range(20):\n            pattern.append( (last_digit * i) % 10 )\n        # Now, the sum is the sum of the first k elements of the pattern, considering how many full cycles and remainder.\n        # Number of full cycles = (k) // 20\n        # Number of remaining terms = k % 20\n        # Sum = (full_cycles * sum(pattern)) + sum of first remaining terms\n        # But wait, let's see: the pattern is for m, 2m, ..., 20m, but 20m is the 20th multiple.\n        # Wait, no. For i in 0 to 19, it's m*1, m*2, ..., m*20? No, i is from 0 to 19, which would be m*1, m*2, ..., m*20? Or is it m, 2m, ..., 20m? Wait, no, in the code, the loop is for i in 0-19, so the multiples are m*1, m*2, ..., m*20. So for i=0, it's m*1, which is the first multiple. Wait, no, m*0 is zero, but that's not considered. So the pattern is for the first 20 multiples, starting from m.\n\n        # So, the pattern is for the first 20 multiples, and it repeats every 20.\n\n        # So, the total number of terms is k.\n\n        # So, the number of full cycles is (k) // 20, and the remainder is (k) % 20.\n\n        # So, the sum is (full_cycles * sum(pattern)) + sum of the first 'remainder' terms.\n\n        # But wait, what if k is less than 20? Then full_cycles is 0, and we just take the sum of first k terms.\n\n        # So, let's compute:\n\n        full_cycles = k // 20\n        remainder = k % 20\n\n        sum_total = full_cycles * sum(pattern)\n        sum_total += sum(pattern[:remainder]) if remainder else 0\n\n        print(sum_total)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n1000000000000000000 7\n3 1\n1234567890123456789 11\n9876543210 2\n1000000000000000000 5",
+                "standard_solution_output": "642857142857142861\n6\n505050500505050505\n19753086420\n500000000000000000",
+                "model_output": "642857142857142852\n3\n505050500505050496\n19753086420\n500000000000000000",
+                "error": null
+            },
+            {
+                "input": "6\n987654321 4\n123456789 5\n456 2\n982347654321 7\n321 8\n654321 3",
+                "standard_solution_output": "987654320\n61728395\n912\n631509206352\n160\n981484",
+                "model_output": "987654320\n61728390\n906\n631509206346\n160\n981483",
+                "error": null
+            },
+            {
+                "input": "8\n12345678901234567890 987654321\n123 456\n987654321 654321\n1000000000000000000 2\n1234567890123456789 987654321\n1234567890123456789 123456789\n1234567890123456789 123456789\n1234567890123456789 123456789",
+                "standard_solution_output": "56249999488\n0\n6795\n2000000000000000000\n5624999946\n45000000009\n45000000009\n45000000009",
+                "model_output": "56249999481\n0\n6786\n2000000000000000000\n5624999938\n45000000000\n45000000000\n45000000000",
+                "error": null
+            },
+            {
+                "input": "9\n1000000000000000 7\n3 9\n1 2\n1000000000000000 3\n1000000000000000 5\n1000000000000000 2\n1000000000000000 11\n1000000000000000 13\n1000000000000000 7",
+                "standard_solution_output": "642857142857141\n0\n0\n1500000000000003\n500000000000000\n2000000000000000\n409090909090905\n346153846153848\n642857142857141",
+                "model_output": "642857142857137\n0\n0\n1499999999999994\n500000000000000\n2000000000000000\n409090909090905\n346153846153840\n642857142857137",
+                "error": null
+            },
+            {
+                "input": "5\n5 1200000000000000000\n7 1200000000000000000\n3 1000000000000000000\n2 1000000000000000000\n1 500000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "6\n234567890 9821\n1 2\n987654321 5\n456 3\n1234567890123456789 7\n9876543210 11",
+                "standard_solution_output": "107470\n0\n493827160\n684\n793650786507936506\n4040404030",
+                "model_output": "107466\n0\n493827160\n678\n793650786507936502\n4040404026",
+                "error": null
+            },
+            {
+                "input": "5\n1000000000000000000 7\n1 2\n1000000000000000000 1000000000000000000\n500000000000000000 500000000000000000\n1000000000000000000 1000000000000000000",
+                "standard_solution_output": "642857142857142861\n0\n0\n0\n0",
+                "model_output": "642857142857142852\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n9 300000000000000000\n1 400000000000000000\n8 500000000000000000\n6 600000000000000000\n2 700000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n1000000000000000 5\n1 2\n100000000000000 7\n100000000000000 7\n100000000000000 7",
+                "standard_solution_output": "500000000000000\n0\n64285714285715\n64285714285715\n64285714285715",
+                "model_output": "500000000000000\n0\n64285714285707\n64285714285707\n64285714285707",
+                "error": null
+            },
+            {
+                "input": "9\n999999999999999 7\n1 2\n1000000000000000 3\n1234567890123456 13\n987654321 11\n1000000000000000 7\n1234567890123456 19\n1000000000000000 17\n1234567890123456 23",
+                "standard_solution_output": "642857142857141\n0\n1500000000000003\n427350423504274\n404040396\n642857142857141\n292397658187139\n264705882352940\n241545891545898",
+                "model_output": "642857142857137\n0\n1499999999999994\n427350423504273\n404040390\n642857142857137\n292397658187137\n264705882352932\n241545891545890",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 2,
+        "code": "def main():\n    import sys\n    input = sys.stdin.read().split()\n    q = int(input[0])\n    idx = 1\n    for _ in range(q):\n        n = int(input[idx])\n        m = int(input[idx+1])\n        idx += 2\n        # Compute the sum\n        last_m = m % 10\n        if last_m == 0:\n            # All multiples end with 0\n            count = n // m\n            print(0)\n            continue\n        # Now, find the cycle of last digits when m is multiplied\n        cycle = []\n        seen = set()\n        k = 1\n        while True:\n            last_digit = (k * last_m) % 10\n            if last_digit in seen:\n                break\n            seen.add(last_digit)\n            cycle.append(last_digit)\n            k += 1\n            if len(cycle) > 100:  # Prevent infinite loop in case of unexpected cycles\n                break\n        count = n // m\n        len_cycle = len(cycle)\n        sum_cycle = sum(cycle)\n        full_cycles = count // len_cycle\n        rem = count % len_cycle\n        sum_full = full_cycles * sum_cycle\n        sum_rem = 0\n        for i in range(rem):\n            sum_rem += cycle[i]\n        total = sum_full + sum_rem\n        print(total)\n    return\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n1000000000000000000 7\n3 1\n1234567890123456789 11\n9876543210 2\n1000000000000000000 5",
+                "standard_solution_output": "642857142857142861\n6\n505050500505050505\n19753086420\n500000000000000000",
+                "model_output": "642857142857142861\n6\n505050500505050505\n19753086420\n500000000000000000",
+                "error": null
+            },
+            {
+                "input": "6\n987654321 4\n123456789 5\n456 2\n982347654321 7\n321 8\n654321 3",
+                "standard_solution_output": "987654320\n61728395\n912\n631509206352\n160\n981484",
+                "model_output": "987654320\n61728395\n912\n631509206352\n160\n981484",
+                "error": null
+            },
+            {
+                "input": "8\n12345678901234567890 987654321\n123 456\n987654321 654321\n1000000000000000000 2\n1234567890123456789 987654321\n1234567890123456789 123456789\n1234567890123456789 123456789\n1234567890123456789 123456789",
+                "standard_solution_output": "56249999488\n0\n6795\n2000000000000000000\n5624999946\n45000000009\n45000000009\n45000000009",
+                "model_output": "56249999488\n0\n6795\n2000000000000000000\n5624999946\n45000000009\n45000000009\n45000000009",
+                "error": null
+            },
+            {
+                "input": "9\n1000000000000000 7\n3 9\n1 2\n1000000000000000 3\n1000000000000000 5\n1000000000000000 2\n1000000000000000 11\n1000000000000000 13\n1000000000000000 7",
+                "standard_solution_output": "642857142857141\n0\n0\n1500000000000003\n500000000000000\n2000000000000000\n409090909090905\n346153846153848\n642857142857141",
+                "model_output": "642857142857141\n0\n0\n1500000000000003\n500000000000000\n2000000000000000\n409090909090905\n346153846153848\n642857142857141",
+                "error": null
+            },
+            {
+                "input": "5\n5 1200000000000000000\n7 1200000000000000000\n3 1000000000000000000\n2 1000000000000000000\n1 500000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "6\n234567890 9821\n1 2\n987654321 5\n456 3\n1234567890123456789 7\n9876543210 11",
+                "standard_solution_output": "107470\n0\n493827160\n684\n793650786507936506\n4040404030",
+                "model_output": "107470\n0\n493827160\n684\n793650786507936506\n4040404030",
+                "error": null
+            },
+            {
+                "input": "5\n1000000000000000000 7\n1 2\n1000000000000000000 1000000000000000000\n500000000000000000 500000000000000000\n1000000000000000000 1000000000000000000",
+                "standard_solution_output": "642857142857142861\n0\n0\n0\n0",
+                "model_output": "642857142857142861\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n9 300000000000000000\n1 400000000000000000\n8 500000000000000000\n6 600000000000000000\n2 700000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n1000000000000000 5\n1 2\n100000000000000 7\n100000000000000 7\n100000000000000 7",
+                "standard_solution_output": "500000000000000\n0\n64285714285715\n64285714285715\n64285714285715",
+                "model_output": "500000000000000\n0\n64285714285715\n64285714285715\n64285714285715",
+                "error": null
+            },
+            {
+                "input": "9\n999999999999999 7\n1 2\n1000000000000000 3\n1234567890123456 13\n987654321 11\n1000000000000000 7\n1234567890123456 19\n1000000000000000 17\n1234567890123456 23",
+                "standard_solution_output": "642857142857141\n0\n1500000000000003\n427350423504274\n404040396\n642857142857141\n292397658187139\n264705882352940\n241545891545898",
+                "model_output": "642857142857141\n0\n1500000000000003\n427350423504274\n404040396\n642857142857141\n292397658187139\n264705882352940\n241545891545898",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 3,
+        "code": "def main():\n    import sys\n    input = sys.stdin.read().split()\n    q = int(input[0])\n    idx = 1\n    for _ in range(q):\n        n = int(input[idx])\n        m = int(input[idx+1])\n        idx += 2\n        # Compute the sum of last digits\n        # Handle the case when m is 1\n        if m == 1:\n            total = n % 10\n            print(total)\n            continue\n        # Calculate the number of multiples of m up to n\n        count = n // m\n        # The last digits of these multiples can be found in a cycle\n        # Find the cycle of last digits\n        # The last digits of m, 2m, 3m, ... mod 10\n        # The last digits cycle every 10 numbers because of modulo 10\n        # So the last digits cycle is m%10, (m*2)%10, ..., (m*k)%10 until it repeats\n        # The cycle length is the period of last digits\n        # Let's find the cycle\n        # Compute the last digits until we find a repetition\n        # Initialize the cycle list\n        cycle = []\n        last_digit = (m % 10)\n        cycle.append(last_digit)\n        for i in range(1, 20):  # arbitrary limit to avoid infinite loop\n            last_digit = (last_digit * m) % 10\n            if last_digit in cycle:\n                break\n            cycle.append(last_digit)\n        # Now, the cycle repeats every len(cycle) steps\n        # The sum for one full cycle is sum(cycle)\n        # Number of full cycles = count // len(cycle)\n        # The remaining elements are count % len(cycle)\n        # So the total sum is (number of full cycles) * sum(cycle) + sum(remaining)\n        # Handle the case when count is less than the cycle length\n        cycle_len = len(cycle)\n        if count < cycle_len:\n            sum_total = sum(cycle[:count])\n        else:\n            sum_total = (count // cycle_len) * sum(cycle)\n            remainder = count % cycle_len\n            sum_total += sum(cycle[:remainder])\n        print(sum_total)\n    return\n\nmain()",
+        "test_results": [
+            {
+                "input": "5\n1000000000000000000 7\n3 1\n1234567890123456789 11\n9876543210 2\n1000000000000000000 5",
+                "standard_solution_output": "642857142857142861\n6\n505050500505050505\n19753086420\n500000000000000000",
+                "model_output": "714285714285714287\n3\n112233444556677889\n24691358022\n1000000000000000000",
+                "error": null
+            },
+            {
+                "input": "6\n987654321 4\n123456789 5\n456 2\n982347654321 7\n321 8\n654321 3",
+                "standard_solution_output": "987654320\n61728395\n912\n631509206352\n160\n981484",
+                "model_output": "1234567900\n123456785\n1140\n701676895940\n200\n1090539",
+                "error": null
+            },
+            {
+                "input": "8\n12345678901234567890 987654321\n123 456\n987654321 654321\n1000000000000000000 2\n1234567890123456789 987654321\n1234567890123456789 123456789\n1234567890123456789 123456789\n1234567890123456789 123456789",
+                "standard_solution_output": "56249999488\n0\n6795\n2000000000000000000\n5624999946\n45000000009\n45000000009\n45000000009",
+                "model_output": "12499999887\n0\n1509\n2500000000000000000\n1249999988\n50000000009\n50000000009\n50000000009",
+                "error": null
+            },
+            {
+                "input": "9\n1000000000000000 7\n3 9\n1 2\n1000000000000000 3\n1000000000000000 5\n1000000000000000 2\n1000000000000000 11\n1000000000000000 13\n1000000000000000 7",
+                "standard_solution_output": "642857142857141\n0\n0\n1500000000000003\n500000000000000\n2000000000000000\n409090909090905\n346153846153848\n642857142857141",
+                "model_output": "714285714285716\n0\n0\n1666666666666663\n1000000000000000\n2500000000000000\n90909090909090\n384615384615380\n714285714285716",
+                "error": null
+            },
+            {
+                "input": "5\n5 1200000000000000000\n7 1200000000000000000\n3 1000000000000000000\n2 1000000000000000000\n1 500000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "6\n234567890 9821\n1 2\n987654321 5\n456 3\n1234567890123456789 7\n9876543210 11",
+                "standard_solution_output": "107470\n0\n493827160\n684\n793650786507936506\n4040404030",
+                "model_output": "23884\n0\n987654320\n760\n881834207231040560\n897867564",
+                "error": null
+            },
+            {
+                "input": "5\n1000000000000000000 7\n1 2\n1000000000000000000 1000000000000000000\n500000000000000000 500000000000000000\n1000000000000000000 1000000000000000000",
+                "standard_solution_output": "642857142857142861\n0\n0\n0\n0",
+                "model_output": "714285714285714287\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n9 300000000000000000\n1 400000000000000000\n8 500000000000000000\n6 600000000000000000\n2 700000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n1000000000000000 5\n1 2\n100000000000000 7\n100000000000000 7\n100000000000000 7",
+                "standard_solution_output": "500000000000000\n0\n64285714285715\n64285714285715\n64285714285715",
+                "model_output": "1000000000000000\n0\n71428571428576\n71428571428576\n71428571428576",
+                "error": null
+            },
+            {
+                "input": "9\n999999999999999 7\n1 2\n1000000000000000 3\n1234567890123456 13\n987654321 11\n1000000000000000 7\n1234567890123456 19\n1000000000000000 17\n1234567890123456 23",
+                "standard_solution_output": "642857142857141\n0\n1500000000000003\n427350423504274\n404040396\n642857142857141\n292397658187139\n264705882352940\n241545891545898",
+                "model_output": "714285714285716\n0\n1666666666666663\n474833803893639\n89786756\n714285714285716\n324886286874590\n294117647058820\n268384323939880",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 4,
+        "code": "def main():\n    import sys\n    q = int(sys.stdin.readline())\n    for _ in range(q):\n        n, m = map(int, sys.stdin.readline().split())\n        # Compute the sum of last digits of multiples of m up to n\n        # First, find the count of multiples\n        count = n // m\n        if count == 0:\n            print(0)\n            continue\n        # Now find the sum of last digits\n        # The last digits cycle every m numbers\n        # For example, m=5: 5,10,15,20,25,... last digits 5,0,5,0,5\n        # The cycle is [5,0], repeating every 2 numbers\n        # So for count = 3, sum is 5+0+5 = 10\n        # So, for each cycle, the sum is sum_cycle\n        # Number of full cycles: count // cycle_length\n        # Remainder: count % cycle_length\n        # So sum = sum_cycle * (count // cycle_length) + sum_remainder\n        # Now, find the cycle for m\n        # The last digits are the last digits of m, 2m, 3m, ..., (k)m\n        # The last digit is (k * m) % 10\n        # So the last digits cycle every lcm(m,10) // m = 10 // gcd(m,10)\n        # Wait, no. Let's think differently.\n        # The last digit of k*m mod 10.\n        # The last digit depends on k*m mod 10.\n        # Since m is fixed, the last digit cycles every 10 // gcd(m,10) steps.\n        # For example, m=5: gcd(5,10)=5, so cycle length is 2.\n        # For m=2: gcd(2,10)=2, cycle length is 5.\n        # So, cycle_length = 10 // gcd(m,10)\n        import math\n        g = math.gcd(m, 10)\n        cycle_length = 10 // g\n        # Now, create the cycle\n        # The cycle is the last digits of m, 2m, 3m, ..., (cycle_length-1)*m\n        cycle = []\n        for k in range(1, cycle_length):\n            cycle.append( (k * m) % 10 )\n        # Now, sum_cycle is sum(cycle)\n        sum_cycle = sum(cycle)\n        # Now, total cycles is count // cycle_length\n        # Remainder is count % cycle_length\n        # So sum = sum_cycle * (count // cycle_length) + sum of first 'remainder' elements of cycle\n        total_cycles = count // cycle_length\n        remainder = count % cycle_length\n        sum_total = sum_cycle * total_cycles\n        if remainder > 0:\n            sum_total += sum(cycle[:remainder])\n        print(sum_total)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n1000000000000000000 7\n3 1\n1234567890123456789 11\n9876543210 2\n1000000000000000000 5",
+                "standard_solution_output": "642857142857142861\n6\n505050500505050505\n19753086420\n500000000000000000",
+                "model_output": "642857142857142861\n6\n505050500505050505\n19753086420\n500000000000000000",
+                "error": null
+            },
+            {
+                "input": "6\n987654321 4\n123456789 5\n456 2\n982347654321 7\n321 8\n654321 3",
+                "standard_solution_output": "987654320\n61728395\n912\n631509206352\n160\n981484",
+                "model_output": "987654320\n61728395\n912\n631509206352\n160\n981484",
+                "error": null
+            },
+            {
+                "input": "8\n12345678901234567890 987654321\n123 456\n987654321 654321\n1000000000000000000 2\n1234567890123456789 987654321\n1234567890123456789 123456789\n1234567890123456789 123456789\n1234567890123456789 123456789",
+                "standard_solution_output": "56249999488\n0\n6795\n2000000000000000000\n5624999946\n45000000009\n45000000009\n45000000009",
+                "model_output": "56249999488\n0\n6795\n2000000000000000000\n5624999946\n45000000009\n45000000009\n45000000009",
+                "error": null
+            },
+            {
+                "input": "9\n1000000000000000 7\n3 9\n1 2\n1000000000000000 3\n1000000000000000 5\n1000000000000000 2\n1000000000000000 11\n1000000000000000 13\n1000000000000000 7",
+                "standard_solution_output": "642857142857141\n0\n0\n1500000000000003\n500000000000000\n2000000000000000\n409090909090905\n346153846153848\n642857142857141",
+                "model_output": "642857142857141\n0\n0\n1500000000000003\n500000000000000\n2000000000000000\n409090909090905\n346153846153848\n642857142857141",
+                "error": null
+            },
+            {
+                "input": "5\n5 1200000000000000000\n7 1200000000000000000\n3 1000000000000000000\n2 1000000000000000000\n1 500000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "6\n234567890 9821\n1 2\n987654321 5\n456 3\n1234567890123456789 7\n9876543210 11",
+                "standard_solution_output": "107470\n0\n493827160\n684\n793650786507936506\n4040404030",
+                "model_output": "107470\n0\n493827160\n684\n793650786507936506\n4040404030",
+                "error": null
+            },
+            {
+                "input": "5\n1000000000000000000 7\n1 2\n1000000000000000000 1000000000000000000\n500000000000000000 500000000000000000\n1000000000000000000 1000000000000000000",
+                "standard_solution_output": "642857142857142861\n0\n0\n0\n0",
+                "model_output": "642857142857142861\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n9 300000000000000000\n1 400000000000000000\n8 500000000000000000\n6 600000000000000000\n2 700000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n1000000000000000 5\n1 2\n100000000000000 7\n100000000000000 7\n100000000000000 7",
+                "standard_solution_output": "500000000000000\n0\n64285714285715\n64285714285715\n64285714285715",
+                "model_output": "500000000000000\n0\n64285714285715\n64285714285715\n64285714285715",
+                "error": null
+            },
+            {
+                "input": "9\n999999999999999 7\n1 2\n1000000000000000 3\n1234567890123456 13\n987654321 11\n1000000000000000 7\n1234567890123456 19\n1000000000000000 17\n1234567890123456 23",
+                "standard_solution_output": "642857142857141\n0\n1500000000000003\n427350423504274\n404040396\n642857142857141\n292397658187139\n264705882352940\n241545891545898",
+                "model_output": "642857142857141\n0\n1500000000000003\n427350423504274\n404040396\n642857142857141\n292397658187139\n264705882352940\n241545891545898",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 5,
+        "code": "def main():\n    import sys\n    input = sys.stdin.read().split()\n    q = int(input[0])\n    idx = 1\n    for _ in range(q):\n        n = int(input[idx])\n        m = int(input[idx+1])\n        idx +=2\n        # Compute sum of last digits of multiples of m up to n\n        # Find all multiples of m: m, 2m, 3m,..., km where km <=n\n        # For each multiple, take the last digit and sum them\n        # We can find the sum without iterating through all multiples\n        # Let's find the last digit pattern and sum it\n        # Let's find the last digit of m\n        last_m_digit = m % 10\n        if last_m_digit == 0:\n            # then all multiples have last digit 0\n            count = n // m\n            sum_digits = 0 * count\n        else:\n            # find how many full cycles of 10 we have\n            cycle = 10\n            # multiples of m can be written as m, 2m, 3m,..., km\n            # the last digit cycles every 10/m' where m' is the part of m not coprime with 10\n            # but perhaps a better approach is to find the pattern in the last digits\n            # for example, m=5: last digits are 5,0,5,0,... repeating every 2 steps\n            # So for each cycle of 10, the sum is the same\n            # Let's find how many complete cycles and the partial cycle\n            # first, find the last digit of m\n            ld = last_m_digit\n            # the cycle is 10, but the period could be less\n            # for example, m=25: last digits of multiples are 5,0,5,0,... same as m=5\n            # So perhaps the cycle is determined by the gcd(m,10)\n            # compute the gcd of m and 10\n            g = gcd(m,10)\n            # the cycle length is 10/g\n            cycle_length = 10 // g\n            # the sum of one cycle is sum of last digits for m, 2m, ..., (cycle_length)m\n            # compute this sum\n            sum_cycle = 0\n            for i in range(cycle_length):\n                temp = (i+1)*m\n                sum_cycle += temp % 10\n            # the number of complete cycles is (count) // cycle_length\n            # the remainder is (count) % cycle_length\n            # sum is sum_cycle * complete_cycles + sum of first 'remainder' terms\n            count = n // m\n            complete_cycles = count // cycle_length\n            remainder = count % cycle_length\n            sum_digits = sum_cycle * complete_cycles + sum( (i+1)*m %10 for i in range(remainder) )\n        print(sum_digits)\n        \nif __name__ == '__main__':\n    import sys\n    import math\n    def gcd(a, b):\n        while b:\n            a, b = b, a % b\n        return a\n    main()",
+        "test_results": [
+            {
+                "input": "5\n1000000000000000000 7\n3 1\n1234567890123456789 11\n9876543210 2\n1000000000000000000 5",
+                "standard_solution_output": "642857142857142861\n6\n505050500505050505\n19753086420\n500000000000000000",
+                "model_output": "642857142857142861\n6\n505050500505050505\n19753086420\n500000000000000000",
+                "error": null
+            },
+            {
+                "input": "6\n987654321 4\n123456789 5\n456 2\n982347654321 7\n321 8\n654321 3",
+                "standard_solution_output": "987654320\n61728395\n912\n631509206352\n160\n981484",
+                "model_output": "987654320\n61728395\n912\n631509206352\n160\n981484",
+                "error": null
+            },
+            {
+                "input": "8\n12345678901234567890 987654321\n123 456\n987654321 654321\n1000000000000000000 2\n1234567890123456789 987654321\n1234567890123456789 123456789\n1234567890123456789 123456789\n1234567890123456789 123456789",
+                "standard_solution_output": "56249999488\n0\n6795\n2000000000000000000\n5624999946\n45000000009\n45000000009\n45000000009",
+                "model_output": "56249999488\n0\n6795\n2000000000000000000\n5624999946\n45000000009\n45000000009\n45000000009",
+                "error": null
+            },
+            {
+                "input": "9\n1000000000000000 7\n3 9\n1 2\n1000000000000000 3\n1000000000000000 5\n1000000000000000 2\n1000000000000000 11\n1000000000000000 13\n1000000000000000 7",
+                "standard_solution_output": "642857142857141\n0\n0\n1500000000000003\n500000000000000\n2000000000000000\n409090909090905\n346153846153848\n642857142857141",
+                "model_output": "642857142857141\n0\n0\n1500000000000003\n500000000000000\n2000000000000000\n409090909090905\n346153846153848\n642857142857141",
+                "error": null
+            },
+            {
+                "input": "5\n5 1200000000000000000\n7 1200000000000000000\n3 1000000000000000000\n2 1000000000000000000\n1 500000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "6\n234567890 9821\n1 2\n987654321 5\n456 3\n1234567890123456789 7\n9876543210 11",
+                "standard_solution_output": "107470\n0\n493827160\n684\n793650786507936506\n4040404030",
+                "model_output": "107470\n0\n493827160\n684\n793650786507936506\n4040404030",
+                "error": null
+            },
+            {
+                "input": "5\n1000000000000000000 7\n1 2\n1000000000000000000 1000000000000000000\n500000000000000000 500000000000000000\n1000000000000000000 1000000000000000000",
+                "standard_solution_output": "642857142857142861\n0\n0\n0\n0",
+                "model_output": "642857142857142861\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n9 300000000000000000\n1 400000000000000000\n8 500000000000000000\n6 600000000000000000\n2 700000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n1000000000000000 5\n1 2\n100000000000000 7\n100000000000000 7\n100000000000000 7",
+                "standard_solution_output": "500000000000000\n0\n64285714285715\n64285714285715\n64285714285715",
+                "model_output": "500000000000000\n0\n64285714285715\n64285714285715\n64285714285715",
+                "error": null
+            },
+            {
+                "input": "9\n999999999999999 7\n1 2\n1000000000000000 3\n1234567890123456 13\n987654321 11\n1000000000000000 7\n1234567890123456 19\n1000000000000000 17\n1234567890123456 23",
+                "standard_solution_output": "642857142857141\n0\n1500000000000003\n427350423504274\n404040396\n642857142857141\n292397658187139\n264705882352940\n241545891545898",
+                "model_output": "642857142857141\n0\n1500000000000003\n427350423504274\n404040396\n642857142857141\n292397658187139\n264705882352940\n241545891545898",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 6,
+        "code": "def main():\n    import sys\n    input = sys.stdin.read().split()\n    q = int(input[0])\n    idx = 1\n    for _ in range(q):\n        n = int(input[idx])\n        m = int(input[idx+1])\n        idx += 2\n        count = n // m\n        if count == 0:\n            print(0)\n            continue\n        \n        # Find the cycle of last digits\n        last_digits = []\n        seen = set()\n        current = m % 10\n        last_digits.append(current)\n        seen.add(current)\n        for _ in range(10):  # Limit to 10 steps to find the cycle\n            current = (current * 10 + m % 10) % 10\n            if current in seen:\n                break\n            last_digits.append(current)\n            seen.add(current)\n        cycle_length = len(last_digits)\n        cycle_sum = sum(last_digits)\n        \n        full_cycles = count // cycle_length\n        remainder = count % cycle_length\n        \n        total = full_cycles * cycle_sum\n        if remainder > 0:\n            total += sum(last_digits[:remainder])\n        print(total)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n1000000000000000000 7\n3 1\n1234567890123456789 11\n9876543210 2\n1000000000000000000 5",
+                "standard_solution_output": "642857142857142861\n6\n505050500505050505\n19753086420\n500000000000000000",
+                "model_output": "999999999999999999\n3\n112233444556677889\n9876543210\n1000000000000000000",
+                "error": null
+            },
+            {
+                "input": "6\n987654321 4\n123456789 5\n456 2\n982347654321 7\n321 8\n654321 3",
+                "standard_solution_output": "987654320\n61728395\n912\n631509206352\n160\n981484",
+                "model_output": "987654320\n123456785\n456\n982347654316\n320\n654321",
+                "error": null
+            },
+            {
+                "input": "8\n12345678901234567890 987654321\n123 456\n987654321 654321\n1000000000000000000 2\n1234567890123456789 987654321\n1234567890123456789 123456789\n1234567890123456789 123456789\n1234567890123456789 123456789",
+                "standard_solution_output": "56249999488\n0\n6795\n2000000000000000000\n5624999946\n45000000009\n45000000009\n45000000009",
+                "model_output": "12499999887\n0\n1509\n1000000000000000000\n1249999988\n90000000009\n90000000009\n90000000009",
+                "error": null
+            },
+            {
+                "input": "9\n1000000000000000 7\n3 9\n1 2\n1000000000000000 3\n1000000000000000 5\n1000000000000000 2\n1000000000000000 11\n1000000000000000 13\n1000000000000000 7",
+                "standard_solution_output": "642857142857141\n0\n0\n1500000000000003\n500000000000000\n2000000000000000\n409090909090905\n346153846153848\n642857142857141",
+                "model_output": "999999999999994\n0\n0\n999999999999999\n1000000000000000\n1000000000000000\n90909090909090\n230769230769228\n999999999999994",
+                "error": null
+            },
+            {
+                "input": "5\n5 1200000000000000000\n7 1200000000000000000\n3 1000000000000000000\n2 1000000000000000000\n1 500000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "6\n234567890 9821\n1 2\n987654321 5\n456 3\n1234567890123456789 7\n9876543210 11",
+                "standard_solution_output": "107470\n0\n493827160\n684\n793650786507936506\n4040404030",
+                "model_output": "23884\n0\n987654320\n456\n1234567890123456784\n897867564",
+                "error": null
+            },
+            {
+                "input": "5\n1000000000000000000 7\n1 2\n1000000000000000000 1000000000000000000\n500000000000000000 500000000000000000\n1000000000000000000 1000000000000000000",
+                "standard_solution_output": "642857142857142861\n0\n0\n0\n0",
+                "model_output": "999999999999999999\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n9 300000000000000000\n1 400000000000000000\n8 500000000000000000\n6 600000000000000000\n2 700000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n1000000000000000 5\n1 2\n100000000000000 7\n100000000000000 7\n100000000000000 7",
+                "standard_solution_output": "500000000000000\n0\n64285714285715\n64285714285715\n64285714285715",
+                "model_output": "1000000000000000\n0\n99999999999998\n99999999999998\n99999999999998",
+                "error": null
+            },
+            {
+                "input": "9\n999999999999999 7\n1 2\n1000000000000000 3\n1234567890123456 13\n987654321 11\n1000000000000000 7\n1234567890123456 19\n1000000000000000 17\n1234567890123456 23",
+                "standard_solution_output": "642857142857141\n0\n1500000000000003\n427350423504274\n404040396\n642857142857141\n292397658187139\n264705882352940\n241545891545898",
+                "model_output": "999999999999994\n0\n999999999999999\n284900282336181\n89786756\n999999999999994\n584795316374262\n411764705882348\n161030594363928",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 7,
+        "code": "def main():\n    import sys\n    q = int(sys.stdin.readline())\n    for _ in range(q):\n        n, m = map(int, sys.stdin.readline().split())\n        # Compute the number of multiples of m up to n\n        count = n // m\n        if count == 0:\n            print(0)\n            continue\n        # Compute the sum of the last digits of these multiples\n        # The last digits of multiples of m cycle every (m's last digit cycle)\n        # For example, if m is 5, the last digits cycle is 0,5\n        # So we can find the sum of one cycle and multiply by the number of cycles\n        # Then add the sum of the remaining terms\n        # Let's find the last digit of m\n        last_digit_m = m % 10\n        if last_digit_m == 0:\n            # The last digit is 0, so all multiples end with 0\n            sum_cycle = 0\n            sum_remaining = 0\n        else:\n            # Find the cycle of last digits\n            cycle = []\n            temp = last_digit_m\n            while True:\n                cycle.append(temp)\n                temp = (temp * last_digit_m) % 10\n                if temp == last_digit_m:\n                    break\n            sum_cycle = sum(cycle)\n            # Number of complete cycles\n            cycles = count // len(cycle)\n            sum_total = cycles * sum_cycle\n            # Remaining terms\n            rem = count % len(cycle)\n            if rem > 0:\n                sum_total += sum(cycle[:rem])\n            print(sum_total)\n        print(sum_total)\nmain()",
+        "test_results": [
+            {
+                "input": "5\n1000000000000000000 7\n3 1\n1234567890123456789 11\n9876543210 2\n1000000000000000000 5",
+                "standard_solution_output": "642857142857142861\n6\n505050500505050505\n19753086420\n500000000000000000",
+                "model_output": "714285714285714287\n714285714285714287\n3\n3\n112233444556677889\n112233444556677889\n24691358022\n24691358022\n1000000000000000000\n1000000000000000000",
+                "error": null
+            },
+            {
+                "input": "6\n987654321 4\n123456789 5\n456 2\n982347654321 7\n321 8\n654321 3",
+                "standard_solution_output": "987654320\n61728395\n912\n631509206352\n160\n981484",
+                "model_output": "1234567900\n1234567900\n123456785\n123456785\n1140\n1140\n701676895940\n701676895940\n200\n200\n1090539\n1090539",
+                "error": null
+            },
+            {
+                "input": "8\n12345678901234567890 987654321\n123 456\n987654321 654321\n1000000000000000000 2\n1234567890123456789 987654321\n1234567890123456789 123456789\n1234567890123456789 123456789\n1234567890123456789 123456789",
+                "standard_solution_output": "56249999488\n0\n6795\n2000000000000000000\n5624999946\n45000000009\n45000000009\n45000000009",
+                "model_output": "12499999887\n12499999887\n0\n1509\n1509\n2500000000000000000\n2500000000000000000\n1249999988\n1249999988\n50000000009\n50000000009\n50000000009\n50000000009\n50000000009\n50000000009",
+                "error": null
+            },
+            {
+                "input": "9\n1000000000000000 7\n3 9\n1 2\n1000000000000000 3\n1000000000000000 5\n1000000000000000 2\n1000000000000000 11\n1000000000000000 13\n1000000000000000 7",
+                "standard_solution_output": "642857142857141\n0\n0\n1500000000000003\n500000000000000\n2000000000000000\n409090909090905\n346153846153848\n642857142857141",
+                "model_output": "714285714285716\n714285714285716\n0\n0\n1666666666666663\n1666666666666663\n1000000000000000\n1000000000000000\n2500000000000000\n2500000000000000\n90909090909090\n90909090909090\n384615384615380\n384615384615380\n714285714285716\n714285714285716",
+                "error": null
+            },
+            {
+                "input": "5\n5 1200000000000000000\n7 1200000000000000000\n3 1000000000000000000\n2 1000000000000000000\n1 500000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "6\n234567890 9821\n1 2\n987654321 5\n456 3\n1234567890123456789 7\n9876543210 11",
+                "standard_solution_output": "107470\n0\n493827160\n684\n793650786507936506\n4040404030",
+                "model_output": "23884\n23884\n0\n987654320\n987654320\n760\n760\n881834207231040560\n881834207231040560\n897867564\n897867564",
+                "error": null
+            },
+            {
+                "input": "5\n1000000000000000000 7\n1 2\n1000000000000000000 1000000000000000000\n500000000000000000 500000000000000000\n1000000000000000000 1000000000000000000",
+                "standard_solution_output": "642857142857142861\n0\n0\n0\n0",
+                "model_output": "714285714285714287\n714285714285714287\n0\n714285714285714287\n714285714285714287\n714285714285714287",
+                "error": null
+            },
+            {
+                "input": "5\n9 300000000000000000\n1 400000000000000000\n8 500000000000000000\n6 600000000000000000\n2 700000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n1000000000000000 5\n1 2\n100000000000000 7\n100000000000000 7\n100000000000000 7",
+                "standard_solution_output": "500000000000000\n0\n64285714285715\n64285714285715\n64285714285715",
+                "model_output": "1000000000000000\n1000000000000000\n0\n71428571428576\n71428571428576\n71428571428576\n71428571428576\n71428571428576\n71428571428576",
+                "error": null
+            },
+            {
+                "input": "9\n999999999999999 7\n1 2\n1000000000000000 3\n1234567890123456 13\n987654321 11\n1000000000000000 7\n1234567890123456 19\n1000000000000000 17\n1234567890123456 23",
+                "standard_solution_output": "642857142857141\n0\n1500000000000003\n427350423504274\n404040396\n642857142857141\n292397658187139\n264705882352940\n241545891545898",
+                "model_output": "714285714285716\n714285714285716\n0\n1666666666666663\n1666666666666663\n474833803893639\n474833803893639\n89786756\n89786756\n714285714285716\n714285714285716\n324886286874590\n324886286874590\n294117647058820\n294117647058820\n268384323939880\n268384323939880",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 8,
+        "code": "def main():\n    import sys\n    input = sys.stdin.read().split()\n    q = int(input[0])\n    idx = 1\n    for _ in range(q):\n        n = int(input[idx])\n        m = int(input[idx+1])\n        idx += 2\n        # Compute the sum of last digits of multiples of m up to n\n        # Find all k where m*k <= n\n        # Sum last digits of m*k for each such k\n        # We can think in terms of cycles of m's multiples last digits\n        # For example, m=5: multiples are 5,10,15,20,... last digits cycle 5,0,5,0,...\n        # So for each cycle of length l, the sum is s.\n        # So the number of full cycles is (n//m) // l, and the remainder is (n//m) % l\n        # So total sum is (full_cycles * s) + sum of first remainder terms\n        # Find s and l for the last digit pattern of m\n        # Let's compute the last digits of m, 2m, 3m, ..., until a cycle repeats\n        # Then s is the sum of the cycle, l is the length\n        # Now, let's compute the last digits of multiples of m\n        last_digits = []\n        current = m % 10\n        last_digits.append(current)\n        for _ in range(m-1):\n            current = (current * 10 + m % 10) % 10\n            last_digits.append(current)\n        # Now, last_digits contains the last digits in the cycle\n        # Compute the sum of one cycle and the length\n        cycle_sum = sum(last_digits)\n        cycle_length = len(last_digits)\n        # Number of full cycles and remainder\n        total_multiples = n // m\n        full_cycles = total_multiples // cycle_length\n        remainder = total_multiples % cycle_length\n        # Compute the sum\n        sum_total = full_cycles * cycle_sum\n        # Now add the sum of the first 'remainder' terms\n        if remainder > 0:\n            sum_total += sum(last_digits[:remainder])\n        print(sum_total)\n        \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n1000000000000000000 7\n3 1\n1234567890123456789 11\n9876543210 2\n1000000000000000000 5",
+                "standard_solution_output": "642857142857142861\n6\n505050500505050505\n19753086420\n500000000000000000",
+                "model_output": "999999999999999999\n3\n112233444556677889\n9876543210\n1000000000000000000",
+                "error": null
+            },
+            {
+                "input": "6\n987654321 4\n123456789 5\n456 2\n982347654321 7\n321 8\n654321 3",
+                "standard_solution_output": "987654320\n61728395\n912\n631509206352\n160\n981484",
+                "model_output": "987654320\n123456785\n456\n982347654316\n320\n654321",
+                "error": null
+            },
+            {
+                "input": "8\n12345678901234567890 987654321\n123 456\n987654321 654321\n1000000000000000000 2\n1234567890123456789 987654321\n1234567890123456789 123456789\n1234567890123456789 123456789\n1234567890123456789 123456789",
+                "standard_solution_output": "56249999488\n0\n6795\n2000000000000000000\n5624999946\n45000000009\n45000000009\n45000000009",
+                "model_output": "",
+                "error": "Command '['python', '/tmp/tmp5kq5ffaq.py']' timed out after 10 seconds"
+            },
+            {
+                "input": "9\n1000000000000000 7\n3 9\n1 2\n1000000000000000 3\n1000000000000000 5\n1000000000000000 2\n1000000000000000 11\n1000000000000000 13\n1000000000000000 7",
+                "standard_solution_output": "642857142857141\n0\n0\n1500000000000003\n500000000000000\n2000000000000000\n409090909090905\n346153846153848\n642857142857141",
+                "model_output": "999999999999994\n0\n0\n999999999999999\n1000000000000000\n1000000000000000\n90909090909090\n230769230769228\n999999999999994",
+                "error": null
+            },
+            {
+                "input": "5\n5 1200000000000000000\n7 1200000000000000000\n3 1000000000000000000\n2 1000000000000000000\n1 500000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "",
+                "error": "Command '['python', '/tmp/tmp5vfyh4ls.py']' timed out after 10 seconds"
+            },
+            {
+                "input": "6\n234567890 9821\n1 2\n987654321 5\n456 3\n1234567890123456789 7\n9876543210 11",
+                "standard_solution_output": "107470\n0\n493827160\n684\n793650786507936506\n4040404030",
+                "model_output": "23884\n0\n987654320\n456\n1234567890123456784\n897867564",
+                "error": null
+            },
+            {
+                "input": "5\n1000000000000000000 7\n1 2\n1000000000000000000 1000000000000000000\n500000000000000000 500000000000000000\n1000000000000000000 1000000000000000000",
+                "standard_solution_output": "642857142857142861\n0\n0\n0\n0",
+                "model_output": "",
+                "error": "Command '['python', '/tmp/tmpgmmynrow.py']' timed out after 10 seconds"
+            },
+            {
+                "input": "5\n9 300000000000000000\n1 400000000000000000\n8 500000000000000000\n6 600000000000000000\n2 700000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "",
+                "error": "Command '['python', '/tmp/tmp78i_e287.py']' timed out after 10 seconds"
+            },
+            {
+                "input": "5\n1000000000000000 5\n1 2\n100000000000000 7\n100000000000000 7\n100000000000000 7",
+                "standard_solution_output": "500000000000000\n0\n64285714285715\n64285714285715\n64285714285715",
+                "model_output": "1000000000000000\n0\n99999999999998\n99999999999998\n99999999999998",
+                "error": null
+            },
+            {
+                "input": "9\n999999999999999 7\n1 2\n1000000000000000 3\n1234567890123456 13\n987654321 11\n1000000000000000 7\n1234567890123456 19\n1000000000000000 17\n1234567890123456 23",
+                "standard_solution_output": "642857142857141\n0\n1500000000000003\n427350423504274\n404040396\n642857142857141\n292397658187139\n264705882352940\n241545891545898",
+                "model_output": "999999999999994\n0\n999999999999999\n284900282336181\n89786756\n999999999999994\n584795316374262\n411764705882348\n161030594363928",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 9,
+        "code": "def main():\n    import sys\n    input = sys.stdin.read().split()\n    q = int(input[0])\n    idx = 1\n    for _ in range(q):\n        n = int(input[idx])\n        m = int(input[idx+1])\n        idx += 2\n        K = n // m\n        if K == 0:\n            print(0)\n            continue\n        ld = m % 10\n        if ld == 0:\n            print(0)\n            continue\n        complete_cycles = K // 10\n        remaining = K % 10\n        sum_cycles = complete_cycles * 45\n        sum_remaining = 0\n        for k in range(1, remaining + 1):\n            sum_remaining += (k * ld) % 10\n        total = sum_cycles + sum_remaining\n        print(total)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n1000000000000000000 7\n3 1\n1234567890123456789 11\n9876543210 2\n1000000000000000000 5",
+                "standard_solution_output": "642857142857142861\n6\n505050500505050505\n19753086420\n500000000000000000",
+                "model_output": "642857142857142861\n6\n505050500505050505\n22222222220\n900000000000000000",
+                "error": null
+            },
+            {
+                "input": "6\n987654321 4\n123456789 5\n456 2\n982347654321 7\n321 8\n654321 3",
+                "standard_solution_output": "987654320\n61728395\n912\n631509206352\n160\n981484",
+                "model_output": "1111111110\n111111095\n1022\n631509206352\n180\n981484",
+                "error": null
+            },
+            {
+                "input": "8\n12345678901234567890 987654321\n123 456\n987654321 654321\n1000000000000000000 2\n1234567890123456789 987654321\n1234567890123456789 123456789\n1234567890123456789 123456789\n1234567890123456789 123456789",
+                "standard_solution_output": "56249999488\n0\n6795\n2000000000000000000\n5624999946\n45000000009\n45000000009\n45000000009",
+                "model_output": "56249999488\n0\n6795\n2250000000000000000\n5624999946\n45000000009\n45000000009\n45000000009",
+                "error": null
+            },
+            {
+                "input": "9\n1000000000000000 7\n3 9\n1 2\n1000000000000000 3\n1000000000000000 5\n1000000000000000 2\n1000000000000000 11\n1000000000000000 13\n1000000000000000 7",
+                "standard_solution_output": "642857142857141\n0\n0\n1500000000000003\n500000000000000\n2000000000000000\n409090909090905\n346153846153848\n642857142857141",
+                "model_output": "642857142857141\n0\n0\n1500000000000003\n900000000000000\n2250000000000000\n409090909090905\n346153846153848\n642857142857141",
+                "error": null
+            },
+            {
+                "input": "5\n5 1200000000000000000\n7 1200000000000000000\n3 1000000000000000000\n2 1000000000000000000\n1 500000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "6\n234567890 9821\n1 2\n987654321 5\n456 3\n1234567890123456789 7\n9876543210 11",
+                "standard_solution_output": "107470\n0\n493827160\n684\n793650786507936506\n4040404030",
+                "model_output": "107470\n0\n888888880\n684\n793650786507936506\n4040404030",
+                "error": null
+            },
+            {
+                "input": "5\n1000000000000000000 7\n1 2\n1000000000000000000 1000000000000000000\n500000000000000000 500000000000000000\n1000000000000000000 1000000000000000000",
+                "standard_solution_output": "642857142857142861\n0\n0\n0\n0",
+                "model_output": "642857142857142861\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n9 300000000000000000\n1 400000000000000000\n8 500000000000000000\n6 600000000000000000\n2 700000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n1000000000000000 5\n1 2\n100000000000000 7\n100000000000000 7\n100000000000000 7",
+                "standard_solution_output": "500000000000000\n0\n64285714285715\n64285714285715\n64285714285715",
+                "model_output": "900000000000000\n0\n64285714285715\n64285714285715\n64285714285715",
+                "error": null
+            },
+            {
+                "input": "9\n999999999999999 7\n1 2\n1000000000000000 3\n1234567890123456 13\n987654321 11\n1000000000000000 7\n1234567890123456 19\n1000000000000000 17\n1234567890123456 23",
+                "standard_solution_output": "642857142857141\n0\n1500000000000003\n427350423504274\n404040396\n642857142857141\n292397658187139\n264705882352940\n241545891545898",
+                "model_output": "642857142857141\n0\n1500000000000003\n427350423504274\n404040396\n642857142857141\n292397658187139\n264705882352940\n241545891545898",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 10,
+        "code": "def main():\n    import sys\n    input = sys.stdin.read().split()\n    q = int(input[0])\n    idx = 1\n    for _ in range(q):\n        n = int(input[idx])\n        m = int(input[idx+1])\n        idx +=2\n        # Compute the sum of last digits\n        # Find all multiples of m up to n\n        # For each multiple, take last digit and sum\n        # But for large n and m, this approach is not efficient\n        # So, need a smarter way\n        # Let's find the sum of last digits of all multiples of m up to n.\n        # The last digit of a multiple of m is the last digit of (k * m) mod 10, where k is 1,2,3,...\n        # So, for each possible last digit d (0-9), we can find how many times it appears\n        # Then sum d * count for each d.\n        # The last digit of m is m_mod = m % 10\n        # So, for each multiple of m, its last digit is (k * m_mod) % 10\n        # We can find the pattern of last digits as k increases.\n        # For example, if m_mod is 2, the last digits cycle through 2,4,6,8,0,2,4,6,8,0,...\n        # So, the cycle length is 10 // gcd(m_mod, 10) = 10 // 2 =5\n        # For each cycle, the sum is 2+4+6+8+0=20\n        # So, the total number of cycles is total_cycles = (n // m) // cycle_length\n        # The remainder is rem = (n // m) % cycle_length\n        # Then, the sum is sum_cycle * total_cycles + sum(rem_digits)\n        # Now, compute m_mod = m % 10\n        m_mod = m % 10\n        if m_mod == 0:\n            # m is a multiple of 10, so last digit is 0 for all multiples\n            count = n // m\n            print(0 * count)\n            continue\n        # Compute the cycle length\n        g = gcd(m_mod, 10)\n        cycle_length = 10 // g\n        # Compute the sum of one cycle\n        # Generate the last digits for the first cycle_length numbers\n        sum_cycle = 0\n        for k in range(1, cycle_length +1):\n            digit = (k * m_mod) %10\n            sum_cycle += digit\n        # Total number of complete cycles\n        total_multiples = n // m\n        total_cycles = total_multiples // cycle_length\n        rem = total_multiples % cycle_length\n        # Compute the sum from complete cycles\n        sum_total = sum_cycle * total_cycles\n        # Compute the sum from the remaining part\n        sum_rem = 0\n        for k in range(1, rem +1):\n            digit = (k * m_mod) %10\n            sum_rem += digit\n        sum_total += sum_rem\n        print(sum_total)\n    return\n\ndef gcd(a, b):\n    while b:\n        a, b = b, a % b\n    return a\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "5\n1000000000000000000 7\n3 1\n1234567890123456789 11\n9876543210 2\n1000000000000000000 5",
+                "standard_solution_output": "642857142857142861\n6\n505050500505050505\n19753086420\n500000000000000000",
+                "model_output": "642857142857142861\n6\n505050500505050505\n19753086420\n500000000000000000",
+                "error": null
+            },
+            {
+                "input": "6\n987654321 4\n123456789 5\n456 2\n982347654321 7\n321 8\n654321 3",
+                "standard_solution_output": "987654320\n61728395\n912\n631509206352\n160\n981484",
+                "model_output": "987654320\n61728395\n912\n631509206352\n160\n981484",
+                "error": null
+            },
+            {
+                "input": "8\n12345678901234567890 987654321\n123 456\n987654321 654321\n1000000000000000000 2\n1234567890123456789 987654321\n1234567890123456789 123456789\n1234567890123456789 123456789\n1234567890123456789 123456789",
+                "standard_solution_output": "56249999488\n0\n6795\n2000000000000000000\n5624999946\n45000000009\n45000000009\n45000000009",
+                "model_output": "56249999488\n0\n6795\n2000000000000000000\n5624999946\n45000000009\n45000000009\n45000000009",
+                "error": null
+            },
+            {
+                "input": "9\n1000000000000000 7\n3 9\n1 2\n1000000000000000 3\n1000000000000000 5\n1000000000000000 2\n1000000000000000 11\n1000000000000000 13\n1000000000000000 7",
+                "standard_solution_output": "642857142857141\n0\n0\n1500000000000003\n500000000000000\n2000000000000000\n409090909090905\n346153846153848\n642857142857141",
+                "model_output": "642857142857141\n0\n0\n1500000000000003\n500000000000000\n2000000000000000\n409090909090905\n346153846153848\n642857142857141",
+                "error": null
+            },
+            {
+                "input": "5\n5 1200000000000000000\n7 1200000000000000000\n3 1000000000000000000\n2 1000000000000000000\n1 500000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "6\n234567890 9821\n1 2\n987654321 5\n456 3\n1234567890123456789 7\n9876543210 11",
+                "standard_solution_output": "107470\n0\n493827160\n684\n793650786507936506\n4040404030",
+                "model_output": "107470\n0\n493827160\n684\n793650786507936506\n4040404030",
+                "error": null
+            },
+            {
+                "input": "5\n1000000000000000000 7\n1 2\n1000000000000000000 1000000000000000000\n500000000000000000 500000000000000000\n1000000000000000000 1000000000000000000",
+                "standard_solution_output": "642857142857142861\n0\n0\n0\n0",
+                "model_output": "642857142857142861\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n9 300000000000000000\n1 400000000000000000\n8 500000000000000000\n6 600000000000000000\n2 700000000000000000",
+                "standard_solution_output": "0\n0\n0\n0\n0",
+                "model_output": "0\n0\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "5\n1000000000000000 5\n1 2\n100000000000000 7\n100000000000000 7\n100000000000000 7",
+                "standard_solution_output": "500000000000000\n0\n64285714285715\n64285714285715\n64285714285715",
+                "model_output": "500000000000000\n0\n64285714285715\n64285714285715\n64285714285715",
+                "error": null
+            },
+            {
+                "input": "9\n999999999999999 7\n1 2\n1000000000000000 3\n1234567890123456 13\n987654321 11\n1000000000000000 7\n1234567890123456 19\n1000000000000000 17\n1234567890123456 23",
+                "standard_solution_output": "642857142857141\n0\n1500000000000003\n427350423504274\n404040396\n642857142857141\n292397658187139\n264705882352940\n241545891545898",
+                "model_output": "642857142857141\n0\n1500000000000003\n427350423504274\n404040396\n642857142857141\n292397658187139\n264705882352940\n241545891545898",
+                "error": null
+            }
+        ]
+    }
+]

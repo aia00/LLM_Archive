@@ -1,0 +1,662 @@
+[
+    {
+        "code_index": 1,
+        "code": "def main():\n    import sys\n    input = sys.stdin.read().split()\n    idx = 0\n    q = int(input[idx])\n    idx += 1\n    for _ in range(q):\n        n = int(input[idx])\n        k = int(input[idx+1])\n        idx +=2\n        s = input[idx]\n        idx +=1\n        # Precompute for each position the pattern\n        # For each possible rotation, compute the required changes\n        # We can have 3 possible patterns: starting with R, G, B\n        # So for each possible pattern, we can compute the minimal changes for each window of size k\n        # Then take the minimal among all possible patterns\n        # So for each pattern, we can create a cost array where cost[i] is the number of changes needed for the substring starting at i\n        # Then for each pattern, find the minimal cost in a window of size k, and then take the overall minimal across all patterns\n        # So for each of the 3 possible patterns, we need to precompute the cost array\n        # Let's see how to compute the cost for each position\n        # For each position i, for each possible pattern, compute whether s[i] matches the pattern at position (i - start) mod 3\n        # Wait, perhaps it's better to precompute for each position what the expected character is for each of the 3 possible patterns\n        # So for each i, and for each pattern (R, G, B), the expected character is determined by (i's position in the pattern)\n        # So for example, pattern starting with R: the sequence is R, G, B, R, G, B, ...\n        # So for position i, the expected character is the (i mod 3)th character in the pattern\n        # So for each pattern, we can precompute the expected character for each position in s\n        # Then, for each window of size k, for each pattern, compute how many mismatches there are\n        # Then, for each pattern, find the minimal number of changes needed, which is the minimal number of mismatches in any window of size k\n        # Finally, take the minimal across all three patterns\n        # So, the steps are:\n        # 1. For each of the 3 patterns (R, G, B), create a list where each element is 0 or 1, indicating whether s[i] matches the pattern at position i\n        # 2. For each pattern, compute the prefix sum of the mismatches (0 where matches, 1 where mismatches)\n        # 3. For each pattern, find the minimal sum of any k-length window (i.e., sum from i to i+k-1)\n        # 4. Take the minimal of these three minimal sums across all patterns\n        # So, how to implement this efficiently?\n        # Since n can be up to 2e5 and q up to 2e5, but the sum of n is 2e5, it's manageable\n        # For each query, we can process each pattern in O(n) time\n        # So, for each query, 3 * O(n) is acceptable\n        # Now, the code structure:\n        # For each query:\n        # - For each pattern (R, G, B):\n        #   - Precompute the expected character for each position\n        #   - Compute the mismatches (1 if s[i] != expected, else 0)\n        #   - Compute the prefix sums of the mismatches\n        #   - For each possible window of size k, compute the sum of mismatches\n        #   - Find the minimal sum for this pattern\n        # - After processing all 3 patterns, take the minimal sum across all\n        # - Output that minimal sum\n        # Now, the code:\n\n        # Precompute the three possible patterns\n        # The patterns are cyclic, so for each position i, the expected character is based on (i) mod 3\n        # For pattern starting with R: expected_char = \"RGB\"[(i) % 3]\n        # For pattern starting with G: expected_char = \"GBR\"[(i) % 3]\n        # For pattern starting with B: expected_char = \"BRG\"[(i) % 3]\n        # Alternatively, we can represent each pattern as a string that is repeated, but that's not efficient for large n\n        # So, for each pattern, we can compute the expected character on the fly\n\n        # So, for each pattern, create a list of 0s and 1s, where 1 indicates a mismatch\n        # Let's create a helper function to compute the cost for a given pattern\n        def compute_cost(s, pattern):\n            cost = []\n            for c, exp_char in zip(s, pattern):\n                if c != exp_char:\n                    cost.append(1)\n                else:\n                    cost.append(0)\n            return cost\n\n        # But for each pattern, we can generate the expected character for each position\n        # So, for pattern starting with 'R', the expected character at position i is 'R', 'G', 'B', 'R', 'G', 'B', ... for i=0,1,2,3,4,5,...\n        # Similarly for the other patterns.\n\n        # So, for each pattern, create a list of expected characters, then compute the cost.\n\n        # Now, for each pattern, compute the cost array and then the prefix sums\n\n        # Precompute for each pattern:\n        # For each pattern, the expected character at position i is determined by (i) mod 3, but with a different starting point.\n\n        # Let's think about the three possible patterns:\n        # Pattern 1: starts with R, then G, B, R, G, B, ... So the expected character at position i is \"RGB\"[i % 3]\n        # Pattern 2: starts with G, then B, R, G, B, R, ... So the expected character at position i is \"GBR\"[i % 3]\n        # Pattern 3: starts with B, then R, G, B, R, G, ... So the expected character at position i is \"BRG\"[i % 3]\n        # Wait, no. Let me think again.\n\n        # The infinite string is \"RGBRGBRGB...\". So any substring of this is a cyclic permutation starting with R, G, or B.\n\n        # So for each possible starting point (R, G, B), the pattern is \"RGB\", \"GBR\", \"BRG\" respectively.\n\n        # So for pattern 1: starts with R, the expected character at position i is \"RGB\"[(i) % 3]\n        # For pattern 2: starts with G, the expected character at position i is \"GBR\"[(i) % 3]\n        # For pattern 3: starts with B, the expected character at position i is \"BRG\"[(i) % 3]\n\n        # So for each pattern, we can generate the expected character for each position i in the string s.\n\n        # So for each pattern, we can compute a list of 0s and 1s where 1 is a mismatch.\n\n        # Then, for each pattern, compute the prefix sum array, and then for each possible window of size k, compute the sum and find the minimal sum.\n\n        # So, the code for each pattern is as follows:\n\n        # For each of the 3 patterns, compute the cost array, then compute the prefix sum, then compute the minimal window.\n\n        # Let's implement this.\n\n        # So, for each query, we'll process each of the 3 patterns.\n\n        # Let's write code for this.\n\n        # First, for pattern 1: expected_char = \"RGB\"[(i) % 3]\n\n        # So, for each i in 0 to n-1, expected_char is \"RGB\"[i % 3]\n\n        # So, for each i, compute whether s[i] matches this.\n\n        # Similarly for the other patterns.\n\n        # So, for each pattern, create a cost array.\n\n        # Now, for each pattern, compute the prefix sum of the cost array.\n\n        # Then, for each window of size k, compute the sum as prefix[i + k] - prefix[i]\n\n        # The minimal sum across all windows is the minimal changes needed for that pattern.\n\n        # Then, take the minimal across all three patterns.\n\n        # So, in code:\n\n        min_changes = float('inf')\n\n        # For each pattern, compute the cost array, prefix sum, and find the minimal window.\n\n        # Let's process each pattern.\n\n        for pattern_start in ['R', 'G', 'B']:\n            # For each pattern, generate the expected character for each position\n            expected = []\n            for i in range(n):\n                if pattern_start == 'R':\n                    expected_char = \"RGB\"[i % 3]\n                elif pattern_start == 'G':\n                    expected_char = \"GBR\"[i % 3]\n                else: # pattern_start is B\n                    expected_char = \"BRG\"[i % 3]\n                expected.append(expected_char)\n            # Now, compute the cost array\n            cost = []\n            for i in range(n):\n                if s[i] != expected[i]:\n                    cost.append(1)\n                else:\n                    cost.append(0)\n            # Compute prefix sums\n            prefix = [0] * (n + 1)\n            for i in range(n):\n                prefix[i+1] = prefix[i] + cost[i]\n            # Now, find the minimal window of size k\n            min_window = float('inf')\n            for i in range(n - k + 1):\n                current_sum = prefix[i + k] - prefix[i]\n                if current_sum < min_window:\n                    min_window = current_sum\n            if min_window < min_changes:\n                min_changes = min_window\n\n        print(min_changes)\n\nmain()",
+        "test_results": [
+            {
+                "input": "1\n6 4\nBBRRBB",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBRGGGB\n6 2\nRRRGGG",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBGGGBR\n8 3\nRGBGBGBG",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 3\nRRRRRGG\n6 2\nBBRRBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "1\n2 4\nRBBGG",
+                "standard_solution_output": "inf",
+                "model_output": "inf",
+                "error": null
+            },
+            {
+                "input": "2\n7 3\nRBRGGBR\n7 5\nBBBRRRR",
+                "standard_solution_output": "0\n2",
+                "model_output": "0\n2",
+                "error": null
+            },
+            {
+                "input": "6\n7 3\nBBRRRBB\n8 2\nRRRRRRR\n3 1\nBBB\n7 4\nGGBBBGG\n4 2\nRRGB\n5 3\nRRGBR",
+                "standard_solution_output": "1\n1\n0\n2\n0\n0",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpr_i6zwu2.py\", line 171, in <module>\n    main()\n  File \"/tmp/tmpr_i6zwu2.py\", line 152, in main\n    if s[i] != expected[i]:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "6\n8 4\nBBRBBGGB\n7 3\nBBGBBB\n6 6\nRRRBBBGG\n5 1\nGBBGG\n8 5\nRRRRRBBB\n5 2\nGBGBR",
+                "standard_solution_output": "1\n1\n4\n0\n3\n0",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpj0l5i4_8.py\", line 171, in <module>\n    main()\n  File \"/tmp/tmpj0l5i4_8.py\", line 152, in main\n    if s[i] != expected[i]:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "4\n7 3\nRRRRRBB\n2 1\nG\n8 2\nBBRRRBB\n5 4\nRRRRR",
+                "standard_solution_output": "1\n0\n0\n2",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp1emau4rq.py\", line 171, in <module>\n    main()\n  File \"/tmp/tmp1emau4rq.py\", line 152, in main\n    if s[i] != expected[i]:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "2\n4 3\nRRRGG\n5 2\nGGBBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 2,
+        "code": "import sys\n\ndef main():\n    q = int(sys.stdin.readline())\n    for _ in range(q):\n        n, k = map(int, sys.stdin.readline().split())\n        s = sys.stdin.readline().strip()\n        # Precompute the expected pattern for each possible starting point\n        # The infinite string is \"RGBRGBRGB...\" which has a cycle of 3\n        # So for any position i in s, the expected character is determined by (i % 3)\n        # We can create a list that represents the expected pattern for each position\n        # Then, for each possible substring of length k in s, calculate the number of mismatches\n        # with the expected pattern, and find the minimum.\n        # However, for large n and k, this approach is O(nk) which is too slow.\n        # So we need a more efficient way.\n        # Alternative approach: precompute the mismatch counts for each possible pattern\n        # and then use a sliding window technique to find the minimum in O(n) time.\n        # There are three possible patterns: starting with R, G, or B.\n        # For each pattern, we can precompute a mismatch array and then find the minimal window.\n        # Let's implement this.\n        # Precompute the expected character for each position in the infinite string.\n        # The pattern is cyclic with period 3, so for each position i, expected_char = \"RGB\"[(i) % 3]\n        # For each of the three possible starting points (R, G, B), we can create a pattern.\n        # For each pattern, we can compute the mismatch counts for each position in s.\n        # Then, for each pattern, we can use a sliding window to find the minimal number of mismatches in any window of size k.\n        # The minimal among all three patterns will be the answer.\n        # Let's create a helper function to compute the mismatch counts for a given pattern.\n        # This helper function will return a list where each element is 1 if the character doesn't match the expected pattern, else 0.\n        # Then, for each of the three patterns, we can compute the mismatch list, and then compute the minimal sum of any k-length window.\n\n        # Let's define the three possible patterns.\n        patterns = [\"RGB\", \"GBR\", \"BRG\"]\n        min_changes = float('inf')\n        for pattern in patterns:\n            # Compute the mismatch array for this pattern\n            mismatches = []\n            for i in range(n):\n                expected_char = pattern[i % 3]\n                if s[i] != expected_char:\n                    mismatches.append(1)\n                else:\n                    mismatches.append(0)\n            # Now, find the minimal number of changes in any window of size k\n            # Use a sliding window approach\n            current_sum = sum(mismatches[:k])\n            min_sum = current_sum\n            for i in range(k, n):\n                current_sum += mismatches[i] - mismatches[i - k]\n                if current_sum < min_sum:\n                    min_sum = current_sum\n            if min_sum < min_changes:\n                min_changes = min_sum\n        print(min_changes)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "1\n6 4\nBBRRBB",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBRGGGB\n6 2\nRRRGGG",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBGGGBR\n8 3\nRGBGBGBG",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 3\nRRRRRGG\n6 2\nBBRRBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "1\n2 4\nRBBGG",
+                "standard_solution_output": "inf",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "2\n7 3\nRBRGGBR\n7 5\nBBBRRRR",
+                "standard_solution_output": "0\n2",
+                "model_output": "0\n2",
+                "error": null
+            },
+            {
+                "input": "6\n7 3\nBBRRRBB\n8 2\nRRRRRRR\n3 1\nBBB\n7 4\nGGBBBGG\n4 2\nRRGB\n5 3\nRRGBR",
+                "standard_solution_output": "1\n1\n0\n2\n0\n0",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpvc1c4lbn.py\", line 56, in <module>\n    main()\n  File \"/tmp/tmpvc1c4lbn.py\", line 39, in main\n    if s[i] != expected_char:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "6\n8 4\nBBRBBGGB\n7 3\nBBGBBB\n6 6\nRRRBBBGG\n5 1\nGBBGG\n8 5\nRRRRRBBB\n5 2\nGBGBR",
+                "standard_solution_output": "1\n1\n4\n0\n3\n0",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmprnn7t6jf.py\", line 56, in <module>\n    main()\n  File \"/tmp/tmprnn7t6jf.py\", line 39, in main\n    if s[i] != expected_char:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "4\n7 3\nRRRRRBB\n2 1\nG\n8 2\nBBRRRBB\n5 4\nRRRRR",
+                "standard_solution_output": "1\n0\n0\n2",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp90lpnq2c.py\", line 56, in <module>\n    main()\n  File \"/tmp/tmp90lpnq2c.py\", line 39, in main\n    if s[i] != expected_char:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "2\n4 3\nRRRGG\n5 2\nGGBBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 3,
+        "code": "def solve():\n    import sys\n    input = sys.stdin.read().split()\n    ptr = 0\n    q = int(input[ptr])\n    ptr += 1\n    for _ in range(q):\n        n, k = int(input[ptr]), int(input[ptr+1])\n        ptr +=2\n        s = input[ptr]\n        ptr +=1\n        # Precompute the patterns for the infinite RGB string\n        # The infinite string is \"RGBRGBRGB...\" which repeats every 3 characters\n        # So the possible starting points are 0,1,2\n        # For each possible starting point, create a pattern of length k\n        # Then, for each possible starting point in s, compute the number of mismatches\n        # between s and each pattern, and find the minimal one\n        # To optimize, precompute the expected character for each position in the infinite string\n        # Then, for each position i in s, compute the mismatch for each of the three possible starting points\n        # We can precompute for each possible starting pattern (0,1,2) the number of mismatches in a sliding window of size k\n        # So for each query, we can compute for each of the 3 patterns, the minimal number of changes needed, and then take the minimum among them\n        # This approach is O(n) per query, which is acceptable for the constraints\n        # Now, let's implement this\n        min_changes = float('inf')\n        # For each possible starting pattern (0,1,2)\n        for start_pattern in range(3):\n            # Generate the expected pattern for the window\n            # The expected character at position i is pattern[(i - start_offset) % 3]\n            # So for each position i in s, compute the difference from the expected character\n            # To compute this efficiently, we can precompute for each position the expected character for each possible start\n            # But since for each query, the window can start at any position, it's better to compute the mismatches on the fly\n            # However, this approach would be O(nk) which is too slow for n=2e5 and q=2e5\n            # So we need a smarter way\n            # We can precompute for each position in s the difference between s[i] and the expected character for each of the 3 possible patterns\n            # Then, for each pattern, compute the sliding window of size k and find the minimal sum\n            # This way, the computation for each query is O(n), which is acceptable\n            # Let's precompute the mismatches for each pattern\n            # Create a list where each element is 0 if s[i] matches the expected character for pattern, else 1\n            # Then, for each pattern, compute the minimal number of 1's in any window of size k\n            # So, precompute for each pattern a list of 0s and 1s\n            # Then, compute the sliding window sums and find the minimal sum\n            # Now, implement this\n            # Precompute for each pattern the mismatch array\n            mismatches = []\n            for i in range(n):\n                expected_char = 'R' if (start_pattern + i) % 3 == 0 else 'G' if (start_pattern + i) % 3 == 1 else 'B'\n                if s[i] != expected_char:\n                    mismatches.append(1)\n                else:\n                    mismatches.append(0)\n            # Now, compute the sliding window of size k and find the minimal sum\n            current_sum = sum(mismatches[:k])\n            min_sum = current_sum\n            for i in range(k, n):\n                current_sum += mismatches[i] - mismatches[i - k]\n                if current_sum < min_sum:\n                    min_sum = current_sum\n            if min_sum < min_changes:\n                min_changes = min_sum\n        print(min_changes)\nsolve()",
+        "test_results": [
+            {
+                "input": "1\n6 4\nBBRRBB",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBRGGGB\n6 2\nRRRGGG",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBGGGBR\n8 3\nRGBGBGBG",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 3\nRRRRRGG\n6 2\nBBRRBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "1\n2 4\nRBBGG",
+                "standard_solution_output": "inf",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "2\n7 3\nRBRGGBR\n7 5\nBBBRRRR",
+                "standard_solution_output": "0\n2",
+                "model_output": "0\n2",
+                "error": null
+            },
+            {
+                "input": "6\n7 3\nBBRRRBB\n8 2\nRRRRRRR\n3 1\nBBB\n7 4\nGGBBBGG\n4 2\nRRGB\n5 3\nRRGBR",
+                "standard_solution_output": "1\n1\n0\n2\n0\n0",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpwg1vytey.py\", line 61, in <module>\n    solve()\n  File \"/tmp/tmpwg1vytey.py\", line 47, in solve\n    if s[i] != expected_char:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "6\n8 4\nBBRBBGGB\n7 3\nBBGBBB\n6 6\nRRRBBBGG\n5 1\nGBBGG\n8 5\nRRRRRBBB\n5 2\nGBGBR",
+                "standard_solution_output": "1\n1\n4\n0\n3\n0",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpzr99nper.py\", line 61, in <module>\n    solve()\n  File \"/tmp/tmpzr99nper.py\", line 47, in solve\n    if s[i] != expected_char:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "4\n7 3\nRRRRRBB\n2 1\nG\n8 2\nBBRRRBB\n5 4\nRRRRR",
+                "standard_solution_output": "1\n0\n0\n2",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpdvdvit8b.py\", line 61, in <module>\n    solve()\n  File \"/tmp/tmpdvdvit8b.py\", line 47, in solve\n    if s[i] != expected_char:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "2\n4 3\nRRRGG\n5 2\nGGBBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 4,
+        "code": "def main():\n    import sys\n    input = sys.stdin.read().split()\n    idx = 0\n    q = int(input[idx])\n    idx +=1\n    for _ in range(q):\n        n = int(input[idx])\n        k = int(input[idx+1])\n        idx +=2\n        s = input[idx]\n        idx +=1\n        # precompute the pattern\n        pattern = 'RGBRGBRGB...'\n        # for each possible starting point in s, check against each possible pattern\n        min_changes = float('inf')\n        for i in range(n - k + 1):\n            current = s[i:i+k]\n            # compare with all possible patterns\n            for p in ['RGB', 'GBR', 'BRG']:\n                # compute the number of mismatches\n                mismatches = 0\n                for j in range(k):\n                    if current[j] != p[j % 3]:\n                        mismatches +=1\n                if mismatches < min_changes:\n                    min_changes = mismatches\n        print(min_changes)\n\nif __name__ == '__main__':\n    main()",
+        "test_results": [
+            {
+                "input": "1\n6 4\nBBRRBB",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBRGGGB\n6 2\nRRRGGG",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBGGGBR\n8 3\nRGBGBGBG",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 3\nRRRRRGG\n6 2\nBBRRBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "1\n2 4\nRBBGG",
+                "standard_solution_output": "inf",
+                "model_output": "inf",
+                "error": null
+            },
+            {
+                "input": "2\n7 3\nRBRGGBR\n7 5\nBBBRRRR",
+                "standard_solution_output": "0\n2",
+                "model_output": "0\n2",
+                "error": null
+            },
+            {
+                "input": "6\n7 3\nBBRRRBB\n8 2\nRRRRRRR\n3 1\nBBB\n7 4\nGGBBBGG\n4 2\nRRGB\n5 3\nRRGBR",
+                "standard_solution_output": "1\n1\n0\n2\n0\n0",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmphd8oa2fb.py\", line 31, in <module>\n    main()\n  File \"/tmp/tmphd8oa2fb.py\", line 24, in main\n    if current[j] != p[j % 3]:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "6\n8 4\nBBRBBGGB\n7 3\nBBGBBB\n6 6\nRRRBBBGG\n5 1\nGBBGG\n8 5\nRRRRRBBB\n5 2\nGBGBR",
+                "standard_solution_output": "1\n1\n4\n0\n3\n0",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp65u2cn03.py\", line 31, in <module>\n    main()\n  File \"/tmp/tmp65u2cn03.py\", line 24, in main\n    if current[j] != p[j % 3]:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "4\n7 3\nRRRRRBB\n2 1\nG\n8 2\nBBRRRBB\n5 4\nRRRRR",
+                "standard_solution_output": "1\n0\n0\n2",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp3hlronf6.py\", line 31, in <module>\n    main()\n  File \"/tmp/tmp3hlronf6.py\", line 24, in main\n    if current[j] != p[j % 3]:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "2\n4 3\nRRRGG\n5 2\nGGBBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 5,
+        "code": "def main():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    q = int(data[0])\n    idx = 1\n    for _ in range(q):\n        n = int(data[idx])\n        k = int(data[idx+1])\n        idx += 2\n        s = data[idx]\n        idx +=1\n        # Precompute the pattern\n        pattern = 'RGB'\n        # We need to find a window of size k in s that has the minimal changes to match a substring of the infinite pattern\n        # For each possible starting pattern, we can compute the required changes\n        # The pattern can start with R, G, or B, and then follow the RGB sequence\n        # So for each possible starting point, we can generate the expected pattern and compare it to s\n        # However, this approach is O(nk) which is too slow for n up to 2e5\n        # So we need a more efficient way\n        # Let's think about the possible patterns we can have\n        # The infinite pattern is periodic with period 3, so for any position i, the expected character is pattern[i % 3]\n        # So for any window of size k, the expected characters are determined by their positions in the pattern\n        # We can precompute for each position in s whether it matches the expected pattern starting with R, G, or B\n        # Then, for each window, we can compute the number of mismatches for each possible starting pattern\n        # The minimal number of mismatches across all possible windows and all possible starting patterns is our answer\n        # So, let's create 3 arrays: one for each possible starting pattern (R, G, B)\n        # Each array will store the cumulative number of mismatches up to each position\n        # Then, for any window, we can compute the number of mismatches by looking up the start and end in the corresponding array\n        # Let's create these arrays\n        # Initialize the cumulative arrays\n        cum_R = [0]*(n+1)\n        cum_G = [0]*(n+1)\n        cum_B = [0]*(n+1)\n        # For each character in s, determine if it matches the expected pattern starting with R, G, or B\n        for i in range(n):\n            expected_R = pattern[i % 3]\n            expected_G = pattern[(i+1) %3]\n            expected_B = pattern[(i+2) %3]\n            # Compare with current character\n            if s[i] == expected_R:\n                cum_R[i+1] = cum_R[i]\n            else:\n                cum_R[i+1] = cum_R[i] +1\n            if s[i] == expected_G:\n                cum_G[i+1] = cum_G[i]\n            else:\n                cum_G[i+1] = cum_G[i] +1\n            if s[i] == expected_B:\n                cum_B[i+1] = cum_B[i]\n            else:\n                cum_B[i+1] = cum_B[i] +1\n        # Now, for each possible window starting at i, of length k, find the minimal changes\n        min_changes = float('inf')\n        for i in range(n - k +1):\n            # For each window, check all three possible starting patterns\n            # For pattern starting with R: the expected pattern is R, G, B, R, G, B,...\n            # So for position i, the expected character is pattern[(i + j) %3] where j is 0 to k-1\n            # But in the cumulative arrays, we have the cumulative mismatches for each pattern\n            # So for each possible starting pattern, the window is from i to i + k -1\n            # So the number of mismatches is cum_R[i + k] - cum_R[i]\n            # Similarly for cum_G and cum_B\n            current_R = cum_R[i +k] - cum_R[i]\n            current_G = cum_G[i +k] - cum_G[i]\n            current_B = cum_B[i +k] - cum_B[i]\n            min_current = min(current_R, current_G, current_B)\n            if min_current < min_changes:\n                min_changes = min_current\n        print(min_changes)\n        \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "1\n6 4\nBBRRBB",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBRGGGB\n6 2\nRRRGGG",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBGGGBR\n8 3\nRGBGBGBG",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 3\nRRRRRGG\n6 2\nBBRRBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "1\n2 4\nRBBGG",
+                "standard_solution_output": "inf",
+                "model_output": "inf",
+                "error": null
+            },
+            {
+                "input": "2\n7 3\nRBRGGBR\n7 5\nBBBRRRR",
+                "standard_solution_output": "0\n2",
+                "model_output": "0\n2",
+                "error": null
+            },
+            {
+                "input": "6\n7 3\nBBRRRBB\n8 2\nRRRRRRR\n3 1\nBBB\n7 4\nGGBBBGG\n4 2\nRRGB\n5 3\nRRGBR",
+                "standard_solution_output": "1\n1\n0\n2\n0\n0",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpxuf8evea.py\", line 72, in <module>\n    main()\n  File \"/tmp/tmpxuf8evea.py\", line 41, in main\n    if s[i] == expected_R:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "6\n8 4\nBBRBBGGB\n7 3\nBBGBBB\n6 6\nRRRBBBGG\n5 1\nGBBGG\n8 5\nRRRRRBBB\n5 2\nGBGBR",
+                "standard_solution_output": "1\n1\n4\n0\n3\n0",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpvpbvon0m.py\", line 72, in <module>\n    main()\n  File \"/tmp/tmpvpbvon0m.py\", line 41, in main\n    if s[i] == expected_R:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "4\n7 3\nRRRRRBB\n2 1\nG\n8 2\nBBRRRBB\n5 4\nRRRRR",
+                "standard_solution_output": "1\n0\n0\n2",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpkqzimpve.py\", line 72, in <module>\n    main()\n  File \"/tmp/tmpkqzimpve.py\", line 41, in main\n    if s[i] == expected_R:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "2\n4 3\nRRRGG\n5 2\nGGBBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 6,
+        "code": "import sys\n\ndef main():\n    q = int(sys.stdin.readline())\n    for _ in range(q):\n        n, k = map(int, sys.stdin.readline().split())\n        s = sys.stdin.readline().strip()\n        # To be filled with code\n        # We need to find the minimal changes for a substring of s of length k to match a substring of the infinite RGB string.\n        # The infinite string is periodic with period 3, so for each possible starting point (R, G, B), we can generate a pattern and compare.\n        # For each possible starting pattern, we compute the number of mismatches for each window of size k in s, and take the minimal one.\n        # Since the infinite string is periodic, the patterns repeat every 3 characters. So for each possible starting position mod 3, we can precompute the expected character for each position.\n        # We'll precompute three possible patterns: starting with 'R', 'G', or 'B'.\n        # For each pattern, we compute the number of mismatches in each window of size k, then find the minimal total mismatches across all windows and all patterns.\n        # To compute this efficiently, we can precompute for each position in s and each pattern, whether the character matches, then use a sliding window to compute the sum of mismatches for each window of size k.\n        # We'll do this for all three patterns and choose the minimal result.\n        # Now, let's think about how to implement this.\n        # First, for each of the three possible starting points, create a list that represents the expected character at each position.\n        # Then, for each position i in s, compute a mismatch array where mismatch[i] is 1 if s[i] != expected_char, else 0.\n        # Then, for each mismatch array, compute the sum of k-length windows. The minimal sum across all three is the answer.\n        # So, steps:\n        # 1. Precompute the three possible patterns.\n        # 2. For each pattern, compute the mismatch array.\n        # 3. For each mismatch array, compute the minimal number of changes for any k-length window.\n        # 4. Take the minimal value across all three patterns.\n        # Now, implement this.\n        # First, precompute the expected character for each position for each pattern.\n        # For pattern starting with 'R', the expected characters are R, G, B, R, G, B, ...\n        # Similarly for 'G' and 'B'.\n        # So, for any position i, the expected character is determined by (i mod 3). For pattern starting with 'R', position 0 is R, 1 is G, 2 is B, 0 is R, etc.\n        # So, for each pattern, create a list of expected characters of length n.\n        # Then, for each position, compute if it matches s[i], and create a 1 if not, 0 if yes.\n        # Then, for each of these three mismatch arrays, compute the sliding window sum for window size k, and find the minimal sum.\n        # Now, the problem is to compute the minimal sum for each window across all three patterns.\n        # So, let's proceed.\n\n        # Precompute the three possible patterns.\n        # For each pattern, the expected character at position i is determined by (i % 3) in the pattern's starting point.\n        # Let's represent the three possible starting points as 'R', 'G', 'B'.\n        patterns = ['R', 'G', 'B']\n\n        # Now, for each starting pattern, compute the expected character for each position.\n        expected = []\n        for p in patterns:\n            pattern = []\n            for i in range(n):\n                pos_in_pattern = i % 3\n                if pos_in_pattern == 0:\n                    pattern.append(p)\n                elif pos_in_pattern == 1:\n                    pattern.append('G' if p == 'R' else 'B')\n                else:\n                    pattern.append('B' if p == 'R' else 'G')\n                # Wait, no. For example, if the starting pattern is 'G', then the sequence is G, B, R, G, B, R, etc. So, the pattern for starting with 'G' is G, B, R, repeating.\n                # So, the correct way is: for each position i, the expected character is determined by the starting pattern and the position in the pattern.\n                # Let's think differently: for a starting pattern p, the expected character at position i is the (i mod 3)th character of the infinite string starting with p.\n                # So, for p = 'R', the infinite string is R, G, B, R, G, B...\n                # For p = 'G', it's G, B, R, G, B, R...\n                # For p = 'B', it's B, R, G, B, R, G...\n                # So, the pattern for each starting point is determined by the first three characters, which repeat.\n                # So, for any i, the expected character is the (i mod 3)th character of the pattern starting with p.\n\n                # So, for a given starting pattern p, the expected character at i is the (i mod 3)th character in the infinite string starting with p.\n                # Let's create a function to get the expected character for a given p and i.\n\n            # So, for each p in patterns, create a list of expected characters for each position in s.\n            # Then, for each position, compute the mismatch.\n\n            # So, for each p in patterns:\n            #   for each i in 0..n-1:\n            #       expected_char = pattern[(i) % 3]\n            #       if s[i] != expected_char, add 1 to mismatch array.\n\n            # So, let's compute the expected for each pattern.\n            # Let's precompute the three possible expected patterns for each i.\n\n            # Create a list of expected characters for each pattern.\n            # For pattern 'R', the expected characters are 'R', 'G', 'B', 'R', 'G', 'B', ...\n            # For pattern 'G', it's 'G', 'B', 'R', 'G', 'B', 'R', ...\n            # For pattern 'B', it's 'B', 'R', 'G', 'B', 'R', 'G', ...\n\n            # So, for each pattern, create a list where for each i, the expected character is determined by (i mod 3).\n            # Let's precompute these.\n\n            # For pattern 'R':\n            r_pattern = ['R', 'G', 'B']\n            # For pattern 'G':\n            g_pattern = ['G', 'B', 'R']\n            # For pattern 'B':\n            b_pattern = ['B', 'R', 'G']\n\n            # So, for each position i, the expected character is r_pattern[i%3], g_pattern[i%3], or b_pattern[i%3].\n\n            # Now, for each pattern, compute the mismatch array.\n\n            # So, for each pattern, create a list where each element is 1 if s[i] != expected_char, else 0.\n\n            # Let's create a function to compute the mismatch for a given pattern and s.\n\n            # For each pattern, compute the mismatch array.\n\n            # Compute for 'R' pattern:\n            r_mismatch = []\n            for i in range(n):\n                expected = r_pattern[i % 3]\n                if s[i] != expected:\n                    r_mismatch.append(1)\n                else:\n                    r_mismatch.append(0)\n\n            # Similarly for 'G' and 'B' patterns.\n            g_mismatch = []\n            for i in range(n):\n                expected = g_pattern[i % 3]\n                if s[i] != expected:\n                    g_mismatch.append(1)\n                else:\n                    g_mismatch.append(0)\n\n            b_mismatch = []\n            for i in range(n):\n                expected = b_pattern[i % 3]\n                if s[i] != expected:\n                    b_mismatch.append(1)\n                else:\n                    g_mismatch.append(0)\n\n            # Wait, no. The 'g_mismatch' and 'b_mismatch' were incorrectly named. Let's correct that.\n\n            b_mismatch = []\n            for i in range(n):\n                expected = b_pattern[i % 3]\n                if s[i] != expected:\n                    b_mismatch.append(1)\n                else:\n                    b_mismatch.append(0)\n\n            # Now, for each of the three mismatch arrays, compute the minimal sum of any k-length window.\n\n            # Now, the task is to compute, for each mismatch array, the minimal sum of a k-length window.\n\n            # How to compute this efficiently?\n\n            # One approach is to precompute the prefix sums of the mismatch arrays, then for each window, compute the sum as prefix[i + k] - prefix[i].\n\n            # For each pattern, compute the minimal sum of any window of size k.\n\n            # So, for each pattern, compute the prefix sum array.\n\n            # Let's compute the prefix sums.\n\n            # Compute prefix sums for r_mismatch:\n            r_prefix = [0] * (n + 1)\n            for i in range(n):\n                r_prefix[i + 1] = r_prefix[i] + r_mismatch[i]\n\n            # Similarly for g and b.\n\n            g_prefix = [0] * (n + 1)\n            for i in range(n):\n                g_prefix[i + 1] = g_prefix[i] + g_mismatch[i]\n\n            b_prefix = [0] * (n + 1)\n            for i in range(n):\n                b_prefix[i + 1] = b_prefix[i] + b_mismatch[i]\n\n            # Now, for each pattern, find the minimal sum in the window of size k.\n\n            min_changes_r = min(r_prefix[i + k] - r_prefix[i] for i in range(n - k + 1))\n            min_changes_g = min(g_prefix[i + k] - g_prefix[i] for i in range(n - k + 1))\n            min_changes_b = min(b_prefix[i + k] - b_prefix[i] for i in range(n - k + 1))\n\n            # The minimal among all three is the answer.\n\n            minimal = min(min_changes_r, min_changes_g, min_changes_b)\n\n            print(minimal)\n\nif __name__ == '__main__':\n    main()",
+        "test_results": [
+            {
+                "input": "1\n6 4\nBBRRBB",
+                "standard_solution_output": "1",
+                "model_output": "1\n1\n1",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBRGGGB\n6 2\nRRRGGG",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n1\n1\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBGGGBR\n8 3\nRGBGBGBG",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n1\n1\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 3\nRRRRRGG\n6 2\nBBRRBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n1\n1\n0\n0\n0",
+                "error": null
+            },
+            {
+                "input": "1\n2 4\nRBBGG",
+                "standard_solution_output": "inf",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpuqlehalj.py\", line 180, in <module>\n    main()\n  File \"/tmp/tmpuqlehalj.py\", line 169, in main\n    min_changes_r = min(r_prefix[i + k] - r_prefix[i] for i in range(n - k + 1))\nValueError: min() arg is an empty sequence\n"
+            },
+            {
+                "input": "2\n7 3\nRBRGGBR\n7 5\nBBBRRRR",
+                "standard_solution_output": "0\n2",
+                "model_output": "0\n0\n0\n2\n2\n2",
+                "error": null
+            },
+            {
+                "input": "6\n7 3\nBBRRRBB\n8 2\nRRRRRRR\n3 1\nBBB\n7 4\nGGBBBGG\n4 2\nRRGB\n5 3\nRRGBR",
+                "standard_solution_output": "1\n1\n0\n2\n0\n0",
+                "model_output": "1\n1\n1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpvufip8ex.py\", line 180, in <module>\n    main()\n  File \"/tmp/tmpvufip8ex.py\", line 106, in main\n    if s[i] != expected:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "6\n8 4\nBBRBBGGB\n7 3\nBBGBBB\n6 6\nRRRBBBGG\n5 1\nGBBGG\n8 5\nRRRRRBBB\n5 2\nGBGBR",
+                "standard_solution_output": "1\n1\n4\n0\n3\n0",
+                "model_output": "1\n1\n1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpji2p57o2.py\", line 180, in <module>\n    main()\n  File \"/tmp/tmpji2p57o2.py\", line 106, in main\n    if s[i] != expected:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "4\n7 3\nRRRRRBB\n2 1\nG\n8 2\nBBRRRBB\n5 4\nRRRRR",
+                "standard_solution_output": "1\n0\n0\n2",
+                "model_output": "1\n1\n1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp8ktv78_x.py\", line 180, in <module>\n    main()\n  File \"/tmp/tmp8ktv78_x.py\", line 106, in main\n    if s[i] != expected:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "2\n4 3\nRRRGG\n5 2\nGGBBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n1\n1\n0\n0\n0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 7,
+        "code": "import sys\n\ndef main():\n    q = int(sys.stdin.readline())\n    for _ in range(q):\n        n, k = map(int, sys.stdin.readline().split())\n        s = sys.stdin.readline().strip()\n        # Precompute the pattern\n        pattern = \"RGBRGBRGB...\"\n        # Generate all possible starting points for the pattern in s\n        # For each possible starting position in s, compute the minimal changes needed\n        # Then take the minimum over all possible starting positions\n        min_changes = float('inf')\n        for i in range(n - k + 1):\n            # For each possible starting index in s\n            current = 0\n            changes = 0\n            for j in range(k):\n                if s[i + j] != pattern[j % 3]:\n                    changes += 1\n            if changes < min_changes:\n                min_changes = changes\n        print(min_changes)\n        \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "1\n6 4\nBBRRBB",
+                "standard_solution_output": "1",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBRGGGB\n6 2\nRRRGGG",
+                "standard_solution_output": "1\n0",
+                "model_output": "2\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBGGGBR\n8 3\nRGBGBGBG",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 3\nRRRRRGG\n6 2\nBBRRBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n1",
+                "error": null
+            },
+            {
+                "input": "1\n2 4\nRBBGG",
+                "standard_solution_output": "inf",
+                "model_output": "inf",
+                "error": null
+            },
+            {
+                "input": "2\n7 3\nRBRGGBR\n7 5\nBBBRRRR",
+                "standard_solution_output": "0\n2",
+                "model_output": "1\n3",
+                "error": null
+            },
+            {
+                "input": "6\n7 3\nBBRRRBB\n8 2\nRRRRRRR\n3 1\nBBB\n7 4\nGGBBBGG\n4 2\nRRGB\n5 3\nRRGBR",
+                "standard_solution_output": "1\n1\n0\n2\n0\n0",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp8ttlrhbo.py\", line 26, in <module>\n    main()\n  File \"/tmp/tmp8ttlrhbo.py\", line 19, in main\n    if s[i + j] != pattern[j % 3]:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "6\n8 4\nBBRBBGGB\n7 3\nBBGBBB\n6 6\nRRRBBBGG\n5 1\nGBBGG\n8 5\nRRRRRBBB\n5 2\nGBGBR",
+                "standard_solution_output": "1\n1\n4\n0\n3\n0",
+                "model_output": "2",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpg2otlmml.py\", line 26, in <module>\n    main()\n  File \"/tmp/tmpg2otlmml.py\", line 19, in main\n    if s[i + j] != pattern[j % 3]:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "4\n7 3\nRRRRRBB\n2 1\nG\n8 2\nBBRRRBB\n5 4\nRRRRR",
+                "standard_solution_output": "1\n0\n0\n2",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp_wq7i5fq.py\", line 26, in <module>\n    main()\n  File \"/tmp/tmp_wq7i5fq.py\", line 19, in main\n    if s[i + j] != pattern[j % 3]:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "2\n4 3\nRRRGG\n5 2\nGGBBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "2\n1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 8,
+        "code": "def solve():\n    import sys\n    input = sys.stdin.read\n    data = input().split()\n    idx = 0\n    q = int(data[idx])\n    idx +=1\n    for _ in range(q):\n        n, k = int(data[idx]), int(data[idx+1])\n        idx +=2\n        s = data[idx]\n        idx +=1\n        # Precompute the pattern for each possible starting position modulo 3\n        # For each position, find the expected character for the infinite string\n        # Then compute the number of mismatches for each possible k-length window\n        # We need to find the minimum number of mismatches across all possible windows\n        # and all possible starting patterns (R, G, B)\n        # So for each possible starting pattern (R, G, B), compute the number of mismatches\n        # for each window of size k, and take the minimum\n        # Since the infinite string is periodic with period 3, the pattern repeats every 3 characters\n        # So for each possible starting offset (0,1,2), we can create a target pattern of length k\n        # and compute the number of mismatches between the substring s[i:i+k] and this target\n        # The minimal number across all possible patterns is the answer\n        # Now, precompute for each position the expected character for each of the three possible patterns\n        # For each position j in s, for each of the three possible patterns (starting with R, G, B),\n        # what is the expected character at j?\n        # Then, for each window of size k, compute the number of mismatches for each of the three patterns\n        # and find the minimal total for each window, then take the minimal across all windows\n        # So, for each window, we can compute the mismatches for each pattern in O(1) time if we precompute the prefix sums\n        # Let's precompute for each position j, for each pattern, the number of mismatches up to j\n        # Then, for any window [i, i+k), the number of mismatches for a pattern is prefix[i + k] - prefix[i]\n        # So, precompute three prefix arrays: one for each possible pattern\n        # Then, for each window, compute the mismatches for each pattern and find the minimal\n        # So, first, for each position j, compute for each pattern p (0,1,2) what is the expected character, and whether it matches s[j]\n        # Then, for each pattern p, create a prefix sum array that counts the number of mismatches up to each position j\n        # Then, for each window of size k, compute the mismatches for each pattern and find the minimal\n        # So, the steps are:\n        # 1. For each pattern (R, G, B), precompute the expected character for each position j\n        # 2. For each position j, compute the mismatch for each pattern (if the character doesn't match)\n        # 3. Compute the prefix sums for each pattern's mismatch array\n        # 4. For each window of size k, compute the sum of mismatches for each pattern, and keep track of the minimal sum across all windows and patterns\n        # The minimal sum across all possible windows and patterns is the answer\n        # Now, let's think about how to represent the patterns. The infinite string is \"RGBRGBRGB...\"\n        # So, for a pattern starting with 'R', the expected character at position j is \"RGB\"[(j) % 3]\n        # For a pattern starting with 'G', it's \"RGB\"[(j+1) % 3]\n        # For a pattern starting with 'B', it's \"RGB\"[(j+2) % 3]\n        # So, for each pattern, the expected character at position j is \"RGB\"[(p + j) % 3], where p is 0,1,2\n        # So, for each pattern p in 0,1,2:\n        # expected_char = \"RGB\"[(p + j) % 3]\n        # Then, for each j, compute if s[j] == expected_char, if not, add 1 to the mismatch count for pattern p\n        # So, for each j, create a mismatch array for each pattern\n        # Then, compute prefix sums for each pattern's mismatch array\n        # Now, for each window of size k, compute the sum of mismatches for each pattern, and find the minimal sum across all windows and patterns\n        # Now, let's precompute the expected characters for each pattern and each position\n        # Let's create three arrays: mismatch0, mismatch1, mismatch2, where each array has n elements\n        # For pattern 0 (starting with R), mismatch0[j] is 1 if s[j] != \"RGB\"[(0 + j) % 3], else 0\n        # Similarly for pattern 1 and 2\n        # Then, compute prefix sums for each array\n        # prefix0 = [0]*(n+1)\n        # prefix1 = [0]*(n+1)\n        # prefix2 = [0]*(n+1)\n        # for j in 0 to n-1:\n        #     prefix0[j+1] = prefix0[j] + mismatch0[j]\n        #     prefix1[j+1] = prefix1[j] + mismatch1[j]\n        #     prefix2[j+1] = prefix2[j] + mismatch2[j]\n        # Then, for each window starting at i (0 <= i <= n -k), the sum for pattern p is prefixp[i +k] - prefixp[i]\n        # So, for each i, we can compute the sum for p=0,1,2 and take the minimal among all possible i and p\n        # The minimal sum across all i and p is the answer\n        # Now, the problem is to compute this efficiently\n        # Let's implement this approach\n        # So, in code:\n        # For each query:\n        #     Precompute the three mismatch arrays\n        #     Compute the three prefix sums\n        #     For each possible i (window start), compute the sum for each pattern and track the minimal sum\n        #     Output the minimal sum\n        # Now, let's code this\n        # Let's create a helper function to compute the mismatch arrays\n        # Or, perhaps, compute them on the fly\n        # Let's proceed step by step\n        # Initialize the minimal changes to a large value\n        min_changes = float('inf')\n        # For each pattern p in 0,1,2:\n        #     Compute the mismatch array for p\n        #     Compute prefix sums\n        #     Then, for each window, compute the sum and track the minimal\n        # So, let's loop through each pattern\n        for p in range(3):\n            # For pattern p, compute the expected character at each position j\n            # So, for each j, expected_char = \"RGB\"[(p + j) % 3]\n            # Compute the mismatch array\n            mismatches = []\n            for j in range(n):\n                expected = \"RGB\"[(p + j) % 3]\n                if s[j] != expected:\n                    mismatches.append(1)\n                else:\n                    mismatches.append(0)\n            # Compute prefix sums\n            prefix = [0] * (n + 1)\n            for j in range(n):\n                prefix[j+1] = prefix[j] + mismatches[j]\n            # Now, for each window starting at i, compute the sum of mismatches in [i, i+k)\n            # i can range from 0 to n -k\n            for i in range(n - k + 1):\n                total = prefix[i + k] - prefix[i]\n                if total < min_changes:\n                    min_changes = total\n        # After checking all patterns and windows, output min_changes\n        print(min_changes)\nsolve()",
+        "test_results": [
+            {
+                "input": "1\n6 4\nBBRRBB",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBRGGGB\n6 2\nRRRGGG",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBGGGBR\n8 3\nRGBGBGBG",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 3\nRRRRRGG\n6 2\nBBRRBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "1\n2 4\nRBBGG",
+                "standard_solution_output": "inf",
+                "model_output": "inf",
+                "error": null
+            },
+            {
+                "input": "2\n7 3\nRBRGGBR\n7 5\nBBBRRRR",
+                "standard_solution_output": "0\n2",
+                "model_output": "0\n2",
+                "error": null
+            },
+            {
+                "input": "6\n7 3\nBBRRRBB\n8 2\nRRRRRRR\n3 1\nBBB\n7 4\nGGBBBGG\n4 2\nRRGB\n5 3\nRRGBR",
+                "standard_solution_output": "1\n1\n0\n2\n0\n0",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpne6rrs5x.py\", line 111, in <module>\n    solve()\n  File \"/tmp/tmpne6rrs5x.py\", line 95, in solve\n    if s[j] != expected:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "6\n8 4\nBBRBBGGB\n7 3\nBBGBBB\n6 6\nRRRBBBGG\n5 1\nGBBGG\n8 5\nRRRRRBBB\n5 2\nGBGBR",
+                "standard_solution_output": "1\n1\n4\n0\n3\n0",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpnmhubwam.py\", line 111, in <module>\n    solve()\n  File \"/tmp/tmpnmhubwam.py\", line 95, in solve\n    if s[j] != expected:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "4\n7 3\nRRRRRBB\n2 1\nG\n8 2\nBBRRRBB\n5 4\nRRRRR",
+                "standard_solution_output": "1\n0\n0\n2",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpfaf8popx.py\", line 111, in <module>\n    solve()\n  File \"/tmp/tmpfaf8popx.py\", line 95, in solve\n    if s[j] != expected:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "2\n4 3\nRRRGG\n5 2\nGGBBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 9,
+        "code": "import sys\n\ndef main():\n    q = int(sys.stdin.readline())\n    for _ in range(q):\n        n, k = map(int, sys.stdin.readline().split())\n        s = sys.stdin.readline().strip()\n        # Precompute the expected pattern for each possible starting point\n        # The infinite string is \"RGBRGBRGB...\" so for each position i, the expected character is determined by (i mod 3)\n        # So for each possible starting pattern (R, G, B), we can precompute the expected characters for the substring of length k\n        # Then, for each window of size k in s, compute the number of mismatches and find the minimum\n        # To optimize, we can precompute the mismatch counts for each possible pattern and each possible window\n        # Let's create three arrays: one for each possible starting pattern (R, G, B)\n        # For each possible window, compute the number of mismatches\n        # Then, for each window, take the minimum of the three possible patterns' mismatches\n        # The overall minimum across all windows is the answer\n        # So, the steps are:\n        # 1. For each possible pattern (R, G, B), precompute the expected characters for each position in s\n        # 2. For each pattern, compute a prefix sum array of mismatches\n        # 3. For each possible window of size k, compute the number of mismatches for each pattern and find the minimum across all windows and all patterns\n        # 4. The answer is the minimum value found\n        # Now, let's implement this\n        # Precompute the expected patterns\n        patterns = ['RGB', 'GBR', 'BRG']\n        min_changes = float('inf')\n        for pattern in patterns:\n            # For each pattern, compute the mismatch count for each position\n            # Create a list where each element is 1 if s[i] != pattern[i % 3], else 0\n            mismatches = [0] * n\n            for i in range(n):\n                expected_char = pattern[i % 3]\n                if s[i] != expected_char:\n                    mismatches[i] = 1\n            # Now, compute the prefix sum array\n            prefix = [0] * (n + 1)\n            for i in range(n):\n                prefix[i+1] = prefix[i] + mismatches[i]\n            # Now, for each window of size k, compute the sum of mismatches\n            # The window starts at position i (0-based), ends at i + k - 1\n            # The sum is prefix[i + k] - prefix[i]\n            for i in range(n - k + 1):\n                total = prefix[i + k] - prefix[i]\n                if total < min_changes:\n                    min_changes = total\n        print(min_changes)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "1\n6 4\nBBRRBB",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBRGGGB\n6 2\nRRRGGG",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBGGGBR\n8 3\nRGBGBGBG",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 3\nRRRRRGG\n6 2\nBBRRBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "1\n2 4\nRBBGG",
+                "standard_solution_output": "inf",
+                "model_output": "inf",
+                "error": null
+            },
+            {
+                "input": "2\n7 3\nRBRGGBR\n7 5\nBBBRRRR",
+                "standard_solution_output": "0\n2",
+                "model_output": "0\n2",
+                "error": null
+            },
+            {
+                "input": "6\n7 3\nBBRRRBB\n8 2\nRRRRRRR\n3 1\nBBB\n7 4\nGGBBBGG\n4 2\nRRGB\n5 3\nRRGBR",
+                "standard_solution_output": "1\n1\n0\n2\n0\n0",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp5d1tybmy.py\", line 48, in <module>\n    main()\n  File \"/tmp/tmp5d1tybmy.py\", line 32, in main\n    if s[i] != expected_char:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "6\n8 4\nBBRBBGGB\n7 3\nBBGBBB\n6 6\nRRRBBBGG\n5 1\nGBBGG\n8 5\nRRRRRBBB\n5 2\nGBGBR",
+                "standard_solution_output": "1\n1\n4\n0\n3\n0",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp6919drqr.py\", line 48, in <module>\n    main()\n  File \"/tmp/tmp6919drqr.py\", line 32, in main\n    if s[i] != expected_char:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "4\n7 3\nRRRRRBB\n2 1\nG\n8 2\nBBRRRBB\n5 4\nRRRRR",
+                "standard_solution_output": "1\n0\n0\n2",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp1wuu5y1b.py\", line 48, in <module>\n    main()\n  File \"/tmp/tmp1wuu5y1b.py\", line 32, in main\n    if s[i] != expected_char:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "2\n4 3\nRRRGG\n5 2\nGGBBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 10,
+        "code": "import sys\nimport math\nfrom itertools import product\n\ndef main():\n    q = int(sys.stdin.readline())\n    for _ in range(q):\n        n, k = map(int, sys.stdin.readline().split())\n        s = sys.stdin.readline().strip()\n        # For each possible starting pattern (R, G, B) and each possible phase shift\n        # We need to find the minimal changes needed for a substring of length k\n        # So, for each possible pattern, we can precompute the expected character for each position\n        # and then for each possible starting position in s, compute the number of mismatches\n        # The minimal such value across all possible patterns and starting positions is the answer\n        # Since the infinite string is periodic with period 3, we can model the expected pattern for each position\n        # as a function of the starting pattern and the position within the pattern\n        # For example, if the starting pattern is R, then position 0 is R, 1 is G, 2 is B, 0 is R, etc.\n        # Similarly for starting with G or B, the pattern cycles every 3 characters\n        # So, for each possible starting pattern (R, G, B), we can precompute for each possible starting position in s\n        # the number of mismatches for the substring of length k\n        # Then, the minimal among all these is the answer\n        # Now, the key is to compute this efficiently\n        # Let's model each possible starting pattern and precompute the mismatches\n        # For each of the 3 possible patterns, we can create an array where each element is 0 or 1, indicating whether s[i] matches the expected pattern at position i for that pattern\n        # Then, for each pattern, we can compute the number of mismatches in a sliding window of size k\n        # The minimal value across all these is the answer\n        # So, for each pattern, we can compute the prefix sum array of mismatches, then for each possible starting position in s, the number of mismatches is the sum from i to i + k - 1 in the prefix sum array\n        # Then, the minimal value across all possible starting positions and all patterns is the answer\n        # Now, let's implement this\n        # Let's first define the three possible patterns\n        patterns = [\n            'RGB',\n            'GBR',\n            'BRG'\n        ]\n        # For each pattern, we can compute the expected character for each position\n        # For example, for pattern 'RGB', position 0 is R, 1 is G, 2 is B, 3 is R, etc.\n        # So, for each pattern, we can create an array where for each position i in s, we check if s[i] matches the expected character for that pattern at position i mod 3\n        min_changes = float('inf')\n        for p in patterns:\n            # Precompute the expected pattern for each position\n            expected = []\n            for i in range(n):\n                c = p[i % 3]\n                expected.append(c)\n            # Now, for each position in s, compute whether it matches the expected character\n            # We can create a list where 1 indicates a mismatch, 0 indicates a match\n            mismatches = [0] * n\n            for i in range(n):\n                if s[i] != expected[i]:\n                    mismatches[i] = 1\n            # Now, compute the prefix sum array of mismatches\n            prefix = [0] * (n + 1)\n            for i in range(n):\n                prefix[i+1] = prefix[i] + mismatches[i]\n            # Now, for each possible starting position in s, compute the number of mismatches in a window of size k\n            # The window can start at position i, and cover i to i + k -1\n            # The number of mismatches is prefix[i + k] - prefix[i]\n            for i in range(n - k + 1):\n                current = prefix[i + k] - prefix[i]\n                if current < min_changes:\n                    min_changes = current\n        print(min_changes)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "1\n6 4\nBBRRBB",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBRGGGB\n6 2\nRRRGGG",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 4\nBBGGGBR\n8 3\nRGBGBGBG",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "2\n7 3\nRRRRRGG\n6 2\nBBRRBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            },
+            {
+                "input": "1\n2 4\nRBBGG",
+                "standard_solution_output": "inf",
+                "model_output": "inf",
+                "error": null
+            },
+            {
+                "input": "2\n7 3\nRBRGGBR\n7 5\nBBBRRRR",
+                "standard_solution_output": "0\n2",
+                "model_output": "0\n2",
+                "error": null
+            },
+            {
+                "input": "6\n7 3\nBBRRRBB\n8 2\nRRRRRRR\n3 1\nBBB\n7 4\nGGBBBGG\n4 2\nRRGB\n5 3\nRRGBR",
+                "standard_solution_output": "1\n1\n0\n2\n0\n0",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpr4xas_k3.py\", line 66, in <module>\n    main()\n  File \"/tmp/tmpr4xas_k3.py\", line 50, in main\n    if s[i] != expected[i]:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "6\n8 4\nBBRBBGGB\n7 3\nBBGBBB\n6 6\nRRRBBBGG\n5 1\nGBBGG\n8 5\nRRRRRBBB\n5 2\nGBGBR",
+                "standard_solution_output": "1\n1\n4\n0\n3\n0",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpf_vw3zlo.py\", line 66, in <module>\n    main()\n  File \"/tmp/tmpf_vw3zlo.py\", line 50, in main\n    if s[i] != expected[i]:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "4\n7 3\nRRRRRBB\n2 1\nG\n8 2\nBBRRRBB\n5 4\nRRRRR",
+                "standard_solution_output": "1\n0\n0\n2",
+                "model_output": "1",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp69sft0o8.py\", line 66, in <module>\n    main()\n  File \"/tmp/tmp69sft0o8.py\", line 50, in main\n    if s[i] != expected[i]:\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "2\n4 3\nRRRGG\n5 2\nGGBBB",
+                "standard_solution_output": "1\n0",
+                "model_output": "1\n0",
+                "error": null
+            }
+        ]
+    }
+]

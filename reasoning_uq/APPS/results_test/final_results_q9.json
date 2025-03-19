@@ -1,0 +1,662 @@
+[
+    {
+        "code_index": 1,
+        "code": "def main():\n    n, x, y = map(int, input().split())\n    s = input().strip()\n    \n    # We need to find the minimal number of changes to make s satisfy s mod 10^x = 10^y\n    # The remainder when divided by 10^x is 10^y, which is a number with y zeros followed by a 1, then x - y -1 zeros.\n    # So, the last x digits must form a number that is equal to 10^y mod 10^x.\n    # But 10^y mod 10^x is 10^y, since y < x.\n    # So, the last x digits must form a number equal to 10^y.\n    # So, the last x digits should be such that the digit at position x - y -1 is 1, and all other digits in the last x positions are 0 except that one.\n\n    # Wait, no. Let me think again. 10^y is 1 followed by y zeros. So, when we take 10^y mod 10^x, since x > y, it's 10^y. So the last x digits must be equal to 10^y, which is 1 followed by y zeros and then x - y -1 zeros.\n\n    # So, the last x digits must be such that the (x - y -1)th digit is 1, and all others are 0.\n\n    # So, for the last x digits, the digit at position (x - y -1) must be 1, and all others must be 0.\n\n    # So, we need to adjust the last x digits to match this pattern.\n\n    # So, the plan is:\n    # 1. Check if the current last x digits already satisfy this condition. If yes, then 0 changes.\n    # 2. Otherwise, calculate the minimal changes needed to make them satisfy the condition.\n\n    # Now, let's find which positions in the last x digits need to be changed.\n\n    # The target is a string where the (x - y -1)th digit is '1' and all others are '0's.\n\n    # So, for each position in the last x digits:\n    # - if it's the target position (x - y -1), it must be '1'.\n    # - else, it must be '0'.\n\n    # So, for each of the last x digits, we check if it's correct. If not, we count the number of changes needed.\n\n    # Now, the target position is at index (x - y -1) in the last x digits. But since the string is 0-based, we need to adjust accordingly.\n\n    # For example, if x is 5, y is 2, then target position is 5 - 2 -1 = 2 (0-based). So the third digit in the last 5 digits must be '1', others '0'.\n\n    # So, let's compute the target position.\n\n    target_pos = x - y - 1\n\n    # Now, for each of the last x digits, we need to see if it's correct.\n\n    # We can loop from i = 0 to x-1:\n\n    changes = 0\n    for i in range(x):\n        # The current digit is s[-x + i] (since s is 0-based, and the last x digits are from index n - x to n -1)\n        current = s[n - x + i]\n        if i == target_pos:\n            if current != '1':\n                changes += 1\n        else:\n            if current != '0':\n                changes += 1\n\n    # Wait, but the target is 10^y, which is 1 followed by y zeros. So, for x digits, it's 1 followed by y zeros and then x - y -1 zeros. So the target is a string of x digits where only the (y+1)th digit is 1, others are 0.\n\n    # Wait, no. Wait, 10^y is 100...0 with y zeros. So when x is larger than y, 10^y mod 10^x is 10^y, which is a 1 followed by y zeros, then x - y -1 zeros.\n\n    # So the last x digits must form the number 10^y, which is 1 followed by y zeros, then x - y -1 zeros.\n\n    # So, the target is a string of x digits, where the first digit (from the left) is 1, then y digits are 0, then x - y -1 digits are 0.\n\n    # So, in the last x digits, the first digit (from the left) is 1, and the rest are 0.\n\n    # So, for the last x digits, the 0-th position (leftmost) must be 1, and the rest 0.\n\n    # Wait, no. Wait, 10^y is a number that has 1 followed by y zeros. So when x is larger than y, the number 10^y is 1 followed by y zeros and then (x - y -1) zeros. So, the last x digits must be such that the first digit is 1, followed by y zeros, then x - y -1 zeros.\n\n    # So, in the last x digits, the first digit is 1, then y digits are 0, then the rest are 0.\n\n    # So, the target is a string where the first character is '1', followed by y '0's, then x - y -1 '0's.\n\n    # So, the target is a string of length x, starting with '1', followed by y '0's, then x - y -1 '0's.\n\n    # So, the target string is '1' followed by y '0's and then x - y -1 '0's.\n\n    # So, for each position in the last x digits, if it's the first position (i=0), it must be '1'; else, it must be '0'.\n\n    # So, the code above is correct.\n\n    # Now, let's compute the changes.\n\n    # So, the code above counts the changes needed for the last x digits.\n\n    # But wait, the initial string may have more than x digits. So, the last x digits are from position n - x to n -1.\n\n    # So, in the code, for i in 0 to x-1, we look at s[n - x + i].\n\n    # So, the code is correct.\n\n    # Now, the minimal number of changes is the sum of changes for each digit.\n\n    # So, the minimal number of changes is the sum of changes.\n\n    # So, the code should output changes.\n\n    # But wait, what if the target position is beyond the length of the string? No, because x < n, so n - x >= 1, so the last x digits are all present.\n\n    # So, the code should work.\n\n    # Let's test with some examples.\n\n    # Example 1:\n    # Input:\n    # 5 3 1\n    # 11001\n    # The last 3 digits are '001'.\n    # The target is 10^1 mod 10^3 = 10, which is '010' in 3 digits.\n    # So, the target is '010'.\n\n    # So, the last 3 digits are '001' vs '010'. So, the first digit is 0 (should be 1), the second is 0 (correct), third is 1 (should be 0). So changes needed: 2.\n\n    # So, the code would compute changes = 2.\n\n    # Another example:\n    # n=3, x=2, y=0\n    # s= '101'\n    # target is 10^0 mod 10^2 = 1 mod 100 = 1. So the last 2 digits should be '01'.\n    # So, the last two digits are '01' in the input. So, changes needed: 0.\n\n    # Another example:\n    # n=4, x=3, y=1\n    # s= '1001'\n    # target is 10^1 mod 10^3 = 10 mod 1000 = 10. So the last 3 digits should be '010'.\n    # The last 3 digits of '1001' are '001'. So, the target is '010'.\n    # So, the first digit is 0 (should be 1), the second is 0 (correct), the third is 1 (should be 0). So changes needed: 2.\n\n    # So, the code seems correct.\n\n    # Now, what about when the target position is beyond the current digits? No, because x < n, so the last x digits are all present.\n\n    # So, the code is correct.\n\n    # Now, the code needs to be written as a function with a main function.\n\n    # So, the code is as written above.\n\n    # Now, the code may have to handle cases where the target position is beyond the string. But since x < n, the last x digits are all present.\n\n    # So, the code is correct.\n\n    print(changes)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "24 15 11\n10111010111010110",
+                "standard_solution_output": "11",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpp4tosec0.py\", line 147, in <module>\n    main()\n  File \"/tmp/tmpp4tosec0.py\", line 49, in main\n    current = s[n - x + i]\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "20 7 3\n1101001001001001",
+                "standard_solution_output": "2",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp5ey759rl.py\", line 147, in <module>\n    main()\n  File \"/tmp/tmp5ey759rl.py\", line 49, in main\n    current = s[n - x + i]\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "18 9 4\n1101001000010001",
+                "standard_solution_output": "1",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpbr6v9ku9.py\", line 147, in <module>\n    main()\n  File \"/tmp/tmpbr6v9ku9.py\", line 49, in main\n    current = s[n - x + i]\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "23 10 7\n110010101000101101",
+                "standard_solution_output": "6",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmphxngmhdg.py\", line 147, in <module>\n    main()\n  File \"/tmp/tmphxngmhdg.py\", line 49, in main\n    current = s[n - x + i]\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "21 9 5\n1110110100111010",
+                "standard_solution_output": "4",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpzp_ursfs.py\", line 147, in <module>\n    main()\n  File \"/tmp/tmpzp_ursfs.py\", line 49, in main\n    current = s[n - x + i]\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "19 13 10\n1001001001001001",
+                "standard_solution_output": "6",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp8ba99pk8.py\", line 147, in <module>\n    main()\n  File \"/tmp/tmp8ba99pk8.py\", line 49, in main\n    current = s[n - x + i]\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "29 21 19\n1001001001001001001001001001001001001001",
+                "standard_solution_output": "8",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "19 6 1\n1101011011101101",
+                "standard_solution_output": "5",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp8hhw7n3t.py\", line 147, in <module>\n    main()\n  File \"/tmp/tmp8hhw7n3t.py\", line 49, in main\n    current = s[n - x + i]\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "19 8 3\n110100110110011",
+                "standard_solution_output": "6",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpymdwlzxt.py\", line 147, in <module>\n    main()\n  File \"/tmp/tmpymdwlzxt.py\", line 49, in main\n    current = s[n - x + i]\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "24 15 9\n1011010111100110101",
+                "standard_solution_output": "8",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpr_5ayrze.py\", line 147, in <module>\n    main()\n  File \"/tmp/tmpr_5ayrze.py\", line 49, in main\n    current = s[n - x + i]\nIndexError: string index out of range\n"
+            }
+        ]
+    },
+    {
+        "code_index": 2,
+        "code": "def main():\n    import sys\n    n, x, y = map(int, sys.stdin.readline().split())\n    s = sys.stdin.readline().strip()\n    target = 10 ** y\n    target_str = str(target).zfill(x)\n    last_x = s[-x:]\n    res = 0\n    for i in range(x):\n        if last_x[i] != target_str[i]:\n            res += 1\n    print(res)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "24 15 11\n10111010111010110",
+                "standard_solution_output": "11",
+                "model_output": "11",
+                "error": null
+            },
+            {
+                "input": "20 7 3\n1101001001001001",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "18 9 4\n1101001000010001",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "23 10 7\n110010101000101101",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "21 9 5\n1110110100111010",
+                "standard_solution_output": "4",
+                "model_output": "4",
+                "error": null
+            },
+            {
+                "input": "19 13 10\n1001001001001001",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "29 21 19\n1001001001001001001001001001001001001001",
+                "standard_solution_output": "8",
+                "model_output": "8",
+                "error": null
+            },
+            {
+                "input": "19 6 1\n1101011011101101",
+                "standard_solution_output": "5",
+                "model_output": "5",
+                "error": null
+            },
+            {
+                "input": "19 8 3\n110100110110011",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "24 15 9\n1011010111100110101",
+                "standard_solution_output": "8",
+                "model_output": "8",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 3,
+        "code": "def main():\n    n, x, y = map(int, input().split())\n    s = input().strip()\n    MOD = 10 ** x\n    remainder = 10 ** y\n    required_pos = x - y - 1\n    changes = 0\n    for i in range(x):\n        pos = n - x + i\n        current = s[pos]\n        if i == required_pos:\n            if current != '1':\n                changes += 1\n        else:\n            if current != '0':\n                changes += 1\n    print(changes)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "24 15 11\n10111010111010110",
+                "standard_solution_output": "11",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpfpnph0zz.py\", line 20, in <module>\n    main()\n  File \"/tmp/tmpfpnph0zz.py\", line 10, in main\n    current = s[pos]\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "20 7 3\n1101001001001001",
+                "standard_solution_output": "2",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmprnycwvqx.py\", line 20, in <module>\n    main()\n  File \"/tmp/tmprnycwvqx.py\", line 10, in main\n    current = s[pos]\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "18 9 4\n1101001000010001",
+                "standard_solution_output": "1",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpunb3_b60.py\", line 20, in <module>\n    main()\n  File \"/tmp/tmpunb3_b60.py\", line 10, in main\n    current = s[pos]\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "23 10 7\n110010101000101101",
+                "standard_solution_output": "6",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp_dno2p_k.py\", line 20, in <module>\n    main()\n  File \"/tmp/tmp_dno2p_k.py\", line 10, in main\n    current = s[pos]\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "21 9 5\n1110110100111010",
+                "standard_solution_output": "4",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpqfuh9_1v.py\", line 20, in <module>\n    main()\n  File \"/tmp/tmpqfuh9_1v.py\", line 10, in main\n    current = s[pos]\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "19 13 10\n1001001001001001",
+                "standard_solution_output": "6",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp9j3kardj.py\", line 20, in <module>\n    main()\n  File \"/tmp/tmp9j3kardj.py\", line 10, in main\n    current = s[pos]\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "29 21 19\n1001001001001001001001001001001001001001",
+                "standard_solution_output": "8",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "19 6 1\n1101011011101101",
+                "standard_solution_output": "5",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpemh1p2bk.py\", line 20, in <module>\n    main()\n  File \"/tmp/tmpemh1p2bk.py\", line 10, in main\n    current = s[pos]\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "19 8 3\n110100110110011",
+                "standard_solution_output": "6",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmphm6539ru.py\", line 20, in <module>\n    main()\n  File \"/tmp/tmphm6539ru.py\", line 10, in main\n    current = s[pos]\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "24 15 9\n1011010111100110101",
+                "standard_solution_output": "8",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpr0l7l5rz.py\", line 20, in <module>\n    main()\n  File \"/tmp/tmpr0l7l5rz.py\", line 10, in main\n    current = s[pos]\nIndexError: string index out of range\n"
+            }
+        ]
+    },
+    {
+        "code_index": 4,
+        "code": "def main():\n    import sys\n    n, x, y = map(int, sys.stdin.readline().split())\n    s = sys.stdin.readline().strip()\n    MOD = 10**x\n    remainder = 10**y\n    target_str = '1' + '0' * y\n    if len(target_str) < x:\n        target_str = '0' * (x - len(target_str)) + target_str\n    last_x = s[-x:]\n    flips = 0\n    for i in range(x):\n        if last_x[i] != target_str[i]:\n            flips += 1\n    print(flips)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "24 15 11\n10111010111010110",
+                "standard_solution_output": "11",
+                "model_output": "11",
+                "error": null
+            },
+            {
+                "input": "20 7 3\n1101001001001001",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "18 9 4\n1101001000010001",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "23 10 7\n110010101000101101",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "21 9 5\n1110110100111010",
+                "standard_solution_output": "4",
+                "model_output": "4",
+                "error": null
+            },
+            {
+                "input": "19 13 10\n1001001001001001",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "29 21 19\n1001001001001001001001001001001001001001",
+                "standard_solution_output": "8",
+                "model_output": "8",
+                "error": null
+            },
+            {
+                "input": "19 6 1\n1101011011101101",
+                "standard_solution_output": "5",
+                "model_output": "5",
+                "error": null
+            },
+            {
+                "input": "19 8 3\n110100110110011",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "24 15 9\n1011010111100110101",
+                "standard_solution_output": "8",
+                "model_output": "8",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 5,
+        "code": "def main():\n    n, x, y = map(int, input().split())\n    s = input().strip()\n    last_x = s[-x:]\n    required_x = ['0'] * x\n    pos = x - (y + 1)\n    required_x[pos] = '1'\n    changes = 0\n    for i in range(x):\n        if last_x[i] != required_x[i]:\n            changes += 1\n    print(changes)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "24 15 11\n10111010111010110",
+                "standard_solution_output": "11",
+                "model_output": "11",
+                "error": null
+            },
+            {
+                "input": "20 7 3\n1101001001001001",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "18 9 4\n1101001000010001",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "23 10 7\n110010101000101101",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "21 9 5\n1110110100111010",
+                "standard_solution_output": "4",
+                "model_output": "4",
+                "error": null
+            },
+            {
+                "input": "19 13 10\n1001001001001001",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "29 21 19\n1001001001001001001001001001001001001001",
+                "standard_solution_output": "8",
+                "model_output": "8",
+                "error": null
+            },
+            {
+                "input": "19 6 1\n1101011011101101",
+                "standard_solution_output": "5",
+                "model_output": "5",
+                "error": null
+            },
+            {
+                "input": "19 8 3\n110100110110011",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "24 15 9\n1011010111100110101",
+                "standard_solution_output": "8",
+                "model_output": "8",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 6,
+        "code": "def main():\n    n, x, y = map(int, input().split())\n    s = input().strip()\n    \n    # Compute the target remainder\n    mod = 10 ** x\n    target_remainder = 10 ** y\n    target = (mod + target_remainder) // (mod // 10)\n    \n    # Initialize variables\n    res = 0\n    current_mod = 0\n    for i in range(n):\n        digit = int(s[i])\n        current_mod = (current_mod * 10 + digit) % mod\n        # Check if we need to change the current digit\n        if i >= x - y:\n            if current_mod % (mod // 10) != target_remainder % (mod // 10):\n                # Need to change the current digit\n                res += 1\n                # Set current_mod to the target after this change\n                current_mod = (current_mod - digit) % mod\n                current_mod = (current_mod // 10) * 10 + target_remainder % 10\n        # Else, we don't need to change it\n    print(res)\n    \nmain()",
+        "test_results": [
+            {
+                "input": "24 15 11\n10111010111010110",
+                "standard_solution_output": "11",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpbrxv3nl8.py\", line 27, in <module>\n    main()\n  File \"/tmp/tmpbrxv3nl8.py\", line 14, in main\n    digit = int(s[i])\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "20 7 3\n1101001001001001",
+                "standard_solution_output": "2",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmptlzkjrzj.py\", line 27, in <module>\n    main()\n  File \"/tmp/tmptlzkjrzj.py\", line 14, in main\n    digit = int(s[i])\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "18 9 4\n1101001000010001",
+                "standard_solution_output": "1",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp1aodp7gb.py\", line 27, in <module>\n    main()\n  File \"/tmp/tmp1aodp7gb.py\", line 14, in main\n    digit = int(s[i])\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "23 10 7\n110010101000101101",
+                "standard_solution_output": "6",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpfq8_r238.py\", line 27, in <module>\n    main()\n  File \"/tmp/tmpfq8_r238.py\", line 14, in main\n    digit = int(s[i])\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "21 9 5\n1110110100111010",
+                "standard_solution_output": "4",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpzffln0ga.py\", line 27, in <module>\n    main()\n  File \"/tmp/tmpzffln0ga.py\", line 14, in main\n    digit = int(s[i])\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "19 13 10\n1001001001001001",
+                "standard_solution_output": "6",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpsi2vbbfb.py\", line 27, in <module>\n    main()\n  File \"/tmp/tmpsi2vbbfb.py\", line 14, in main\n    digit = int(s[i])\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "29 21 19\n1001001001001001001001001001001001001001",
+                "standard_solution_output": "8",
+                "model_output": "26",
+                "error": null
+            },
+            {
+                "input": "19 6 1\n1101011011101101",
+                "standard_solution_output": "5",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp665078bz.py\", line 27, in <module>\n    main()\n  File \"/tmp/tmp665078bz.py\", line 14, in main\n    digit = int(s[i])\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "19 8 3\n110100110110011",
+                "standard_solution_output": "6",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp6kv8509m.py\", line 27, in <module>\n    main()\n  File \"/tmp/tmp6kv8509m.py\", line 14, in main\n    digit = int(s[i])\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "24 15 9\n1011010111100110101",
+                "standard_solution_output": "8",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp4h2p9035.py\", line 27, in <module>\n    main()\n  File \"/tmp/tmp4h2p9035.py\", line 14, in main\n    digit = int(s[i])\nIndexError: string index out of range\n"
+            }
+        ]
+    },
+    {
+        "code_index": 7,
+        "code": "def main():\n    n, x, y = map(int, input().split())\n    s = input().strip()\n    res = 0\n    for i in range(n):\n        if i < x - y:\n            if s[i] != '0':\n                res += 1\n        else:\n            if i == x - y:\n                if s[i] != '1':\n                    res += 1\n            elif i > x - y:\n                if s[i] == '1':\n                    res += 1\n    print(res)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "24 15 11\n10111010111010110",
+                "standard_solution_output": "11",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpnnpllof0.py\", line 19, in <module>\n    main()\n  File \"/tmp/tmpnnpllof0.py\", line 14, in main\n    if s[i] == '1':\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "20 7 3\n1101001001001001",
+                "standard_solution_output": "2",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpzqc14lmh.py\", line 19, in <module>\n    main()\n  File \"/tmp/tmpzqc14lmh.py\", line 14, in main\n    if s[i] == '1':\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "18 9 4\n1101001000010001",
+                "standard_solution_output": "1",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpo5_2miba.py\", line 19, in <module>\n    main()\n  File \"/tmp/tmpo5_2miba.py\", line 14, in main\n    if s[i] == '1':\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "23 10 7\n110010101000101101",
+                "standard_solution_output": "6",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpm3biw5kd.py\", line 19, in <module>\n    main()\n  File \"/tmp/tmpm3biw5kd.py\", line 14, in main\n    if s[i] == '1':\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "21 9 5\n1110110100111010",
+                "standard_solution_output": "4",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpmnr_kebx.py\", line 19, in <module>\n    main()\n  File \"/tmp/tmpmnr_kebx.py\", line 14, in main\n    if s[i] == '1':\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "19 13 10\n1001001001001001",
+                "standard_solution_output": "6",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpm8itccc_.py\", line 19, in <module>\n    main()\n  File \"/tmp/tmpm8itccc_.py\", line 14, in main\n    if s[i] == '1':\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "29 21 19\n1001001001001001001001001001001001001001",
+                "standard_solution_output": "8",
+                "model_output": "11",
+                "error": null
+            },
+            {
+                "input": "19 6 1\n1101011011101101",
+                "standard_solution_output": "5",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp60p0r6hw.py\", line 19, in <module>\n    main()\n  File \"/tmp/tmp60p0r6hw.py\", line 14, in main\n    if s[i] == '1':\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "19 8 3\n110100110110011",
+                "standard_solution_output": "6",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpl83wnxzj.py\", line 19, in <module>\n    main()\n  File \"/tmp/tmpl83wnxzj.py\", line 14, in main\n    if s[i] == '1':\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "24 15 9\n1011010111100110101",
+                "standard_solution_output": "8",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpn9s00sv9.py\", line 19, in <module>\n    main()\n  File \"/tmp/tmpn9s00sv9.py\", line 14, in main\n    if s[i] == '1':\nIndexError: string index out of range\n"
+            }
+        ]
+    },
+    {
+        "code_index": 8,
+        "code": "def main():\n    n, x, y = map(int, input().split())\n    s = input().strip()\n    \n    # Construct the target string for the last x digits\n    target = ['0'] * x\n    target[x - y - 1] = '1'\n    \n    changes = 0\n    for i in range(x):\n        if s[-x + i] != target[i]:\n            changes += 1\n    \n    print(changes)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "24 15 11\n10111010111010110",
+                "standard_solution_output": "11",
+                "model_output": "11",
+                "error": null
+            },
+            {
+                "input": "20 7 3\n1101001001001001",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "18 9 4\n1101001000010001",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "23 10 7\n110010101000101101",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "21 9 5\n1110110100111010",
+                "standard_solution_output": "4",
+                "model_output": "4",
+                "error": null
+            },
+            {
+                "input": "19 13 10\n1001001001001001",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "29 21 19\n1001001001001001001001001001001001001001",
+                "standard_solution_output": "8",
+                "model_output": "8",
+                "error": null
+            },
+            {
+                "input": "19 6 1\n1101011011101101",
+                "standard_solution_output": "5",
+                "model_output": "5",
+                "error": null
+            },
+            {
+                "input": "19 8 3\n110100110110011",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "24 15 9\n1011010111100110101",
+                "standard_solution_output": "8",
+                "model_output": "8",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 9,
+        "code": "def main():\n    import sys\n    n, x, y = map(int, sys.stdin.readline().split())\n    s = sys.stdin.readline().strip()\n    res = 0\n    for i in range(n):\n        if i >= x:\n            res += (s[i] != s[i - x])\n        else:\n            if i < y:\n                if s[i] == '1':\n                    res += 1\n            else:\n                if s[i] == '0':\n                    res += 1\n    print(res)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "24 15 11\n10111010111010110",
+                "standard_solution_output": "11",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpx4uo5vty.py\", line 19, in <module>\n    main()\n  File \"/tmp/tmpx4uo5vty.py\", line 8, in main\n    res += (s[i] != s[i - x])\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "20 7 3\n1101001001001001",
+                "standard_solution_output": "2",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpbk2ze274.py\", line 19, in <module>\n    main()\n  File \"/tmp/tmpbk2ze274.py\", line 8, in main\n    res += (s[i] != s[i - x])\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "18 9 4\n1101001000010001",
+                "standard_solution_output": "1",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpd06d4p30.py\", line 19, in <module>\n    main()\n  File \"/tmp/tmpd06d4p30.py\", line 8, in main\n    res += (s[i] != s[i - x])\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "23 10 7\n110010101000101101",
+                "standard_solution_output": "6",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpvjkf5ipj.py\", line 19, in <module>\n    main()\n  File \"/tmp/tmpvjkf5ipj.py\", line 8, in main\n    res += (s[i] != s[i - x])\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "21 9 5\n1110110100111010",
+                "standard_solution_output": "4",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp5gvdvwxd.py\", line 19, in <module>\n    main()\n  File \"/tmp/tmp5gvdvwxd.py\", line 8, in main\n    res += (s[i] != s[i - x])\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "19 13 10\n1001001001001001",
+                "standard_solution_output": "6",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp51infc6z.py\", line 19, in <module>\n    main()\n  File \"/tmp/tmp51infc6z.py\", line 8, in main\n    res += (s[i] != s[i - x])\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "29 21 19\n1001001001001001001001001001001001001001",
+                "standard_solution_output": "8",
+                "model_output": "9",
+                "error": null
+            },
+            {
+                "input": "19 6 1\n1101011011101101",
+                "standard_solution_output": "5",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpl5y283la.py\", line 19, in <module>\n    main()\n  File \"/tmp/tmpl5y283la.py\", line 8, in main\n    res += (s[i] != s[i - x])\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "19 8 3\n110100110110011",
+                "standard_solution_output": "6",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp4jsgte_y.py\", line 19, in <module>\n    main()\n  File \"/tmp/tmp4jsgte_y.py\", line 8, in main\n    res += (s[i] != s[i - x])\nIndexError: string index out of range\n"
+            },
+            {
+                "input": "24 15 9\n1011010111100110101",
+                "standard_solution_output": "8",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmprd9wkcv7.py\", line 19, in <module>\n    main()\n  File \"/tmp/tmprd9wkcv7.py\", line 8, in main\n    res += (s[i] != s[i - x])\nIndexError: string index out of range\n"
+            }
+        ]
+    },
+    {
+        "code_index": 10,
+        "code": "def main():\n    import sys\n    n, x, y = map(int, sys.stdin.readline().split())\n    s = sys.stdin.readline().strip()\n    \n    # Compute the desired pattern\n    desired = ['0'] * (x - (y + 1)) + ['1'] + ['0'] * y\n    \n    # Take the last x digits of s\n    last_x = s[-x:]\n    \n    # Compare each digit and count differences\n    count = 0\n    for i in range(x):\n        if last_x[i] != desired[i]:\n            count += 1\n    \n    print(count)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "24 15 11\n10111010111010110",
+                "standard_solution_output": "11",
+                "model_output": "11",
+                "error": null
+            },
+            {
+                "input": "20 7 3\n1101001001001001",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "18 9 4\n1101001000010001",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "23 10 7\n110010101000101101",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "21 9 5\n1110110100111010",
+                "standard_solution_output": "4",
+                "model_output": "4",
+                "error": null
+            },
+            {
+                "input": "19 13 10\n1001001001001001",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "29 21 19\n1001001001001001001001001001001001001001",
+                "standard_solution_output": "8",
+                "model_output": "8",
+                "error": null
+            },
+            {
+                "input": "19 6 1\n1101011011101101",
+                "standard_solution_output": "5",
+                "model_output": "5",
+                "error": null
+            },
+            {
+                "input": "19 8 3\n110100110110011",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "24 15 9\n1011010111100110101",
+                "standard_solution_output": "8",
+                "model_output": "8",
+                "error": null
+            }
+        ]
+    }
+]

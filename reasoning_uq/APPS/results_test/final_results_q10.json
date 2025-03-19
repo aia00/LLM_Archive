@@ -1,0 +1,662 @@
+[
+    {
+        "code_index": 1,
+        "code": "def has_palindrome_subsequence(a):\n    n = len(a)\n    if n < 3:\n        return False\n    # Check for the first occurrence of a possible palindrome\n    # Try to find a triplet where first and last are same\n    # Then check if middle can be any of the elements in between\n    for i in range(n):\n        for j in range(i+1, n):\n            if a[i] == a[j]:\n                # Now, check if there's a k between i and j such that a[k] is the same as a[i]\n                # Or, if there exists a middle element between i and j that is same as a[i]\n                # So, the triplet would be a[i], a[k], a[j], which is a palindrome\n                # So, check if there exists any k between i and j where a[k] == a[i]\n                # If yes, return True\n                for k in range(i+1, j):\n                    if a[k] == a[i]:\n                        return True\n                # Also, check if the first and last elements are same, and there exists at least one element in between\n                if a[i] == a[j]:\n                    return True\n    # If none found, check for longer palindromes\n    # Maybe we need to check for longer sequences, but for the problem, we can just return True if any triplet is found\n    # Wait, but the problem is to find any subsequence of length at least 3 that is a palindrome. So, if any triplet is found, return True.\n    # So, in the above loops, if any triplet is found, return True.\n    # Else, check for longer sequences, but it's possible that longer sequences exist but no triplet.\n    # Wait, no. Because if a subsequence of length 4 is a palindrome, then any 3 elements in it form a subsequence of length 3 that is a palindrome.\n    # So, if any longer subsequence is a palindrome, then there must be a triplet that is a palindrome.\n    # So, in that case, the initial loops should have found it.\n    # So, perhaps the code is sufficient as is.\n    # So, if no triplet is found, return False.\n    return False\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    if has_palindrome_subsequence(a):\n        print(\"YES\")\n    else:\n        print(\"NO\")",
+        "test_results": [
+            {
+                "input": "3\n5\n4 4 3 2 5\n7\n1 3 1 1 2 2 3\n4\n2 2 3 3",
+                "standard_solution_output": "NO\nYES\nNO",
+                "model_output": "YES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 2 2 1\n5\n3 4 3 1 2\n5\n2 2 2 1 2",
+                "standard_solution_output": "YES\nYES\nYES",
+                "model_output": "YES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 3 2\n5\n1 2 2 3 3\n3\n2 2 3\n4\n1 1 3 1\n10\n2 3 2 3 3 1 1 2 1 2",
+                "standard_solution_output": "NO\nNO\nNO\nYES\nYES",
+                "model_output": "NO\nYES\nYES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 2 1\n5\n2 3 1 2 3\n3\n3 2 2\n4\n2 1 2 2\n10\n1 1 2 2 3 3 4 4 5 5",
+                "standard_solution_output": "YES\nYES\nNO\nYES\nNO",
+                "model_output": "YES\nYES\nYES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "4\n3\n2 2 1\n6\n5 5 5 5 5 5\n7\n1 3 3 4 5 6 2\n4\n2 2 1 1\n9\n3 3 3 3 3 3 3 3 3",
+                "standard_solution_output": "NO\nYES\nNO\nNO",
+                "model_output": "YES\nYES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 5 2 1 4\n7\n2 3 1 2 3 2 1\n4\n1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES",
+                "model_output": "NO\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "4\n3\n3 2 1\n5\n2 4 3 4 1\n7\n1 3 4 3 1 2 1\n4\n2 1 4 3\n5\n2 1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES\nNO",
+                "model_output": "NO\nYES\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "4\n4\n3 4 2 1\n8\n3 1 8 5 6 2 7 4\n9\n9 4 3 6 8 7 2 5 1\n5\n5 3 1 2 4",
+                "standard_solution_output": "NO\nNO\nNO\nNO",
+                "model_output": "NO\nNO\nNO\nNO",
+                "error": null
+            },
+            {
+                "input": "5\n3\n2 1 2\n5\n1 5 2 3 1\n4\n2 2 2 1\n6\n3 1 3 2 4 5\n7\n3 2 4 1 3 5 1",
+                "standard_solution_output": "YES\nYES\nYES\nYES\nYES",
+                "model_output": "YES\nYES\nYES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 4 3 1 4\n4\n2 2 1 4\n4\n3 1 2 2",
+                "standard_solution_output": "YES\nNO\nNO",
+                "model_output": "YES\nYES\nYES",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 2,
+        "code": "def has_palindromic_subsequence(a):\n    n = len(a)\n    if n < 3:\n        return False\n    # We'll check for all possible centers of palindromes\n    # For odd length\n    for i in range(n):\n        left, right = i, i\n        while left >= 0 and right < n:\n            if a[left] == a[right]:\n                left -= 1\n                right += 1\n            else:\n                break\n        # After expanding, the length is right - left - 1\n        # For even length\n    # For even length\n    for i in range(n-1):\n        left, right = i, i+1\n        while left >=0 and right < n:\n            if a[left] == a[right]:\n                left -= 1\n                right += 1\n                if right - left -1 >=2:\n                    return True\n            else:\n                break\n    return False\n\ndef main():\n    import sys\n    input = sys.stdin.read().split()\n    idx = 0\n    t = int(input[idx])\n    idx +=1\n    for _ in range(t):\n        n = int(input[idx])\n        idx +=1\n        a = list(map(int, input[idx:idx+n]))\n        idx +=n\n        if has_palindromic_subsequence(a):\n            print(\"YES\")\n        else:\n            print(\"NO\")\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "3\n5\n4 4 3 2 5\n7\n1 3 1 1 2 2 3\n4\n2 2 3 3",
+                "standard_solution_output": "NO\nYES\nNO",
+                "model_output": "YES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 2 2 1\n5\n3 4 3 1 2\n5\n2 2 2 1 2",
+                "standard_solution_output": "YES\nYES\nYES",
+                "model_output": "YES\nNO\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 3 2\n5\n1 2 2 3 3\n3\n2 2 3\n4\n1 1 3 1\n10\n2 3 2 3 3 1 1 2 1 2",
+                "standard_solution_output": "NO\nNO\nNO\nYES\nYES",
+                "model_output": "NO\nYES\nYES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 2 1\n5\n2 3 1 2 3\n3\n3 2 2\n4\n2 1 2 2\n10\n1 1 2 2 3 3 4 4 5 5",
+                "standard_solution_output": "YES\nYES\nNO\nYES\nNO",
+                "model_output": "NO\nNO\nYES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "4\n3\n2 2 1\n6\n5 5 5 5 5 5\n7\n1 3 3 4 5 6 2\n4\n2 2 1 1\n9\n3 3 3 3 3 3 3 3 3",
+                "standard_solution_output": "NO\nYES\nNO\nNO",
+                "model_output": "YES\nYES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 5 2 1 4\n7\n2 3 1 2 3 2 1\n4\n1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES",
+                "model_output": "NO\nNO\nYES",
+                "error": null
+            },
+            {
+                "input": "4\n3\n3 2 1\n5\n2 4 3 4 1\n7\n1 3 4 3 1 2 1\n4\n2 1 4 3\n5\n2 1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES\nNO",
+                "model_output": "NO\nNO\nNO\nNO",
+                "error": null
+            },
+            {
+                "input": "4\n4\n3 4 2 1\n8\n3 1 8 5 6 2 7 4\n9\n9 4 3 6 8 7 2 5 1\n5\n5 3 1 2 4",
+                "standard_solution_output": "NO\nNO\nNO\nNO",
+                "model_output": "NO\nNO\nNO\nNO",
+                "error": null
+            },
+            {
+                "input": "5\n3\n2 1 2\n5\n1 5 2 3 1\n4\n2 2 2 1\n6\n3 1 3 2 4 5\n7\n3 2 4 1 3 5 1",
+                "standard_solution_output": "YES\nYES\nYES\nYES\nYES",
+                "model_output": "NO\nNO\nYES\nNO\nNO",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 4 3 1 4\n4\n2 2 1 4\n4\n3 1 2 2",
+                "standard_solution_output": "YES\nNO\nNO",
+                "model_output": "NO\nYES\nYES",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 3,
+        "code": "def has_palindrome_subsequence(a):\n    n = len(a)\n    if n < 3:\n        return False\n    # Check if any triplet forms a palindrome\n    for i in range(n):\n        for j in range(i+1, n):\n            for k in range(j+1, n):\n                if a[i] == a[k] and a[j] == a[j]:\n                    return True\n    return False\n\ndef main():\n    import sys\n    input = sys.stdin.read().split()\n    idx = 0\n    t = int(input[idx])\n    idx +=1\n    for _ in range(t):\n        n = int(input[idx])\n        idx +=1\n        a = list(map(int, input[idx:idx+n]))\n        idx +=n\n        if has_palindrome_subsequence(a):\n            print(\"YES\")\n        else:\n            print(\"NO\")\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "3\n5\n4 4 3 2 5\n7\n1 3 1 1 2 2 3\n4\n2 2 3 3",
+                "standard_solution_output": "NO\nYES\nNO",
+                "model_output": "NO\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 2 2 1\n5\n3 4 3 1 2\n5\n2 2 2 1 2",
+                "standard_solution_output": "YES\nYES\nYES",
+                "model_output": "YES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 3 2\n5\n1 2 2 3 3\n3\n2 2 3\n4\n1 1 3 1\n10\n2 3 2 3 3 1 1 2 1 2",
+                "standard_solution_output": "NO\nNO\nNO\nYES\nYES",
+                "model_output": "NO\nNO\nNO\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 2 1\n5\n2 3 1 2 3\n3\n3 2 2\n4\n2 1 2 2\n10\n1 1 2 2 3 3 4 4 5 5",
+                "standard_solution_output": "YES\nYES\nNO\nYES\nNO",
+                "model_output": "YES\nYES\nNO\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "4\n3\n2 2 1\n6\n5 5 5 5 5 5\n7\n1 3 3 4 5 6 2\n4\n2 2 1 1\n9\n3 3 3 3 3 3 3 3 3",
+                "standard_solution_output": "NO\nYES\nNO\nNO",
+                "model_output": "NO\nYES\nNO\nNO",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 5 2 1 4\n7\n2 3 1 2 3 2 1\n4\n1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES",
+                "model_output": "NO\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "4\n3\n3 2 1\n5\n2 4 3 4 1\n7\n1 3 4 3 1 2 1\n4\n2 1 4 3\n5\n2 1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES\nNO",
+                "model_output": "NO\nYES\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "4\n4\n3 4 2 1\n8\n3 1 8 5 6 2 7 4\n9\n9 4 3 6 8 7 2 5 1\n5\n5 3 1 2 4",
+                "standard_solution_output": "NO\nNO\nNO\nNO",
+                "model_output": "NO\nNO\nNO\nNO",
+                "error": null
+            },
+            {
+                "input": "5\n3\n2 1 2\n5\n1 5 2 3 1\n4\n2 2 2 1\n6\n3 1 3 2 4 5\n7\n3 2 4 1 3 5 1",
+                "standard_solution_output": "YES\nYES\nYES\nYES\nYES",
+                "model_output": "YES\nYES\nYES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 4 3 1 4\n4\n2 2 1 4\n4\n3 1 2 2",
+                "standard_solution_output": "YES\nNO\nNO",
+                "model_output": "YES\nNO\nNO",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 4,
+        "code": "def has_palindrome_subsequence(a):\n    n = len(a)\n    if n < 3:\n        return False\n    # We need to find a subsequence of length >=3 that is a palindrome.\n    # Let's consider the first and last elements.\n    # If any element in the middle is equal to both, then we can form a palindrome.\n    # For example, if a[0] == a[-1], then we can take a[0], a[mid], a[-1].\n    # Similarly, if a[0] == a[1], then we can take a[0], a[1], a[0] again if possible.\n    # So, let's check for these cases.\n\n    # Case 1: Check if the first element is equal to some element in the last two positions.\n    # Because if a[0] == a[-1], then we can form a palindrome by taking a[0], a[mid], a[-1].\n    # So, we just need to check if a[0] is present in the last two elements.\n    if a[0] in a[-2:]:\n        return True\n\n    # Case 2: Check if the first element is equal to the second element.\n    # Then, we can take a[0], a[1], a[0], but wait, the subsequence can't have duplicates unless they are in the original array.\n    # So, if a[0] == a[1], then we can take a[0], a[1], a[0] (if a[0] appears at least twice).\n    # But wait, the subsequence needs to be of length at least 3, so we need at least three elements.\n    # So, if a[0] == a[1], then we can take a[0], a[1], a[0], but only if there's another a[0] somewhere else.\n    # Wait, no. Because the subsequence can be any elements as long as they are in order. So, for example, if a[0] == a[1], then we can take a[0], a[1], and another a[0] that appears later.\n    # So, if a[0] appears at least twice, then we can form a palindrome of length 3 by taking the first two a[0]s and another a[0].\n    # So, check if a[0] appears at least twice.\n    if a[0] in a[1:]:\n        return True\n\n    # Case 3: Check if the last element is equal to the second last element.\n    # Then, we can take a[-2], a[-1], a[-2], but again, we need at least three elements.\n    if a[-1] in a[-2:]:\n        return True\n\n    # Case 4: Check if the last element is equal to the first element.\n    # Then, similar to case 1, we can take a[0], a[mid], a[-1].\n    if a[-1] in a[:-2]:\n        return True\n\n    # If none of the above, then we need to check for any possible middle element that can form a palindrome.\n    # For example, find a middle element that is equal to some element on both sides.\n    # So, for each possible middle index i (from 1 to n-2), check if there exists j < i and k > i such that a[j] == a[k], and a[i] is in the middle.\n    # But this approach might be time-consuming for large n. Let's think of a smarter way.\n\n    # Another approach: for each possible middle element, check if there are elements on both sides that are equal.\n    # So, for each i from 1 to n-2:\n    #   find if there exists j < i and k > i such that a[j] == a[k]\n    #   if such j and k exist, then return True.\n\n    # So, for each i, we can check if the elements before i and after i have any common elements.\n    # For example, for i=1, check if any element before 1 (which is a[0]) is present in the elements after 1.\n\n    # Let's implement this approach.\n\n    for i in range(1, n-1):\n        # Collect all elements before i\n        left = a[:i]\n        # Collect all elements after i\n        right = a[i+1:]\n        # Check if left and right have any common elements.\n        # To optimize, we can create a set of left and check intersection with right.\n        if set(left) & set(right):\n            return True\n\n    # If none of the cases above worked, then return False.\n    return False\n\ndef main():\n    import sys\n    input = sys.stdin.read().split()\n    ptr = 0\n    t = int(input[ptr])\n    ptr += 1\n    for _ in range(t):\n        n = int(input[ptr])\n        ptr += 1\n        a = list(map(int, input[ptr:ptr+n]))\n        ptr += n\n        if has_palindrome_subsequence(a):\n            print(\"YES\")\n        else:\n            print(\"NO\")\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "3\n5\n4 4 3 2 5\n7\n1 3 1 1 2 2 3\n4\n2 2 3 3",
+                "standard_solution_output": "NO\nYES\nNO",
+                "model_output": "YES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 2 2 1\n5\n3 4 3 1 2\n5\n2 2 2 1 2",
+                "standard_solution_output": "YES\nYES\nYES",
+                "model_output": "YES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 3 2\n5\n1 2 2 3 3\n3\n2 2 3\n4\n1 1 3 1\n10\n2 3 2 3 3 1 1 2 1 2",
+                "standard_solution_output": "NO\nNO\nNO\nYES\nYES",
+                "model_output": "YES\nYES\nYES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 2 1\n5\n2 3 1 2 3\n3\n3 2 2\n4\n2 1 2 2\n10\n1 1 2 2 3 3 4 4 5 5",
+                "standard_solution_output": "YES\nYES\nNO\nYES\nNO",
+                "model_output": "YES\nYES\nYES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "4\n3\n2 2 1\n6\n5 5 5 5 5 5\n7\n1 3 3 4 5 6 2\n4\n2 2 1 1\n9\n3 3 3 3 3 3 3 3 3",
+                "standard_solution_output": "NO\nYES\nNO\nNO",
+                "model_output": "YES\nYES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 5 2 1 4\n7\n2 3 1 2 3 2 1\n4\n1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES",
+                "model_output": "YES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "4\n3\n3 2 1\n5\n2 4 3 4 1\n7\n1 3 4 3 1 2 1\n4\n2 1 4 3\n5\n2 1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES\nNO",
+                "model_output": "YES\nYES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "4\n4\n3 4 2 1\n8\n3 1 8 5 6 2 7 4\n9\n9 4 3 6 8 7 2 5 1\n5\n5 3 1 2 4",
+                "standard_solution_output": "NO\nNO\nNO\nNO",
+                "model_output": "YES\nYES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n2 1 2\n5\n1 5 2 3 1\n4\n2 2 2 1\n6\n3 1 3 2 4 5\n7\n3 2 4 1 3 5 1",
+                "standard_solution_output": "YES\nYES\nYES\nYES\nYES",
+                "model_output": "YES\nYES\nYES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 4 3 1 4\n4\n2 2 1 4\n4\n3 1 2 2",
+                "standard_solution_output": "YES\nNO\nNO",
+                "model_output": "YES\nYES\nYES",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 5,
+        "code": "def has_palindrome_subsequence(a):\n    n = len(a)\n    if n < 3:\n        return False\n    pos = {}\n    for idx, num in enumerate(a):\n        if num not in pos:\n            pos[num] = []\n        pos[num].append(idx)\n    for num in pos:\n        indices = pos[num]\n        if len(indices) >= 2:\n            first = indices[0]\n            last = indices[-1]\n            if last - first >= 2:\n                return True\n    return False\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    if has_palindrome_subsequence(a):\n        print(\"YES\")\n    else:\n        print(\"NO\")",
+        "test_results": [
+            {
+                "input": "3\n5\n4 4 3 2 5\n7\n1 3 1 1 2 2 3\n4\n2 2 3 3",
+                "standard_solution_output": "NO\nYES\nNO",
+                "model_output": "NO\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 2 2 1\n5\n3 4 3 1 2\n5\n2 2 2 1 2",
+                "standard_solution_output": "YES\nYES\nYES",
+                "model_output": "YES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 3 2\n5\n1 2 2 3 3\n3\n2 2 3\n4\n1 1 3 1\n10\n2 3 2 3 3 1 1 2 1 2",
+                "standard_solution_output": "NO\nNO\nNO\nYES\nYES",
+                "model_output": "NO\nNO\nNO\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 2 1\n5\n2 3 1 2 3\n3\n3 2 2\n4\n2 1 2 2\n10\n1 1 2 2 3 3 4 4 5 5",
+                "standard_solution_output": "YES\nYES\nNO\nYES\nNO",
+                "model_output": "YES\nYES\nNO\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "4\n3\n2 2 1\n6\n5 5 5 5 5 5\n7\n1 3 3 4 5 6 2\n4\n2 2 1 1\n9\n3 3 3 3 3 3 3 3 3",
+                "standard_solution_output": "NO\nYES\nNO\nNO",
+                "model_output": "NO\nYES\nNO\nNO",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 5 2 1 4\n7\n2 3 1 2 3 2 1\n4\n1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES",
+                "model_output": "NO\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "4\n3\n3 2 1\n5\n2 4 3 4 1\n7\n1 3 4 3 1 2 1\n4\n2 1 4 3\n5\n2 1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES\nNO",
+                "model_output": "NO\nYES\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "4\n4\n3 4 2 1\n8\n3 1 8 5 6 2 7 4\n9\n9 4 3 6 8 7 2 5 1\n5\n5 3 1 2 4",
+                "standard_solution_output": "NO\nNO\nNO\nNO",
+                "model_output": "NO\nNO\nNO\nNO",
+                "error": null
+            },
+            {
+                "input": "5\n3\n2 1 2\n5\n1 5 2 3 1\n4\n2 2 2 1\n6\n3 1 3 2 4 5\n7\n3 2 4 1 3 5 1",
+                "standard_solution_output": "YES\nYES\nYES\nYES\nYES",
+                "model_output": "YES\nYES\nYES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 4 3 1 4\n4\n2 2 1 4\n4\n3 1 2 2",
+                "standard_solution_output": "YES\nNO\nNO",
+                "model_output": "YES\nNO\nNO",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 6,
+        "code": "def has_palindromic_subsequence(s):\n    n = len(s)\n    if n < 3:\n        return False\n    # We can try to find a palindrome of length 3 or more.\n    # To find a palindrome, we can check for the first and last elements.\n    # If they are the same, then we can look for a middle element in between.\n    # So, for each possible pair of first and last elements, check if they are equal.\n    # If any such pair exists, then the answer is YES.\n    # Otherwise, return NO.\n    for i in range(n):\n        for j in range(n):\n            if i == j:\n                continue\n            if s[i] == s[j]:\n                # Now, check if there's a middle element between i and j.\n                # The middle element must be in the subsequence.\n                # So, the subsequence would be s[i], x, s[j], where x is any element between i and j.\n                # So, if i+1 <= j-1, then there exists at least one element in between.\n                if j - i >= 2:\n                    return True\n                else:\n                    # j - i is 1, which means no middle element. So, the subsequence would be of length 2, which is not enough.\n                    # So, we need to find a longer subsequence.\n                    # Wait, but if j - i is 1, then the subsequence would be s[i], s[j], which is length 2, but we need at least 3.\n                    # So, in this case, we can't form a palindrome of length 3.\n                    # So, we need to see if there's a longer subsequence.\n                    # But how?\n                    # Maybe we can look for a third element in between.\n                    # So, for the current i and j, check if there's any element between them that is equal to either s[i] or s[j].\n                    # Because then, we can form a subsequence of length 3.\n                    # For example, if s[i] == s[j], and there's an element x in between equal to s[i], then the subsequence is s[i], x, s[j], which is a palindrome.\n                    # Similarly, if x is equal to s[j], then the subsequence is s[i], x, s[j], which is also a palindrome.\n                    # So, the idea is: for each i and j where s[i] == s[j], check if there's any element between i and j that is equal to s[i] or s[j].\n                    # If yes, then return True.\n                    # Otherwise, continue.\n                    # So, in this case, j - i is 1, so i+1 <= j-1 is not possible (since j = i+1, j-1 = i, which is equal to i). So, no elements in between.\n                    # So, in this case, we can't form a subsequence of length 3, so we need to look for other pairs.\n                    # So, for the current i and j, if s[i] == s[j], but j - i is 1, then we can't form a subsequence of length 3. So, we need to check for other pairs.\n                    # So, in this case, we can't return True, so we continue.\n                    # So, in this case, the current i and j can't form a subsequence of length 3, so we need to look for other pairs.\n                    # So, let's proceed.\n                    # Now, we need to check if there's any element between i and j that is equal to s[i] or s[j].\n                    # So, for k in i+1 to j-1:\n                    #   if s[k] == s[i] or s[k] == s[j]:\n                    #       return True\n                    # So, let's loop through k from i+1 to j-1:\n                    for k in range(i+1, j):\n                        if s[k] == s[i] or s[k] == s[j]:\n                            return True\n                    # If none found, then continue.\n    # If no such pair is found, return False.\n    return False\n\ndef main():\n    import sys\n    input = sys.stdin.read().split()\n    ptr = 0\n    t = int(input[ptr])\n    ptr +=1\n    for _ in range(t):\n        n = int(input[ptr])\n        ptr +=1\n        a = list(map(int, input[ptr:ptr+n]))\n        ptr +=n\n        if has_palindromic_subsequence(a):\n            print(\"YES\")\n        else:\n            print(\"NO\")\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "3\n5\n4 4 3 2 5\n7\n1 3 1 1 2 2 3\n4\n2 2 3 3",
+                "standard_solution_output": "NO\nYES\nNO",
+                "model_output": "NO\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 2 2 1\n5\n3 4 3 1 2\n5\n2 2 2 1 2",
+                "standard_solution_output": "YES\nYES\nYES",
+                "model_output": "YES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 3 2\n5\n1 2 2 3 3\n3\n2 2 3\n4\n1 1 3 1\n10\n2 3 2 3 3 1 1 2 1 2",
+                "standard_solution_output": "NO\nNO\nNO\nYES\nYES",
+                "model_output": "NO\nNO\nNO\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 2 1\n5\n2 3 1 2 3\n3\n3 2 2\n4\n2 1 2 2\n10\n1 1 2 2 3 3 4 4 5 5",
+                "standard_solution_output": "YES\nYES\nNO\nYES\nNO",
+                "model_output": "YES\nYES\nNO\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "4\n3\n2 2 1\n6\n5 5 5 5 5 5\n7\n1 3 3 4 5 6 2\n4\n2 2 1 1\n9\n3 3 3 3 3 3 3 3 3",
+                "standard_solution_output": "NO\nYES\nNO\nNO",
+                "model_output": "NO\nYES\nNO\nNO",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 5 2 1 4\n7\n2 3 1 2 3 2 1\n4\n1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES",
+                "model_output": "NO\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "4\n3\n3 2 1\n5\n2 4 3 4 1\n7\n1 3 4 3 1 2 1\n4\n2 1 4 3\n5\n2 1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES\nNO",
+                "model_output": "NO\nYES\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "4\n4\n3 4 2 1\n8\n3 1 8 5 6 2 7 4\n9\n9 4 3 6 8 7 2 5 1\n5\n5 3 1 2 4",
+                "standard_solution_output": "NO\nNO\nNO\nNO",
+                "model_output": "NO\nNO\nNO\nNO",
+                "error": null
+            },
+            {
+                "input": "5\n3\n2 1 2\n5\n1 5 2 3 1\n4\n2 2 2 1\n6\n3 1 3 2 4 5\n7\n3 2 4 1 3 5 1",
+                "standard_solution_output": "YES\nYES\nYES\nYES\nYES",
+                "model_output": "YES\nYES\nYES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 4 3 1 4\n4\n2 2 1 4\n4\n3 1 2 2",
+                "standard_solution_output": "YES\nNO\nNO",
+                "model_output": "YES\nNO\nNO",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 7,
+        "code": "def has_palindromic_subsequence(a):\n    n = len(a)\n    for i in range(n):\n        if i > n - 3:\n            break\n        if a[i] in a[i + 2:]:\n            return True\n    return False\n\ndef main():\n    import sys\n    input = sys.stdin.read().split()\n    ptr = 0\n    t = int(input[ptr])\n    ptr += 1\n    for _ in range(t):\n        n = int(input[ptr])\n        ptr += 1\n        a = list(map(int, input[ptr:ptr + n]))\n        ptr += n\n        if has_palindromic_subsequence(a):\n            print(\"YES\")\n        else:\n            print(\"NO\")\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "3\n5\n4 4 3 2 5\n7\n1 3 1 1 2 2 3\n4\n2 2 3 3",
+                "standard_solution_output": "NO\nYES\nNO",
+                "model_output": "NO\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 2 2 1\n5\n3 4 3 1 2\n5\n2 2 2 1 2",
+                "standard_solution_output": "YES\nYES\nYES",
+                "model_output": "YES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 3 2\n5\n1 2 2 3 3\n3\n2 2 3\n4\n1 1 3 1\n10\n2 3 2 3 3 1 1 2 1 2",
+                "standard_solution_output": "NO\nNO\nNO\nYES\nYES",
+                "model_output": "NO\nNO\nNO\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 2 1\n5\n2 3 1 2 3\n3\n3 2 2\n4\n2 1 2 2\n10\n1 1 2 2 3 3 4 4 5 5",
+                "standard_solution_output": "YES\nYES\nNO\nYES\nNO",
+                "model_output": "YES\nYES\nNO\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "4\n3\n2 2 1\n6\n5 5 5 5 5 5\n7\n1 3 3 4 5 6 2\n4\n2 2 1 1\n9\n3 3 3 3 3 3 3 3 3",
+                "standard_solution_output": "NO\nYES\nNO\nNO",
+                "model_output": "NO\nYES\nNO\nNO",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 5 2 1 4\n7\n2 3 1 2 3 2 1\n4\n1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES",
+                "model_output": "NO\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "4\n3\n3 2 1\n5\n2 4 3 4 1\n7\n1 3 4 3 1 2 1\n4\n2 1 4 3\n5\n2 1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES\nNO",
+                "model_output": "NO\nYES\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "4\n4\n3 4 2 1\n8\n3 1 8 5 6 2 7 4\n9\n9 4 3 6 8 7 2 5 1\n5\n5 3 1 2 4",
+                "standard_solution_output": "NO\nNO\nNO\nNO",
+                "model_output": "NO\nNO\nNO\nNO",
+                "error": null
+            },
+            {
+                "input": "5\n3\n2 1 2\n5\n1 5 2 3 1\n4\n2 2 2 1\n6\n3 1 3 2 4 5\n7\n3 2 4 1 3 5 1",
+                "standard_solution_output": "YES\nYES\nYES\nYES\nYES",
+                "model_output": "YES\nYES\nYES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 4 3 1 4\n4\n2 2 1 4\n4\n3 1 2 2",
+                "standard_solution_output": "YES\nNO\nNO",
+                "model_output": "YES\nNO\nNO",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 8,
+        "code": "def has_palindromic_subsequence(a):\n    n = len(a)\n    if n < 3:\n        return False\n    # Check for any triplet that forms a palindrome\n    for i in range(n):\n        for j in range(i+1, n):\n            for k in range(j+1, n):\n                if a[i] == a[j] and a[j] == a[k]:\n                    return True\n    return False\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    if has_palindromic_subsequence(a):\n        print(\"YES\")\n    else:\n        print(\"NO\")",
+        "test_results": [
+            {
+                "input": "3\n5\n4 4 3 2 5\n7\n1 3 1 1 2 2 3\n4\n2 2 3 3",
+                "standard_solution_output": "NO\nYES\nNO",
+                "model_output": "NO\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 2 2 1\n5\n3 4 3 1 2\n5\n2 2 2 1 2",
+                "standard_solution_output": "YES\nYES\nYES",
+                "model_output": "NO\nNO\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 3 2\n5\n1 2 2 3 3\n3\n2 2 3\n4\n1 1 3 1\n10\n2 3 2 3 3 1 1 2 1 2",
+                "standard_solution_output": "NO\nNO\nNO\nYES\nYES",
+                "model_output": "NO\nNO\nNO\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 2 1\n5\n2 3 1 2 3\n3\n3 2 2\n4\n2 1 2 2\n10\n1 1 2 2 3 3 4 4 5 5",
+                "standard_solution_output": "YES\nYES\nNO\nYES\nNO",
+                "model_output": "NO\nNO\nNO\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "4\n3\n2 2 1\n6\n5 5 5 5 5 5\n7\n1 3 3 4 5 6 2\n4\n2 2 1 1\n9\n3 3 3 3 3 3 3 3 3",
+                "standard_solution_output": "NO\nYES\nNO\nNO",
+                "model_output": "NO\nYES\nNO\nNO",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 5 2 1 4\n7\n2 3 1 2 3 2 1\n4\n1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES",
+                "model_output": "NO\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "4\n3\n3 2 1\n5\n2 4 3 4 1\n7\n1 3 4 3 1 2 1\n4\n2 1 4 3\n5\n2 1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES\nNO",
+                "model_output": "NO\nNO\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "4\n4\n3 4 2 1\n8\n3 1 8 5 6 2 7 4\n9\n9 4 3 6 8 7 2 5 1\n5\n5 3 1 2 4",
+                "standard_solution_output": "NO\nNO\nNO\nNO",
+                "model_output": "NO\nNO\nNO\nNO",
+                "error": null
+            },
+            {
+                "input": "5\n3\n2 1 2\n5\n1 5 2 3 1\n4\n2 2 2 1\n6\n3 1 3 2 4 5\n7\n3 2 4 1 3 5 1",
+                "standard_solution_output": "YES\nYES\nYES\nYES\nYES",
+                "model_output": "NO\nNO\nYES\nNO\nNO",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 4 3 1 4\n4\n2 2 1 4\n4\n3 1 2 2",
+                "standard_solution_output": "YES\nNO\nNO",
+                "model_output": "NO\nNO\nNO",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 9,
+        "code": "def has_palindrome_subsequence(a):\n    n = len(a)\n    if n < 3:\n        return False\n    for i in range(n):\n        for k in range(i + 2, n):\n            if a[i] == a[k]:\n                return True\n    return False\n\ndef main():\n    import sys\n    input = sys.stdin.read().split()\n    ptr = 0\n    t = int(input[ptr])\n    ptr += 1\n    for _ in range(t):\n        n = int(input[ptr])\n        ptr += 1\n        a = list(map(int, input[ptr:ptr + n]))\n        ptr += n\n        if has_palindrome_subsequence(a):\n            print(\"YES\")\n        else:\n            print(\"NO\")\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "3\n5\n4 4 3 2 5\n7\n1 3 1 1 2 2 3\n4\n2 2 3 3",
+                "standard_solution_output": "NO\nYES\nNO",
+                "model_output": "NO\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 2 2 1\n5\n3 4 3 1 2\n5\n2 2 2 1 2",
+                "standard_solution_output": "YES\nYES\nYES",
+                "model_output": "YES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 3 2\n5\n1 2 2 3 3\n3\n2 2 3\n4\n1 1 3 1\n10\n2 3 2 3 3 1 1 2 1 2",
+                "standard_solution_output": "NO\nNO\nNO\nYES\nYES",
+                "model_output": "NO\nNO\nNO\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 2 1\n5\n2 3 1 2 3\n3\n3 2 2\n4\n2 1 2 2\n10\n1 1 2 2 3 3 4 4 5 5",
+                "standard_solution_output": "YES\nYES\nNO\nYES\nNO",
+                "model_output": "YES\nYES\nNO\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "4\n3\n2 2 1\n6\n5 5 5 5 5 5\n7\n1 3 3 4 5 6 2\n4\n2 2 1 1\n9\n3 3 3 3 3 3 3 3 3",
+                "standard_solution_output": "NO\nYES\nNO\nNO",
+                "model_output": "NO\nYES\nNO\nNO",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 5 2 1 4\n7\n2 3 1 2 3 2 1\n4\n1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES",
+                "model_output": "NO\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "4\n3\n3 2 1\n5\n2 4 3 4 1\n7\n1 3 4 3 1 2 1\n4\n2 1 4 3\n5\n2 1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES\nNO",
+                "model_output": "NO\nYES\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "4\n4\n3 4 2 1\n8\n3 1 8 5 6 2 7 4\n9\n9 4 3 6 8 7 2 5 1\n5\n5 3 1 2 4",
+                "standard_solution_output": "NO\nNO\nNO\nNO",
+                "model_output": "NO\nNO\nNO\nNO",
+                "error": null
+            },
+            {
+                "input": "5\n3\n2 1 2\n5\n1 5 2 3 1\n4\n2 2 2 1\n6\n3 1 3 2 4 5\n7\n3 2 4 1 3 5 1",
+                "standard_solution_output": "YES\nYES\nYES\nYES\nYES",
+                "model_output": "YES\nYES\nYES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 4 3 1 4\n4\n2 2 1 4\n4\n3 1 2 2",
+                "standard_solution_output": "YES\nNO\nNO",
+                "model_output": "YES\nNO\nNO",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 10,
+        "code": "def has_palindromic_subsequence(a):\n    n = len(a)\n    if n < 3:\n        return False\n    for i in range(n):\n        for k in range(i + 2, n):\n            if a[k] == a[i]:\n                return True\n    return False\n\nt = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    if has_palindromic_subsequence(a):\n        print(\"YES\")\n    else:\n        print(\"NO\")",
+        "test_results": [
+            {
+                "input": "3\n5\n4 4 3 2 5\n7\n1 3 1 1 2 2 3\n4\n2 2 3 3",
+                "standard_solution_output": "NO\nYES\nNO",
+                "model_output": "NO\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "3\n4\n1 2 2 1\n5\n3 4 3 1 2\n5\n2 2 2 1 2",
+                "standard_solution_output": "YES\nYES\nYES",
+                "model_output": "YES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 3 2\n5\n1 2 2 3 3\n3\n2 2 3\n4\n1 1 3 1\n10\n2 3 2 3 3 1 1 2 1 2",
+                "standard_solution_output": "NO\nNO\nNO\nYES\nYES",
+                "model_output": "NO\nNO\nNO\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "5\n3\n1 2 1\n5\n2 3 1 2 3\n3\n3 2 2\n4\n2 1 2 2\n10\n1 1 2 2 3 3 4 4 5 5",
+                "standard_solution_output": "YES\nYES\nNO\nYES\nNO",
+                "model_output": "YES\nYES\nNO\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "4\n3\n2 2 1\n6\n5 5 5 5 5 5\n7\n1 3 3 4 5 6 2\n4\n2 2 1 1\n9\n3 3 3 3 3 3 3 3 3",
+                "standard_solution_output": "NO\nYES\nNO\nNO",
+                "model_output": "NO\nYES\nNO\nNO",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 5 2 1 4\n7\n2 3 1 2 3 2 1\n4\n1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES",
+                "model_output": "NO\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "4\n3\n3 2 1\n5\n2 4 3 4 1\n7\n1 3 4 3 1 2 1\n4\n2 1 4 3\n5\n2 1 2 2 1",
+                "standard_solution_output": "NO\nYES\nYES\nNO",
+                "model_output": "NO\nYES\nYES\nNO",
+                "error": null
+            },
+            {
+                "input": "4\n4\n3 4 2 1\n8\n3 1 8 5 6 2 7 4\n9\n9 4 3 6 8 7 2 5 1\n5\n5 3 1 2 4",
+                "standard_solution_output": "NO\nNO\nNO\nNO",
+                "model_output": "NO\nNO\nNO\nNO",
+                "error": null
+            },
+            {
+                "input": "5\n3\n2 1 2\n5\n1 5 2 3 1\n4\n2 2 2 1\n6\n3 1 3 2 4 5\n7\n3 2 4 1 3 5 1",
+                "standard_solution_output": "YES\nYES\nYES\nYES\nYES",
+                "model_output": "YES\nYES\nYES\nYES\nYES",
+                "error": null
+            },
+            {
+                "input": "3\n5\n3 4 3 1 4\n4\n2 2 1 4\n4\n3 1 2 2",
+                "standard_solution_output": "YES\nNO\nNO",
+                "model_output": "YES\nNO\nNO",
+                "error": null
+            }
+        ]
+    }
+]

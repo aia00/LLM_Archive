@@ -1,0 +1,662 @@
+[
+    {
+        "code_index": 1,
+        "code": "def max_problems_solved(n, k, a):\n    count = 0\n    left = 0\n    right = n - 1\n    left_ptr = 0\n    right_ptr = n - 1\n    while left_ptr <= right_ptr:\n        if a[left_ptr] <= k and a[right_ptr] <= k:\n            # Choose the end with the higher value to maximize the count\n            if a[left_ptr] >= a[right_ptr]:\n                count += 1\n                left_ptr += 1\n            else:\n                count += 1\n                right_ptr -= 1\n        elif a[left_ptr] <= k:\n            count += 1\n            left_ptr += 1\n        elif a[right_ptr] <= k:\n            count += 1\n            right_ptr -= 1\n        else:\n            break\n    return count\n\ndef main():\n    import sys\n    n, k = map(int, sys.stdin.readline().split())\n    a = list(map(int, sys.stdin.readline().split()))\n    print(max_problems_solved(n, k, a))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "6 3\n3 1 4 1 2 5",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "9 3\n1 2 3 4 5 6 7 8 9",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "10 4\n3 2 6 1 5 4 2 3 1 6",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "6 5\n2 1 3 4 5 3",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "10 3\n2 1 3 4 2 5 1 9 6 8",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 1\n5 4 9 1 7 2 6 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "12 3\n2 4 5 1 1 3 4 5 1 6 2 3",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "4 4\n44 68 92 16",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6 3\n3 1 5 2 4 2",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 5\n8 7 6 5 4 3 2 1",
+                "standard_solution_output": "5",
+                "model_output": "5",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 2,
+        "code": "def max_problems_solved(n, k, a):\n    count = 0\n    left = 0\n    right = n - 1\n    while left <= right:\n        if a[left] <= k:\n            count += 1\n            left += 1\n        elif a[right] <= k:\n            count += 1\n            right -= 1\n        else:\n            break\n    return count\n\ndef main():\n    n, k = map(int, input().split())\n    a = list(map(int, input().split()))\n    print(max_problems_solved(n, k, a))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "6 3\n3 1 4 1 2 5",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "9 3\n1 2 3 4 5 6 7 8 9",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "10 4\n3 2 6 1 5 4 2 3 1 6",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "6 5\n2 1 3 4 5 3",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "10 3\n2 1 3 4 2 5 1 9 6 8",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 1\n5 4 9 1 7 2 6 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "12 3\n2 4 5 1 1 3 4 5 1 6 2 3",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "4 4\n44 68 92 16",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6 3\n3 1 5 2 4 2",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 5\n8 7 6 5 4 3 2 1",
+                "standard_solution_output": "5",
+                "model_output": "5",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 3,
+        "code": "def max_problems_solved(n, k, a):\n    # Initialize the count of problems solved\n    count = 0\n    left = 0\n    right = n - 1\n    # While both ends are accessible\n    while left <= right:\n        # Choose the left end if it's <= k\n        if a[left] <= k:\n            count += 1\n            left += 1\n        # Else, check the right end\n        else:\n            if a[right] <= k:\n                count += 1\n                right -= 1\n            else:\n                break\n    return count\n\ndef main():\n    n, k = map(int, input().split())\n    a = list(map(int, input().split()))\n    print(max_problems_solved(n, k, a))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "6 3\n3 1 4 1 2 5",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "9 3\n1 2 3 4 5 6 7 8 9",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "10 4\n3 2 6 1 5 4 2 3 1 6",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "6 5\n2 1 3 4 5 3",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "10 3\n2 1 3 4 2 5 1 9 6 8",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 1\n5 4 9 1 7 2 6 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "12 3\n2 4 5 1 1 3 4 5 1 6 2 3",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "4 4\n44 68 92 16",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6 3\n3 1 5 2 4 2",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 5\n8 7 6 5 4 3 2 1",
+                "standard_solution_output": "5",
+                "model_output": "5",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 4,
+        "code": "def main():\n    n, k = map(int, input().split())\n    a = list(map(int, input().split()))\n    \n    left = 0\n    right = n - 1\n    count = 0\n    left_possible = True\n    right_possible = True\n    \n    while left_possible or right_possible:\n        if left_possible:\n            if a[left] <= k:\n                count += 1\n                left += 1\n                left_possible = True\n            else:\n                left_possible = False\n        if right_possible:\n            if a[right] <= k:\n                count += 1\n                right -= 1\n                right_possible = True\n            else:\n                right_possible = False\n        # Check if both are not possible\n        if not left_possible and not right_possible:\n            break\n    print(count)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "6 3\n3 1 4 1 2 5",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "9 3\n1 2 3 4 5 6 7 8 9",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "10 4\n3 2 6 1 5 4 2 3 1 6",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "6 5\n2 1 3 4 5 3",
+                "standard_solution_output": "6",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmps69v4blr.py\", line 32, in <module>\n    main()\n  File \"/tmp/tmps69v4blr.py\", line 13, in main\n    if a[left] <= k:\nIndexError: list index out of range\n"
+            },
+            {
+                "input": "10 3\n2 1 3 4 2 5 1 9 6 8",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 1\n5 4 9 1 7 2 6 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "12 3\n2 4 5 1 1 3 4 5 1 6 2 3",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "4 4\n44 68 92 16",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6 3\n3 1 5 2 4 2",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 5\n8 7 6 5 4 3 2 1",
+                "standard_solution_output": "5",
+                "model_output": "5",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 5,
+        "code": "def max_problems_solved(n, k, a):\n    count = 0\n    left = 0\n    right = n - 1\n    left_ptr = 0\n    right_ptr = n - 1\n    while left_ptr <= right_ptr:\n        if a[left_ptr] <= k:\n            count += 1\n            left_ptr += 1\n        elif a[right_ptr] <= k:\n            count += 1\n            right_ptr -= 1\n        else:\n            break\n    return count\n\ndef main():\n    n, k = map(int, input().split())\n    a = list(map(int, input().split()))\n    print(max_problems_solved(n, k, a))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "6 3\n3 1 4 1 2 5",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "9 3\n1 2 3 4 5 6 7 8 9",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "10 4\n3 2 6 1 5 4 2 3 1 6",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "6 5\n2 1 3 4 5 3",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "10 3\n2 1 3 4 2 5 1 9 6 8",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 1\n5 4 9 1 7 2 6 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "12 3\n2 4 5 1 1 3 4 5 1 6 2 3",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "4 4\n44 68 92 16",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6 3\n3 1 5 2 4 2",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 5\n8 7 6 5 4 3 2 1",
+                "standard_solution_output": "5",
+                "model_output": "5",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 6,
+        "code": "def main():\n    n, k = map(int, input().split())\n    a = list(map(int, input().split()))\n    \n    # Initialize variables\n    left = 0\n    right = n - 1\n    count = 0\n    \n    # While both pointers are within the list and at least one can be solved\n    while left <= right:\n        # Check if left can be solved\n        if a[left] <= k:\n            count += 1\n            left += 1\n        else:\n            # Check if right can be solved\n            if a[right] <= k:\n                count += 1\n                right -= 1\n            else:\n                # Neither can be solved, break\n                break\n    print(count)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "6 3\n3 1 4 1 2 5",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "9 3\n1 2 3 4 5 6 7 8 9",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "10 4\n3 2 6 1 5 4 2 3 1 6",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "6 5\n2 1 3 4 5 3",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "10 3\n2 1 3 4 2 5 1 9 6 8",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 1\n5 4 9 1 7 2 6 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "12 3\n2 4 5 1 1 3 4 5 1 6 2 3",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "4 4\n44 68 92 16",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6 3\n3 1 5 2 4 2",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 5\n8 7 6 5 4 3 2 1",
+                "standard_solution_output": "5",
+                "model_output": "5",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 7,
+        "code": "def max_problems_solved(n, k, a):\n    count = 0\n    left = 0\n    right = n - 1\n    while left <= right:\n        if a[left] <= k:\n            count += 1\n            left += 1\n        elif a[right] <= k:\n            count += 1\n            right -= 1\n        else:\n            break\n    return count\n\ndef main():\n    n, k = map(int, input().split())\n    a = list(map(int, input().split()))\n    print(max_problems_solved(n, k, a))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "6 3\n3 1 4 1 2 5",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "9 3\n1 2 3 4 5 6 7 8 9",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "10 4\n3 2 6 1 5 4 2 3 1 6",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "6 5\n2 1 3 4 5 3",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "10 3\n2 1 3 4 2 5 1 9 6 8",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 1\n5 4 9 1 7 2 6 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "12 3\n2 4 5 1 1 3 4 5 1 6 2 3",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "4 4\n44 68 92 16",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6 3\n3 1 5 2 4 2",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 5\n8 7 6 5 4 3 2 1",
+                "standard_solution_output": "5",
+                "model_output": "5",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 8,
+        "code": "def main():\n    n, k = map(int, input().split())\n    a = list(map(int, input().split()))\n    count = 0\n    left = 0\n    right = n - 1\n    while left <= right:\n        if a[left] <= k:\n            count += 1\n            left += 1\n        else:\n            if a[right] <= k:\n                count += 1\n                right -= 1\n            else:\n                break\n    print(count)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "6 3\n3 1 4 1 2 5",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "9 3\n1 2 3 4 5 6 7 8 9",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "10 4\n3 2 6 1 5 4 2 3 1 6",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "6 5\n2 1 3 4 5 3",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "10 3\n2 1 3 4 2 5 1 9 6 8",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 1\n5 4 9 1 7 2 6 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "12 3\n2 4 5 1 1 3 4 5 1 6 2 3",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "4 4\n44 68 92 16",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6 3\n3 1 5 2 4 2",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 5\n8 7 6 5 4 3 2 1",
+                "standard_solution_output": "5",
+                "model_output": "5",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 9,
+        "code": "def max_problems_solved(n, k, a):\n    count = 0\n    left = 0\n    right = n - 1\n    left_ptr = 0\n    right_ptr = n - 1\n    while left_ptr <= right_ptr:\n        if a[left_ptr] <= k and a[right_ptr] <= k:\n            # Choose the end which has the higher value to maximize the count\n            if a[left_ptr] >= a[right_ptr]:\n                left_ptr += 1\n            else:\n                right_ptr -= 1\n            count += 1\n        elif a[left_ptr] <= k:\n            left_ptr += 1\n            count += 1\n        elif a[right_ptr] <= k:\n            right_ptr -= 1\n            count += 1\n        else:\n            break\n    return count\n\ndef main():\n    n, k = map(int, input().split())\n    a = list(map(int, input().split()))\n    print(max_problems_solved(n, k, a))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "6 3\n3 1 4 1 2 5",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "9 3\n1 2 3 4 5 6 7 8 9",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "10 4\n3 2 6 1 5 4 2 3 1 6",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "6 5\n2 1 3 4 5 3",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "10 3\n2 1 3 4 2 5 1 9 6 8",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 1\n5 4 9 1 7 2 6 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "12 3\n2 4 5 1 1 3 4 5 1 6 2 3",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "4 4\n44 68 92 16",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6 3\n3 1 5 2 4 2",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 5\n8 7 6 5 4 3 2 1",
+                "standard_solution_output": "5",
+                "model_output": "5",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 10,
+        "code": "def max_problems_solved(n, k, a):\n    count = 0\n    left = 0\n    right = n - 1\n    while left <= right:\n        if a[left] <= k:\n            count += 1\n            left += 1\n        elif a[right] <= k:\n            count += 1\n            right -= 1\n        else:\n            break\n    return count\n\ndef main():\n    n, k = map(int, input().split())\n    a = list(map(int, input().split()))\n    print(max_problems_solved(n, k, a))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "6 3\n3 1 4 1 2 5",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "9 3\n1 2 3 4 5 6 7 8 9",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "10 4\n3 2 6 1 5 4 2 3 1 6",
+                "standard_solution_output": "2",
+                "model_output": "2",
+                "error": null
+            },
+            {
+                "input": "6 5\n2 1 3 4 5 3",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "10 3\n2 1 3 4 2 5 1 9 6 8",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 1\n5 4 9 1 7 2 6 8",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "12 3\n2 4 5 1 1 3 4 5 1 6 2 3",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "4 4\n44 68 92 16",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6 3\n3 1 5 2 4 2",
+                "standard_solution_output": "3",
+                "model_output": "3",
+                "error": null
+            },
+            {
+                "input": "8 5\n8 7 6 5 4 3 2 1",
+                "standard_solution_output": "5",
+                "model_output": "5",
+                "error": null
+            }
+        ]
+    }
+]

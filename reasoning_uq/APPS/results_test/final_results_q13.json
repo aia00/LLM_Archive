@@ -1,0 +1,662 @@
+[
+    {
+        "code_index": 1,
+        "code": "def min_unstable(a):\n    if len(a) == 1:\n        return 0\n    a_sorted = sorted(a)\n    max_val = a_sorted[-1]\n    min_val = a_sorted[0]\n    min_unstable_val = max_val - min_val\n    for i in range(len(a_sorted)):\n        # Remove the current element and calculate new instability\n        temp = a_sorted[:i] + a_sorted[i+1:]\n        current_max = temp[-1]\n        current_min = temp[0]\n        current_unstable = current_max - current_min\n        if current_unstable < min_unstable_val:\n            min_unstable_val = current_unstable\n    return min_unstable_val\n\ndef main():\n    import sys\n    n = int(sys.stdin.readline())\n    a = list(map(int, sys.stdin.readline().split()))\n    print(min_unstable(a))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "17\n43 19 43 19 43 19 43 19 43 19 43 19 43 19 43 19 43",
+                "standard_solution_output": "24",
+                "model_output": "24",
+                "error": null
+            },
+            {
+                "input": "9\n58 67 92 49 75 23 81 46 13",
+                "standard_solution_output": "68",
+                "model_output": "68",
+                "error": null
+            },
+            {
+                "input": "8\n94 94 94 94 94 94 94 94",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n91 19 42 46 85 52",
+                "standard_solution_output": "49",
+                "model_output": "49",
+                "error": null
+            },
+            {
+                "input": "7\n9 1 4 2 7 6 3",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "5\n85 85 85 85 85",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n19 49 41 67 31 35",
+                "standard_solution_output": "30",
+                "model_output": "30",
+                "error": null
+            },
+            {
+                "input": "3\n31 31 62",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n100000 100000 100000 100000 100000 100000 100000 100000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n43 92 67 13 81",
+                "standard_solution_output": "49",
+                "model_output": "49",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 2,
+        "code": "def main():\n    n = int(input())\n    a = list(map(int, input().split()))\n    if n == 1:\n        print(0)\n        return\n    a_sorted = sorted(a)\n    min_instability = float('inf')\n    for i in range(n):\n        # Consider removing the i-th element\n        current_max = a_sorted[0] if i == 0 else a_sorted[0] if a_sorted[0] < a_sorted[i] else a_sorted[i]\n        current_min = a_sorted[-1] if i == n-1 else a_sorted[-1] if a_sorted[-1] > a_sorted[i] else a_sorted[i]\n        # Wait, this logic is wrong. Need to think differently.\n        # When removing the i-th element, the new array is a_sorted without a[i]\n        # So, the new max is max of the remaining elements\n        # Similarly, new min is min of the remaining elements\n        # So, for each i, compute new_max and new_min, then compute instability\n        # and track the minimum.\n        # To do this efficiently, since the array is sorted, for each i, the new_max is a_sorted[i-1] if i>0 else a_sorted[i+1]\n        # Similarly, new_min is a_sorted[i+1] if i < n-1 else a_sorted[i-1]\n        # Wait, no. Because when we remove a[i], the new array is a_sorted without a[i]. So, the new_max is the maximum of the elements before i and after i.\n        # Since the array is sorted, the maximum would be the maximum of a_sorted[i-1] and a_sorted[i+1], but only if those indices exist.\n        # Similarly for the min.\n        # So, for each i, new_max = a_sorted[i-1] if i>0 else a_sorted[i+1]\n        # Wait, no. If i is at the beginning, then the new array is a_sorted[1..n-1], so new_max is a_sorted[-1] = a_sorted[n-1]\n        # Similarly, if i is at the end, the new array is a_sorted[0..n-2], so new_max is a_sorted[-1] = a_sorted[n-2]\n        # For i in the middle, new_max is the max of a_sorted[i-1] and a_sorted[i+1]\n        # Same logic for new_min.\n        # So, for each i:\n        if i == 0:\n            new_max = a_sorted[-1]\n        elif i == n-1:\n            new_max = a_sorted[0]\n        else:\n            new_max = max(a_sorted[i-1], a_sorted[i+1])\n        if i == 0:\n            new_min = a_sorted[0]\n        elif i == n-1:\n            new_min = a_sorted[-1]\n        else:\n            new_min = min(a_sorted[i-1], a_sorted[i+1])\n        # Now calculate the instability\n        instability = new_max - new_min\n        if instability < min_instability:\n            min_instability = instability\n    print(min_instability)\n\nmain()",
+        "test_results": [
+            {
+                "input": "17\n43 19 43 19 43 19 43 19 43 19 43 19 43 19 43 19 43",
+                "standard_solution_output": "24",
+                "model_output": "-24",
+                "error": null
+            },
+            {
+                "input": "9\n58 67 92 49 75 23 81 46 13",
+                "standard_solution_output": "68",
+                "model_output": "-79",
+                "error": null
+            },
+            {
+                "input": "8\n94 94 94 94 94 94 94 94",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n91 19 42 46 85 52",
+                "standard_solution_output": "49",
+                "model_output": "-72",
+                "error": null
+            },
+            {
+                "input": "7\n9 1 4 2 7 6 3",
+                "standard_solution_output": "6",
+                "model_output": "-8",
+                "error": null
+            },
+            {
+                "input": "5\n85 85 85 85 85",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n19 49 41 67 31 35",
+                "standard_solution_output": "30",
+                "model_output": "-48",
+                "error": null
+            },
+            {
+                "input": "3\n31 31 62",
+                "standard_solution_output": "0",
+                "model_output": "-31",
+                "error": null
+            },
+            {
+                "input": "8\n100000 100000 100000 100000 100000 100000 100000 100000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n43 92 67 13 81",
+                "standard_solution_output": "49",
+                "model_output": "-79",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 3,
+        "code": "def main():\n    n = int(input())\n    a = list(map(int, input().split()))\n    if n == 2:\n        print(abs(a[0] - a[1]))\n        return\n    sorted_a = sorted(a)\n    min_max = max(sorted_a)\n    min_min = min(sorted_a)\n    current_max = max(a)\n    current_min = min(a)\n    candidates = []\n    for i in range(n):\n        new_max = max(a[:i] + a[i+1:])\n        new_min = min(a[:i] + a[i+1:])\n        candidates.append(abs(new_max - new_min))\n    print(min(candidates))\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "17\n43 19 43 19 43 19 43 19 43 19 43 19 43 19 43 19 43",
+                "standard_solution_output": "24",
+                "model_output": "24",
+                "error": null
+            },
+            {
+                "input": "9\n58 67 92 49 75 23 81 46 13",
+                "standard_solution_output": "68",
+                "model_output": "68",
+                "error": null
+            },
+            {
+                "input": "8\n94 94 94 94 94 94 94 94",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n91 19 42 46 85 52",
+                "standard_solution_output": "49",
+                "model_output": "49",
+                "error": null
+            },
+            {
+                "input": "7\n9 1 4 2 7 6 3",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "5\n85 85 85 85 85",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n19 49 41 67 31 35",
+                "standard_solution_output": "30",
+                "model_output": "30",
+                "error": null
+            },
+            {
+                "input": "3\n31 31 62",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n100000 100000 100000 100000 100000 100000 100000 100000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n43 92 67 13 81",
+                "standard_solution_output": "49",
+                "model_output": "49",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 4,
+        "code": "def main():\n    import sys\n    n, *rest = map(int, sys.stdin.read().split())\n    a = rest[:n]\n    a.sort()\n    min_instability = float('inf')\n    for i in range(n):\n        # Consider removing the i-th element\n        current_max = a[-1]\n        current_min = a[0]\n        if i == 0:\n            current_min = a[1]\n        elif i == n-1:\n            current_max = a[-2]\n        else:\n            current_max = a[i-1]\n            current_min = a[i+1]\n        # Calculate instability\n        instability = current_max - current_min\n        if instability < min_instability:\n            min_instability = instability\n    print(min_instability)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "17\n43 19 43 19 43 19 43 19 43 19 43 19 43 19 43 19 43",
+                "standard_solution_output": "24",
+                "model_output": "-24",
+                "error": null
+            },
+            {
+                "input": "9\n58 67 92 49 75 23 81 46 13",
+                "standard_solution_output": "68",
+                "model_output": "-33",
+                "error": null
+            },
+            {
+                "input": "8\n94 94 94 94 94 94 94 94",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n91 19 42 46 85 52",
+                "standard_solution_output": "49",
+                "model_output": "-39",
+                "error": null
+            },
+            {
+                "input": "7\n9 1 4 2 7 6 3",
+                "standard_solution_output": "6",
+                "model_output": "-3",
+                "error": null
+            },
+            {
+                "input": "5\n85 85 85 85 85",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n19 49 41 67 31 35",
+                "standard_solution_output": "30",
+                "model_output": "-26",
+                "error": null
+            },
+            {
+                "input": "3\n31 31 62",
+                "standard_solution_output": "0",
+                "model_output": "-31",
+                "error": null
+            },
+            {
+                "input": "8\n100000 100000 100000 100000 100000 100000 100000 100000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n43 92 67 13 81",
+                "standard_solution_output": "49",
+                "model_output": "-54",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 5,
+        "code": "def main():\n    import sys\n    n, *rest = map(int, sys.stdin.read().split())\n    a = rest[:n]\n    if n == 2:\n        print(abs(a[0] - a[1]))\n        return\n    sorted_a = sorted(a)\n    min_val = sorted_a[0]\n    max_val = sorted_a[-1]\n    current_max_diff = max_val - min_val\n    # Now, we need to find the element whose removal leads to the smallest possible max_diff\n    # Let's consider each possible element to remove and compute the new max_diff\n    # But since n can be up to 1e5, we need an O(n) approach\n    # So, precompute the second minimum and second maximum\n    # We can precompute prefix min and suffix min, similarly for max\n    # Wait, but since we are removing one element, maybe the new min is min of the rest, and new max is max of the rest\n    # So for each element a[i], the new min is min of all elements except a[i], same for max\n    # So, to compute the new max_diff for each i, we need new_min and new_max\n    # But computing this for each i in O(1) is tricky\n    # Let's think of it differently: the new max_diff will be the difference between the new max and new min\n    # The new max can be either the original max (if the removed element is not the max) or the second max\n    # Similarly, the new min can be the original min (if the removed element is not the min) or the second min\n    # So, precompute the second min and second max\n    # Also, count the number of times the min appears and the number of times the max appears\n    # So, let's compute the count of min and max\n    min_count = 0\n    max_count = 0\n    for num in sorted_a:\n        if num == min_val:\n            min_count += 1\n        if num == max_val:\n            max_count += 1\n    # Now, if we remove a min, we need to check if there are other mins\n    # Similarly for max\n    # So, to compute the new min after removing a[i], we can see if a[i] is the current min\n    # If the count of min is more than 1, the new min remains the same\n    # Else, the new min is the second min\n    # Similarly for max\n    # So, precompute the second min and second max\n    # Let's find the second min\n    # Iterate through the sorted array, find the first number greater than min_val\n    second_min = None\n    for num in sorted_a:\n        if num > min_val:\n            second_min = num\n            break\n    # Similarly for second max\n    second_max = None\n    for num in reversed(sorted_a):\n        if num < max_val:\n            second_max = num\n            break\n    # Now, for each element in the array, compute the new min and new max\n    # The new max_diff will be max(new_max, new_min) - min(new_max, new_min)\n    # But this is not efficient for n=1e5, so we need a smarter way\n    # Alternative approach: for each element, if it's the min, the new min is second_min if min_count ==1, else min\n    # Similarly for max\n    # So, let's compute for each element:\n    # For each a[i], determine whether removing it affects the min or max\n    # If the element is the min, then the new min is min_val if min_count >1, else second_min\n    # Similarly for max\n    # So, for each a[i], the new min is:\n    if min_count > 1:\n        new_min = min_val\n    else:\n        new_min = second_min\n    # Similarly, the new max is:\n    if max_count > 1:\n        new_max = max_val\n    else:\n        new_max = second_max\n    # Then, the new max_diff is max(new_max, new_min) - min(new_max, new_min)\n    # But this is the same as abs(new_max - new_min)\n    # So, the new max_diff is abs(new_max - new_min)\n    # Now, for each element, we can compute this and find the minimum\n    # But again, this is O(n), which is acceptable for n=1e5\n    # So, let's proceed\n    min_instability = float('inf')\n    for num in a:\n        # Determine new_min and new_max after removing num\n        if num == min_val:\n            if min_count == 1:\n                new_min = second_min\n            else:\n                new_min = min_val\n        else:\n            new_min = min_val\n        if num == max_val:\n            if max_count == 1:\n                new_max = second_max\n            else:\n                new_max = max_val\n        else:\n            new_max = max_val\n        current_diff = abs(new_max - new_min)\n        if current_diff < min_instability:\n            min_instability = current_diff\n    print(min_instability)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "17\n43 19 43 19 43 19 43 19 43 19 43 19 43 19 43 19 43",
+                "standard_solution_output": "24",
+                "model_output": "24",
+                "error": null
+            },
+            {
+                "input": "9\n58 67 92 49 75 23 81 46 13",
+                "standard_solution_output": "68",
+                "model_output": "68",
+                "error": null
+            },
+            {
+                "input": "8\n94 94 94 94 94 94 94 94",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n91 19 42 46 85 52",
+                "standard_solution_output": "49",
+                "model_output": "49",
+                "error": null
+            },
+            {
+                "input": "7\n9 1 4 2 7 6 3",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "5\n85 85 85 85 85",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n19 49 41 67 31 35",
+                "standard_solution_output": "30",
+                "model_output": "30",
+                "error": null
+            },
+            {
+                "input": "3\n31 31 62",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n100000 100000 100000 100000 100000 100000 100000 100000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n43 92 67 13 81",
+                "standard_solution_output": "49",
+                "model_output": "49",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 6,
+        "code": "def main():\n    import sys\n    input = sys.stdin.read().split()\n    n = int(input[0])\n    a = list(map(int, input[1:n+1]))\n    a.sort()\n    min_instability = float('inf')\n    for i in range(n):\n        # Remove the i-th element and compute the new instability\n        # The new array is a[0..i-1] + a[i+1..n-1]\n        # Since the array is sorted, the new min is min(a[0..i-1], a[i+1..n-1])\n        # The new max is max(a[0..i-1], a[i+1..n-1])\n        # So, new_max - new_min is (max of left and right) - (min of left and right)\n        # Since the array is sorted, the left is a[0..i-1], which has min a[0]\n        # The right is a[i+1..n-1], which has min a[i+1]\n        # So the new min is min(a[0], a[i+1])\n        # The new max is max(a[i-1], a[n-1])\n        # Wait, no, because the left is a[0..i-1], which is up to a[i-1], and the right is a[i+1..n-1], up to a[n-1]\n        # So the max of the new array is max(a[i-1], a[n-1]) if i>0 else a[n-1]\n        # Similarly, the min is min(a[0], a[i+1]) if i <n-1 else a[0]\n        # So for each i, new_max is max of a[i-1] and a[n-1], but need to handle cases where i=0 or i =n-1\n        # Similarly for new_min\n        # So, for each i, compute:\n        if i == 0:\n            new_max = a[-1]\n        else:\n            new_max = max(a[i-1], a[-1])\n        if i == n-1:\n            new_min = a[0]\n        else:\n            new_min = min(a[0], a[i+1])\n        current_instability = new_max - new_min\n        if current_instability < min_instability:\n            min_instability = current_instability\n    print(min_instability)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "17\n43 19 43 19 43 19 43 19 43 19 43 19 43 19 43 19 43",
+                "standard_solution_output": "24",
+                "model_output": "24",
+                "error": null
+            },
+            {
+                "input": "9\n58 67 92 49 75 23 81 46 13",
+                "standard_solution_output": "68",
+                "model_output": "79",
+                "error": null
+            },
+            {
+                "input": "8\n94 94 94 94 94 94 94 94",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n91 19 42 46 85 52",
+                "standard_solution_output": "49",
+                "model_output": "72",
+                "error": null
+            },
+            {
+                "input": "7\n9 1 4 2 7 6 3",
+                "standard_solution_output": "6",
+                "model_output": "8",
+                "error": null
+            },
+            {
+                "input": "5\n85 85 85 85 85",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n19 49 41 67 31 35",
+                "standard_solution_output": "30",
+                "model_output": "48",
+                "error": null
+            },
+            {
+                "input": "3\n31 31 62",
+                "standard_solution_output": "0",
+                "model_output": "31",
+                "error": null
+            },
+            {
+                "input": "8\n100000 100000 100000 100000 100000 100000 100000 100000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n43 92 67 13 81",
+                "standard_solution_output": "49",
+                "model_output": "79",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 7,
+        "code": "def main():\n    n = int(input())\n    a = list(map(int, input().split()))\n    sorted_a = sorted(a)\n    min_max = sorted_a[-1]\n    min_min = sorted_a[0]\n    current_max = max(a)\n    current_min = min(a)\n    if current_max == current_min:\n        print(0)\n        return\n    # Now, find the element to remove that will minimize the new max - new min\n    # We can consider removing each element and see what happens\n    min_instability = float('inf')\n    for i in range(n):\n        # Create a new array without the i-th element\n        new_a = a[:i] + a[i+1:]\n        new_max = max(new_a)\n        new_min = min(new_a)\n        instability = new_max - new_min\n        if instability < min_instability:\n            min_instability = instability\n    print(min_instability)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "17\n43 19 43 19 43 19 43 19 43 19 43 19 43 19 43 19 43",
+                "standard_solution_output": "24",
+                "model_output": "24",
+                "error": null
+            },
+            {
+                "input": "9\n58 67 92 49 75 23 81 46 13",
+                "standard_solution_output": "68",
+                "model_output": "68",
+                "error": null
+            },
+            {
+                "input": "8\n94 94 94 94 94 94 94 94",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n91 19 42 46 85 52",
+                "standard_solution_output": "49",
+                "model_output": "49",
+                "error": null
+            },
+            {
+                "input": "7\n9 1 4 2 7 6 3",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "5\n85 85 85 85 85",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n19 49 41 67 31 35",
+                "standard_solution_output": "30",
+                "model_output": "30",
+                "error": null
+            },
+            {
+                "input": "3\n31 31 62",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n100000 100000 100000 100000 100000 100000 100000 100000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n43 92 67 13 81",
+                "standard_solution_output": "49",
+                "model_output": "49",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 8,
+        "code": "def main():\n    n = int(input())\n    a = list(map(int, input().split()))\n    if n == 1:\n        print(0)\n        return\n    min_val = min(a)\n    max_val = max(a)\n    current_instability = max_val - min_val\n    # Now, find the best element to remove\n    # The best candidate is either the current min or max, but not both\n    # So, check if removing min or max gives a better result\n    if n == 2:\n        # Removing either of them gives a single element, so instability is 0\n        print(0)\n        return\n    # Else, compute the new instability when removing min and when removing max\n    # Then choose the minimum of the two\n    # To compute when removing min:\n    # The new min is the second smallest, and new max is the current max\n    # Similarly, when removing max: new max is current min, new min is second max\n    # So, we need to find the second min and second max\n    # But for large n, this could be time-consuming if done naively\n    # So, we need an efficient way to find the second min and second max\n    # One approach is to sort the array and then find the second min and second max\n    # But for n up to 1e5, sorting is acceptable since it's O(n log n)\n    # So, proceed with sorting\n    sorted_a = sorted(a)\n    # Now, find the second min and second max\n    second_min = sorted_a[1]\n    second_max = sorted_a[-2]\n    instability_remove_min = second_max - second_min\n    instability_remove_max = second_max - second_min\n    # Wait, that's the same as before? No, that's not right. Wait, no, when you remove the max, the new max is the second max, and the new min is the original min, but wait no:\n    # Let me think again. When you remove the max, the new array's min is the original min, but the max is the second max. So the instability is (second max - min).\n    # Similarly, when you remove the min, the new array's max is the original max, and the min is the second min. So the instability is (max - second min).\n    # So, the two options are:\n    option1 = max_val - second_min\n    option2 = second_max - min_val\n    min_instability = min(option1, option2)\n    print(min_instability)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "17\n43 19 43 19 43 19 43 19 43 19 43 19 43 19 43 19 43",
+                "standard_solution_output": "24",
+                "model_output": "24",
+                "error": null
+            },
+            {
+                "input": "9\n58 67 92 49 75 23 81 46 13",
+                "standard_solution_output": "68",
+                "model_output": "68",
+                "error": null
+            },
+            {
+                "input": "8\n94 94 94 94 94 94 94 94",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n91 19 42 46 85 52",
+                "standard_solution_output": "49",
+                "model_output": "49",
+                "error": null
+            },
+            {
+                "input": "7\n9 1 4 2 7 6 3",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "5\n85 85 85 85 85",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n19 49 41 67 31 35",
+                "standard_solution_output": "30",
+                "model_output": "30",
+                "error": null
+            },
+            {
+                "input": "3\n31 31 62",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n100000 100000 100000 100000 100000 100000 100000 100000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n43 92 67 13 81",
+                "standard_solution_output": "49",
+                "model_output": "49",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 9,
+        "code": "def main():\n    n = int(input())\n    a = list(map(int, input().split()))\n    if n == 1:\n        print(0)\n        return\n    min_val = min(a)\n    max_val = max(a)\n    current_instability = max_val - min_val\n    best = current_instability\n    for i in range(n):\n        # Try removing the current element\n        temp = a[:i] + a[i+1:]\n        new_min = min(temp)\n        new_max = max(temp)\n        temp_instability = new_max - new_min\n        if temp_instability < best:\n            best = temp_instability\n    print(best)\n    \nmain()",
+        "test_results": [
+            {
+                "input": "17\n43 19 43 19 43 19 43 19 43 19 43 19 43 19 43 19 43",
+                "standard_solution_output": "24",
+                "model_output": "24",
+                "error": null
+            },
+            {
+                "input": "9\n58 67 92 49 75 23 81 46 13",
+                "standard_solution_output": "68",
+                "model_output": "68",
+                "error": null
+            },
+            {
+                "input": "8\n94 94 94 94 94 94 94 94",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n91 19 42 46 85 52",
+                "standard_solution_output": "49",
+                "model_output": "49",
+                "error": null
+            },
+            {
+                "input": "7\n9 1 4 2 7 6 3",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "5\n85 85 85 85 85",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n19 49 41 67 31 35",
+                "standard_solution_output": "30",
+                "model_output": "30",
+                "error": null
+            },
+            {
+                "input": "3\n31 31 62",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n100000 100000 100000 100000 100000 100000 100000 100000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n43 92 67 13 81",
+                "standard_solution_output": "49",
+                "model_output": "49",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 10,
+        "code": "def main():\n    n = int(input())\n    a = list(map(int, input().split()))\n    if n == 1:\n        print(0)\n        return\n    # To find the best element to remove to minimize the max - min after removal\n    # The initial instability is max(a) - min(a)\n    # We need to check for each element, what happens when we remove it\n    # and find the minimal instability\n    # However, checking each element by removing it and computing the new max and min is O(n^2), which is too slow for n=1e5\n    # So, we need a smarter approach\n    # Let's think about the possible candidates for the new max and new min\n    # The new max could be either the second maximum or the original max if it's not removed\n    # Similarly, the new min could be either the second min or the original min if it's not removed\n    # So, for each element, if we remove it, the new instability is either:\n    # (second_max - second_min) if both are present\n    # Or, if the removed element was the max, then new_max is second_max, else it's the original max\n    # Similarly for the min\n    # So, we can precompute the two smallest and two largest elements\n    # Then, for each element, determine which case we are in and compute the new instability\n    # Then find the minimal one\n    # Let's find the two smallest and two largest elements\n    sorted_a = sorted(a)\n    min_val = sorted_a[0]\n    second_min = sorted_a[1]\n    max_val = sorted_a[-1]\n    second_max = sorted_a[-2]\n    # Now, for each element, see if removing it affects the min or max\n    min_instability = float('inf')\n    for i in range(n):\n        current = a[i]\n        # Compute the new min and max after removing current\n        # Case 1: current is the max\n        if current == max_val:\n            new_max = second_max\n        else:\n            new_max = max_val\n        # Case 2: current is the min\n        if current == min_val:\n            new_min = second_min\n        else:\n            new_min = min_val\n        # Now, compute the new instability\n        if new_max < new_min:\n            # This can't happen, since the array is sorted\n            # So, new_max >= new_min always\n            pass\n        current_instability = new_max - new_min\n        if current_instability < min_instability:\n            min_instability = current_instability\n    print(min_instability)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "17\n43 19 43 19 43 19 43 19 43 19 43 19 43 19 43 19 43",
+                "standard_solution_output": "24",
+                "model_output": "24",
+                "error": null
+            },
+            {
+                "input": "9\n58 67 92 49 75 23 81 46 13",
+                "standard_solution_output": "68",
+                "model_output": "68",
+                "error": null
+            },
+            {
+                "input": "8\n94 94 94 94 94 94 94 94",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n91 19 42 46 85 52",
+                "standard_solution_output": "49",
+                "model_output": "49",
+                "error": null
+            },
+            {
+                "input": "7\n9 1 4 2 7 6 3",
+                "standard_solution_output": "6",
+                "model_output": "6",
+                "error": null
+            },
+            {
+                "input": "5\n85 85 85 85 85",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n19 49 41 67 31 35",
+                "standard_solution_output": "30",
+                "model_output": "30",
+                "error": null
+            },
+            {
+                "input": "3\n31 31 62",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n100000 100000 100000 100000 100000 100000 100000 100000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n43 92 67 13 81",
+                "standard_solution_output": "49",
+                "model_output": "49",
+                "error": null
+            }
+        ]
+    }
+]

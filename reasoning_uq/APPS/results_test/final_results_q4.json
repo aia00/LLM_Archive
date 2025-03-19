@@ -1,0 +1,662 @@
+[
+    {
+        "code_index": 1,
+        "code": "def find_min_d(a):\n    n = len(a)\n    if n == 1:\n        return 0  # only one element, D can be 0\n    # find all possible D candidates\n    possible_d = set()\n    for i in range(n):\n        for j in range(i+1, n):\n            # possible differences between a[i] and a[j]\n            diff = a[i] - a[j]\n            possible_d.add(abs(diff))\n    # if no possible D, return -1\n    if not possible_d:\n        return -1\n    # now, find the minimal D from possible_d\n    min_d = min(possible_d)\n    # check if this min_d works\n    # for all elements, after adding, subtracting, or not changing, they should be equal to target\n    target = a[0] + min_d  # or a[0] - min_d, but we can check both\n    # wait, perhaps the target can be a[0], but then all other elements must be +/- min_d\n    # let's think: for all elements, a_i + min_d, a_i - min_d, or a_i must be equal to target\n    # so the target can be a[0] +/- min_d, but perhaps the minimal D is such that the target is a[0] +/- min_d, but for all other elements, they can be adjusted accordingly.\n\n    # Let's try to find the target for each possible D.\n\n    # So for each candidate D in possible_d, check if it's possible to make all elements equal to some target by adding, subtracting, or not changing.\n\n    # So, let's loop through all possible D in possible_d, and for each, see if all elements can reach a common target.\n\n    # So, for each D in possible_d:\n    for D in possible_d:\n        # for each element, possible values are a_i - D, a_i, a_i + D\n        # the target must be one of these values for all elements\n        # So, for each element, compute the possible values and find the intersection across all elements.\n\n        possible_values = set()\n        for num in a:\n            possible_values.add(num - D)\n            possible_values.add(num)\n            possible_values.add(num + D)\n        # the intersection of all possible_values must have at least one element\n        if len(possible_values) == 0:\n            continue\n        if all(x in possible_values for x in a):\n            return D\n    # if no D found, return -1\n    return -1\n\n# Read input\nn = int(input())\na = list(map(int, input().split()))\n\n# Compute and print the result\nprint(find_min_d(a))",
+        "test_results": [
+            {
+                "input": "9\n93 93 93 93 93 93 93 93 93",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n93 55 21 74 81 46",
+                "standard_solution_output": "-1",
+                "model_output": "34",
+                "error": null
+            },
+            {
+                "input": "9\n43 43 43 43 43 43 43 43 43",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "11\n1 9 5 8 9 3 1 6 8 9 5",
+                "standard_solution_output": "-1",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n41 41 41 41 41 41",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "11\n81 46 93 59 28 82 49 67 85 91 34",
+                "standard_solution_output": "-1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "4\n67 67 67 67",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n100 75 100 50 25 100 75 25",
+                "standard_solution_output": "-1",
+                "model_output": "0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 2,
+        "code": "def find_min_D(a):\n    n = len(a)\n    if n == 1:\n        return 0  # because D can be 0, and no changes are needed.\n    \n    # Find all possible target values and corresponding Ds\n    possible_targets = set()\n    for num in a:\n        for delta in [-1, 0, 1]:\n            target = num + delta\n            possible_targets.add(target)\n    \n    min_D = float('inf')\n    for target in possible_targets:\n        D = 0\n        for num in a:\n            possible = False\n            if num + D == target:\n                possible = True\n            elif num - D == target:\n                possible = True\n            else:\n                # Check if num can be adjusted by adding or subtracting D once\n                # So, for this num, target must be either num + D or num - D\n                # So, for this target, the required D is |target - num|\n                # But wait, for each num, D must be same for all. So, if for this target, all nums can be adjusted with same D, then we can proceed.\n                # So, for each num, the required D is |target - num|\n                # So, let's compute D for each num and see if it's the same.\n                # But wait, no. Because for each num, you can choose to add or subtract D once, so for each num, the target can be num + D or num - D.\n                # So for a given target, the required D must be same for all nums, and for each num, target must be either num + D or num - D.\n                # So, for a given target, compute the D for each num as |target - num|, but D must be same across all nums.\n                # So, for this target, let's compute the D for each num as |target - num|, and check if all are same.\n                # Also, D can't be zero unless all are same.\n                # So, for this target, compute D as |target - num| for each num, check if all are same.\n                # If so, record this D and see if it's the minimum.\n                # So, for each num, compute the possible D for this target, which is |target - num|\n                # All these Ds must be same.\n                # So, for this target, let's compute all the possible Ds for each num and see if they are same.\n                # Also, the D can be zero, but in that case all numbers must already be same.\n                # So, for each num in a:\n                #   possible D for this num is |target - num|\n                #   So, for the target, the D must be same across all nums.\n                #   So, for each num, compute D_candidate = |target - num|\n                #   If D_candidate is same for all, then D is that value.\n                #   Else, this target is not possible.\n                # So, for this target, check if all D_candidate are same.\n                # So, for this target, let's compute D_candidate for each num.\n                # Then, if all D_candidate are same, then D is that value.\n                # Else, this target is not possible.\n                # Also, D must be non-negative.\n                # So, let's proceed.\n                D_candidate = abs(target - num)\n                if D_candidate != D:\n                    possible = False\n                    break\n                D = D_candidate\n        if possible and D != float('inf'):\n            if D < min_D:\n                min_D = D\n    if min_D != float('inf'):\n        return min_D\n    else:\n        return -1\n\n# Read input\nn = int(input())\na = list(map(int, input().split()))\n\n# Compute and print the result\nprint(find_min_D(a))",
+        "test_results": [
+            {
+                "input": "9\n93 93 93 93 93 93 93 93 93",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n93 55 21 74 81 46",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "9\n43 43 43 43 43 43 43 43 43",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "11\n1 9 5 8 9 3 1 6 8 9 5",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "6\n41 41 41 41 41 41",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "11\n81 46 93 59 28 82 49 67 85 91 34",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "4\n67 67 67 67",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n100 75 100 50 25 100 75 25",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 3,
+        "code": "def find_min_d(a):\n    n = len(a)\n    if n == 1:\n        return 0\n    s = set(a)\n    if len(s) == 1:\n        return 0\n    possible_ds = set()\n    for i in range(n):\n        for j in range(i+1, n):\n            diff = abs(a[i] - a[j])\n            possible_ds.add(diff)\n    if not possible_ds:\n        return -1\n    possible_ds = sorted(possible_ds)\n    for d in possible_ds:\n        if d == 0:\n            continue\n        target = a[0] + d\n        if all((x + d == target) or (x - d == target) or (x == target) for x in a):\n            return d\n    return -1\n\ndef main():\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(find_min_d(a))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "9\n93 93 93 93 93 93 93 93 93",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n93 55 21 74 81 46",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "9\n43 43 43 43 43 43 43 43 43",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "11\n1 9 5 8 9 3 1 6 8 9 5",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "6\n41 41 41 41 41 41",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "11\n81 46 93 59 28 82 49 67 85 91 34",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "4\n67 67 67 67",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n100 75 100 50 25 100 75 25",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 4,
+        "code": "def find_min_D(a):\n    n = len(a)\n    if n == 1:\n        return 0\n    s = set(a)\n    unique = sorted(list(s))\n    if len(unique) == 1:\n        return 0\n    # Now, for all possible D, find the minimum one\n    possible_D = []\n    for i in range(len(unique)):\n        for j in range(i+1, len(unique)):\n            diff = unique[j] - unique[i]\n            # The possible D must be a divisor of the difference\n            possible_D.append(diff)\n            if diff !=0:\n                possible_D.append(diff // 2)\n                possible_D.append(diff // 3)\n                possible_D.append(diff // 4)\n                possible_D.append(diff // 5)\n                possible_D.append(diff // 6)\n                possible_D.append(diff // 7)\n                possible_D.append(diff // 8)\n                possible_D.append(diff // 9)\n                possible_D.append(diff // 10)\n                possible_D.append(diff // 11)\n                possible_D.append(diff // 12)\n                possible_D.append(diff // 13)\n                possible_D.append(diff // 14)\n                possible_D.append(diff // 15)\n                possible_D.append(diff // 16)\n                possible_D.append(diff // 17)\n                possible_D.append(diff // 18)\n                possible_D.append(diff // 19)\n                possible_D.append(diff // 20)\n                possible_D.append(diff // 21)\n                possible_D.append(diff // 22)\n                possible_D.append(diff // 23)\n                possible_D.append(diff // 24)\n                possible_D.append(diff // 25)\n                possible_D.append(diff // 26)\n                possible_D.append(diff // 27)\n                possible_D.append(diff // 28)\n                possible_D.append(diff // 29)\n                possible_D.append(diff // 30)\n                possible_D.append(diff // 31)\n                possible_D.append(diff // 32)\n                possible_D.append(diff // 33)\n                possible_D.append(diff // 34)\n                possible_D.append(diff // 35)\n                possible_D.append(diff // 36)\n                possible_D.append(diff // 37)\n                possible_D.append(diff // 38)\n                possible_D.append(diff // 39)\n                possible_D.append(diff // 40)\n                possible_D.append(diff // 41)\n                possible_D.append(diff // 42)\n                possible_D.append(diff // 43)\n                possible_D.append(diff // 44)\n                possible_D.append(diff // 45)\n                possible_D.append(diff // 46)\n                possible_D.append(diff // 47)\n                possible_D.append(diff // 48)\n                possible_D.append(diff // 49)\n                possible_D.append(diff // 50)\n    # Now, collect all possible D's and check them\n    unique_D = set(possible_D)\n    unique_D.discard(0)  # since D is non-negative, but D=0 is possible only if all are same\n    min_D = None\n    for d in sorted(unique_D):\n        if d ==0:\n            continue\n        # Check if all elements can be adjusted to a common value with this D\n        target = a[0] + d\n        possible = True\n        for num in a:\n            if num - d == target or num == target or num + d == target:\n                continue\n            else:\n                possible = False\n                break\n        if possible:\n            min_D = d\n            break\n    if min_D is not None:\n        return min_D\n    else:\n        return -1\n\ndef main():\n    import sys\n    input = sys.stdin.read().split()\n    n = int(input[0])\n    a = list(map(int, input[1:n+1]))\n    print(find_min_D(a))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "9\n93 93 93 93 93 93 93 93 93",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n93 55 21 74 81 46",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "9\n43 43 43 43 43 43 43 43 43",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "11\n1 9 5 8 9 3 1 6 8 9 5",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "6\n41 41 41 41 41 41",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "11\n81 46 93 59 28 82 49 67 85 91 34",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "4\n67 67 67 67",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n100 75 100 50 25 100 75 25",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 5,
+        "code": "def find_min_d(a):\n    n = len(a)\n    if n == 1:\n        return 0\n    s = set(a)\n    if len(s) == 1:\n        return 0\n    possible_ds = []\n    for d in range(0, max(a) - min(a) + 1):\n        current = set()\n        for num in a:\n            current.add(num + d)\n            current.add(num - d)\n            current.add(num)\n        if len(current) == 1:\n            possible_ds.append(d)\n    if not possible_ds:\n        return -1\n    else:\n        return min(possible_ds)\n\ndef main():\n    n = int(input())\n    a = list(map(int, input().split()))\n    print(find_min_d(a))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "9\n93 93 93 93 93 93 93 93 93",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n93 55 21 74 81 46",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "9\n43 43 43 43 43 43 43 43 43",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "11\n1 9 5 8 9 3 1 6 8 9 5",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "6\n41 41 41 41 41 41",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "11\n81 46 93 59 28 82 49 67 85 91 34",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "4\n67 67 67 67",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n100 75 100 50 25 100 75 25",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 6,
+        "code": "def main():\n    n = int(input())\n    a = list(map(int, input().split()))\n    if n == 1:\n        print(0)\n        return\n    # Get all possible D candidates\n    unique = list(set(a))\n    # Generate all possible D's based on the differences between unique elements\n    D_candidates = set()\n    for i in range(len(unique)):\n        for j in range(i+1, len(unique)):\n            diff = unique[i] - unique[j]\n            if diff > 0:\n                D_candidates.add(diff)\n    if not D_candidates:\n        print(-1)\n        return\n    # Now, for each D in D_candidates, check if it's possible\n    min_D = None\n    for D in sorted(D_candidates):\n        target = a[0] + D  # Assume we add D to the first element\n        possible = True\n        for num in a:\n            if num + D == target or num - D == target or num == target:\n                continue\n            possible = False\n            break\n        if possible:\n            min_D = D\n            break\n    if min_D is not None:\n        print(min_D)\n    else:\n        print(-1)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "9\n93 93 93 93 93 93 93 93 93",
+                "standard_solution_output": "0",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "6\n93 55 21 74 81 46",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "9\n43 43 43 43 43 43 43 43 43",
+                "standard_solution_output": "0",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "11\n1 9 5 8 9 3 1 6 8 9 5",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "6\n41 41 41 41 41 41",
+                "standard_solution_output": "0",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "11\n81 46 93 59 28 82 49 67 85 91 34",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "4\n67 67 67 67",
+                "standard_solution_output": "0",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "8\n100 75 100 50 25 100 75 25",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 7,
+        "code": "def find_min_d(a):\n    n = len(a)\n    if n == 1:\n        return 0  # Only one element, D can be 0\n    # Find all possible D candidates\n    possible_ds = set()\n    # Consider all pairwise differences\n    for i in range(n):\n        for j in range(i+1, n):\n            diff = abs(a[i] - a[j])\n            possible_ds.add(diff)\n    # Also consider the case when all elements are same, D=0\n    if all(x == a[0] for x in a):\n        return 0\n    # Now, for each candidate D, check if it's possible\n    min_d = None\n    for d in possible_ds:\n        if is_possible(a, d):\n            if min_d is None or d < min_d:\n                min_d = d\n    if min_d is not None:\n        return min_d\n    else:\n        return -1\n\ndef is_possible(a, d):\n    # For each element, it can be a_i +d, a_i -d, or a_i\n    # We need to find a value x such that for all a_i, x is in {a_i -d, a_i, a_i +d}\n    # So, for each a_i, it can reach x by adding, subtracting, or not changing d\n    # So, for each a_i, x must be in the set {a_i -d, a_i, a_i +d}\n    # So, the possible x's for each a_i are those, and the overall x must be same for all\n    # So, the intersection of all possible x's for each a_i must be non-empty\n    # So, for each a_i, possible_x = {a_i -d, a_i, a_i +d}\n    # Then, the intersection of all possible_x is the set of possible x's\n    # So, if the intersection is not empty, return True\n    possible_x = None\n    for num in a:\n        current = {num - d, num, num + d}\n        if possible_x is None:\n            possible_x = current\n        else:\n            possible_x = possible_x.intersection(current)\n        if not possible_x:\n            return False\n    return len(possible_x) > 0\n\ndef main():\n    import sys\n    input = sys.stdin.read().split()\n    n = int(input[0])\n    a = list(map(int, input[1:n+1]))\n    d = find_min_d(a)\n    print(d)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "9\n93 93 93 93 93 93 93 93 93",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n93 55 21 74 81 46",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "9\n43 43 43 43 43 43 43 43 43",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "11\n1 9 5 8 9 3 1 6 8 9 5",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "6\n41 41 41 41 41 41",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "11\n81 46 93 59 28 82 49 67 85 91 34",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "4\n67 67 67 67",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n100 75 100 50 25 100 75 25",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 8,
+        "code": "def find_min_d(a):\n    n = len(a)\n    if n == 1:\n        return 0  # Only one element, D can be 0\n    # Find all possible D candidates\n    unique_values = list(set(a))\n    possible_ds = []\n    for d in unique_values:\n        # Check if d is a possible D\n        valid = True\n        for num in a:\n            # For each number, see if it can be adjusted by +/-d or 0\n            if num - d < 0 or num + d < 0:\n                valid = False\n                break\n            if (num - d) != (num + d):\n                valid = False\n                break\n        if valid:\n            possible_ds.append(d)\n    if not possible_ds:\n        return -1\n    # Now find the minimal D\n    min_d = min(possible_ds)\n    return min_d\n\ndef main():\n    import sys\n    input = sys.stdin.read().split()\n    n = int(input[0])\n    a = list(map(int, input[1:n+1]))\n    print(find_min_d(a))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "9\n93 93 93 93 93 93 93 93 93",
+                "standard_solution_output": "0",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "6\n93 55 21 74 81 46",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "9\n43 43 43 43 43 43 43 43 43",
+                "standard_solution_output": "0",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "11\n1 9 5 8 9 3 1 6 8 9 5",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "6\n41 41 41 41 41 41",
+                "standard_solution_output": "0",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "11\n81 46 93 59 28 82 49 67 85 91 34",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "4\n67 67 67 67",
+                "standard_solution_output": "0",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "8\n100 75 100 50 25 100 75 25",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 9,
+        "code": "def find_min_d(a):\n    n = len(a)\n    if n == 1:\n        return 0\n    a = sorted(a)\n    unique = list(set(a))\n    if len(unique) == 1:\n        return 0\n    possible_ds = []\n    for i in range(len(unique)):\n        for j in range(i+1, len(unique)):\n            d = abs(unique[i] - unique[j])\n            possible_ds.append(d)\n    if not possible_ds:\n        return -1\n    # Now, for each possible D, check if it's possible to make all elements equal\n    min_d = float('inf')\n    for d in possible_ds:\n        if d == 0:\n            continue\n        target = a[0] + d  # Or maybe a[0] - d?\n        # Wait, no. Because for each element, it can be a_i +d, a_i -d, or a_i.\n        # So for all elements, after applying one of these, they should be equal to the same target.\n        # So for each element, it must be that a_i -d, a_i, or a_i +d equals the target.\n        # So target must be one of a_i -d, a_i, or a_i +d for all i.\n        # So for each d, check if all elements have a value that is either target = a_i -d, a_i, or a_i +d.\n        # So for each d, collect all possible targets for each a_i, and see if there's a common target across all.\n        # So for each a_i, possible targets are [a_i -d, a_i, a_i +d]\n        # So for all a_i, the intersection of their possible targets must not be empty.\n        # So for each d, compute the intersection of all [a_i -d, a_i, a_i +d] for each i.\n        # If the intersection is not empty, then d is possible.\n        # So for each d, collect all possible targets for each a_i and check if there's a common target.\n        # How to do this efficiently?\n        # Maybe for each d, compute the possible targets for the first element, then check if any of those targets is present in all other elements' possible targets.\n        # So for the first element, possible_targets = {a[0]-d, a[0], a[0]+d}\n        # For each possible target in possible_targets:\n        #   check if for all other elements, a_i -d, a_i, a_i +d includes this target.\n        # If any such target exists, then d is possible.\n        # So let's implement this.\n        possible_targets_first = {a[0]-d, a[0], a[0]+d}\n        for target in possible_targets_first:\n            valid = True\n            for num in a[1:]:\n                if target not in {num -d, num, num +d}:\n                    valid = False\n                    break\n            if valid:\n                possible_ds.remove(d)  # since we found a d that works, but we need to find the minimum\n                min_d = min(min_d, d)\n                break\n    if min_d != float('inf'):\n        return min_d\n    else:\n        return -1\n\ndef main():\n    import sys\n    n = int(sys.stdin.readline())\n    a = list(map(int, sys.stdin.readline().split()))\n    print(find_min_d(a))\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "9\n93 93 93 93 93 93 93 93 93",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n93 55 21 74 81 46",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "9\n43 43 43 43 43 43 43 43 43",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "11\n1 9 5 8 9 3 1 6 8 9 5",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "6\n41 41 41 41 41 41",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "11\n81 46 93 59 28 82 49 67 85 91 34",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "4\n67 67 67 67",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n100 75 100 50 25 100 75 25",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 10,
+        "code": "def find_min_d(a):\n    # Convert to a set to find unique elements\n    unique = list(set(a))\n    if len(unique) == 1:\n        return 0\n    # If there are more than 2 unique elements, it's impossible\n    if len(unique) > 2:\n        return -1\n    # Now, for cases where there are exactly two unique elements\n    # The possible target is the average of the two unique elements\n    # The difference between the two elements is 2D, so D is (max - min)/2\n    # But we need to check if all elements can be adjusted to the target\n    # So first, find the two unique elements\n    min_val = min(unique)\n    max_val = max(unique)\n    if (max_val - min_val) % 2 != 0:\n        return -1\n    D = (max_val - min_val) // 2\n    # Now, check each element to see if it can be adjusted to target\n    target = min_val + D\n    for num in a:\n        if num == target or num == target + D or num == target - D:\n            continue\n        else:\n            return -1\n    return D\n\ndef main():\n    n = int(input())\n    a = list(map(int, input().split()))\n    d = find_min_d(a)\n    print(d)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "9\n93 93 93 93 93 93 93 93 93",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6\n93 55 21 74 81 46",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "9\n43 43 43 43 43 43 43 43 43",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "11\n1 9 5 8 9 3 1 6 8 9 5",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "6\n41 41 41 41 41 41",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "11\n81 46 93 59 28 82 49 67 85 91 34",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            },
+            {
+                "input": "4\n67 67 67 67",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5\n29 29 29 29 29",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "8\n100 75 100 50 25 100 75 25",
+                "standard_solution_output": "-1",
+                "model_output": "-1",
+                "error": null
+            }
+        ]
+    }
+]

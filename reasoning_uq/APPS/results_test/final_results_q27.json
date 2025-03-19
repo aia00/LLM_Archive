@@ -1,0 +1,662 @@
+[
+    {
+        "code_index": 1,
+        "code": "def main():\n    n = int(input())\n    total = n * (n + 1) // 2\n    print(0 if total % 2 == 0 else 1)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "91",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "123456789",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "378",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "71",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "987654321000000000000000000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6543210",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 2,
+        "code": "def main():\n    n = int(input())\n    total = n * (n + 1) // 2\n    if total % 2 == 0:\n        print(0)\n    else:\n        print(1)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "91",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "123456789",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "378",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "71",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "987654321000000000000000000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6543210",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 3,
+        "code": "def main():\n    n = int(input())\n    if n == 0:\n        print(0)\n        return\n    total = n * (n + 1) // 2\n    if total % 2 == 0:\n        print(0)\n    else:\n        print(1)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "91",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "123456789",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "378",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "71",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "987654321000000000000000000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6543210",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 4,
+        "code": "def main():\n    n = int(input())\n    total = n * (n + 1) // 2\n    if total % 2 == 0:\n        print(0)\n    else:\n        print(1)\n        \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "91",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "123456789",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "378",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "71",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "987654321000000000000000000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6543210",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 5,
+        "code": "def main():\n    n = int(input())\n    total = n * (n + 1) // 2\n    if total % 2 == 0:\n        print(0)\n    else:\n        print(1)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "91",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "123456789",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "378",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "71",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "987654321000000000000000000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6543210",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 6,
+        "code": "def main():\n    n = int(input())\n    total = n * (n + 1) // 2\n    print(0 if total % 2 == 0 else 1)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "91",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "123456789",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "378",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "71",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "987654321000000000000000000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6543210",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 7,
+        "code": "def main():\n    n = int(input())\n    total = n * (n + 1) // 2\n    if total % 2 == 0:\n        print(0)\n    else:\n        print(1)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "91",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "123456789",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "378",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "71",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "987654321000000000000000000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6543210",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 8,
+        "code": "def main():\n    n = int(input())\n    if n == 0:\n        print(0)\n        return\n    total = n * (n + 1) // 2\n    if total % 2 == 0:\n        print(0)\n    else:\n        print(1)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "91",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "123456789",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "378",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "71",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "987654321000000000000000000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6543210",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 9,
+        "code": "def main():\n    n = int(input())\n    total = n * (n + 1) // 2\n    print(0 if total % 2 == 0 else 1)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "91",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "123456789",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "378",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "71",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "987654321000000000000000000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6543210",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 10,
+        "code": "def main():\n    n = int(input())\n    if n == 0:\n        print(0)\n        return\n    total = n * (n + 1) // 2\n    if total % 2 == 0:\n        print(0)\n    else:\n        print(1)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "91",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "123456789",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "378",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "222222222",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "71",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "777777777",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            },
+            {
+                "input": "987654321000000000000000000",
+                "standard_solution_output": "0",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "6543210",
+                "standard_solution_output": "1",
+                "model_output": "1",
+                "error": null
+            }
+        ]
+    }
+]

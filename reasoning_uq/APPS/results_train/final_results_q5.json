@@ -1,0 +1,14 @@
+[
+    {
+        "code_index": 1,
+        "code": "t = int(input())\nfor _ in range(t):\n    n = int(input())\n    a = list(map(int, input().split()))\n    if n == 0:\n        print(0)\n        continue\n    min_price = a[-1]\n    count = 0\n    for i in range(n-2, -1, -1):\n        if a[i] > min_price:\n            count += 1\n        else:\n            min_price = a[i]\n    print(count)",
+        "test_results": [
+            {
+                "input": "3\n4\n1 2 3 4\n15\n5 6 7 8 9 10 11 12 13 14 15 16 17 18 19\n14\n2 4 6 8 10 12 14 16 18 20 22 24 26 28",
+                "standard_solution_output": "0\n0\n0",
+                "model_output": "0\n0\n0",
+                "error": null
+            }
+        ]
+    }
+]

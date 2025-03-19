@@ -1,0 +1,662 @@
+[
+    {
+        "code_index": 1,
+        "code": "def main():\n    import sys\n    n, m, k = map(int, sys.stdin.readline().split())\n    a = []\n    for _ in range(n):\n        row = list(map(int, sys.stdin.readline().split()))\n        a.append(row)\n    \n    # Precompute all possible sums for each row\n    row_sums = []\n    for row in a:\n        # For each row, generate all possible sums when choosing 0 to t elements, where t is floor(m/2)\n        t = m // 2\n        row_sums.append( [0] + [sum(row[:i+1]) for i in range(1, t+1)] )\n    \n    # Now, for each row, we can choose a sum from the precomputed row_sums, and the total sum should be divisible by k\n    # We need to find the maximum total sum possible.\n    \n    # Let's model this as a dynamic programming problem.\n    \n    # Initialize DP array\n    dp = [0] * (k)\n    # dp[i] represents the maximum sum achievable with a remainder i modulo k.\n    \n    for row in row_sums:\n        # For each possible sum in the current row, update the DP\n        new_dp = [ -1 ] * k\n        for s in row:\n            rem = s % k\n            for i in range(k):\n                if dp[i] != -1:\n                    new_dp[(i + rem) % k] = max( new_dp[(i + rem) % k], dp[i] + s )\n        dp = new_dp\n    \n    # The maximum sum is the maximum value in dp\n    max_sum = max(dp)\n    print(max_sum)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "13 3 30\n46 43 49\n21 14 15\n68 49 13\n23 29 14\n34 24 17\n42 12 43\n55 46 14\n29 34 17\n45 13 46\n67 21 49\n32 14 23\n48 15 24\n18 29 42",
+                "standard_solution_output": "540",
+                "model_output": "871",
+                "error": null
+            },
+            {
+                "input": "13 44 25\n39 14 23\n48 16 31\n34 43 27\n11 27 29",
+                "standard_solution_output": "300",
+                "model_output": "342",
+                "error": null
+            },
+            {
+                "input": "14 5 32\n18 47 28 49 27\n39 46 31 1 31\n34 16 11 34 48\n44 23 4 18 33\n32 28 35 4 4\n19 46 35 23 15\n24 26 34 29 17\n38 16 47 14 45\n43 34 17 13 10\n30 25 33 48 32\n36 49 1 17 11\n20 34 24 23 46\n42 48 38 16 29\n31 10 15 19 41",
+                "standard_solution_output": "1120",
+                "model_output": "1251",
+                "error": null
+            },
+            {
+                "input": "4 5 2\n14 68 46 31 21\n16 1 64 66 46\n4 65 14 13 29\n21 2 4 16 13",
+                "standard_solution_output": "372",
+                "model_output": "319",
+                "error": null
+            },
+            {
+                "input": "3 4 2\n13 49 14 11\n67 35 28 22\n18 42 17 15",
+                "standard_solution_output": "224",
+                "model_output": "283",
+                "error": null
+            },
+            {
+                "input": "5 3 6\n49 13 14\n23 22 25\n31 18 16\n46 41 51\n28 14 35",
+                "standard_solution_output": "186",
+                "model_output": "285",
+                "error": null
+            },
+            {
+                "input": "7 4 3\n68 41 52 14\n29 55 18 35\n34 31 46 20\n3 49 1 23\n24 42 16 11\n58 25 38 48\n19 13 6 22",
+                "standard_solution_output": "567",
+                "model_output": "668",
+                "error": null
+            },
+            {
+                "input": "5 3 2\n49 66 30\n15 35 35\n25 14 29\n19 28 22\n42 18 66",
+                "standard_solution_output": "224",
+                "model_output": "311",
+                "error": null
+            },
+            {
+                "input": "7 5 6\n59 34 39 29 44\n62 21 55 25 11\n17 49 46 14 23\n19 35 31 58 42\n36 13 22 48 16\n51 38 18 26 20",
+                "standard_solution_output": "588",
+                "model_output": "645",
+                "error": null
+            },
+            {
+                "input": "1 5 2\n49 11 46 44 48",
+                "standard_solution_output": "94",
+                "model_output": "106",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 2,
+        "code": "def main():\n    # Read input\n    n, m, k = map(int, input().split())\n    a = []\n    for _ in range(n):\n        row = list(map(int, input().split()))\n        a.append(row)\n    \n    # Preprocess each row\n    processed = []\n    for row in a:\n        # For each row, we can take up to m//2 elements\n        max_take = m // 2\n        # We need to find the subset of the row where the sum is divisible by k, and the sum is as large as possible\n        # So for each row, we can generate all possible sums modulo k, and track the maximum sum for each possible remainder\n        # We'll use dynamic programming for each row\n        dp = [ -1 for _ in range(k) ]\n        dp[0] = 0  # Taking 0 elements gives sum 0, which is divisible by k\n        for num in row:\n            for r in range(k):\n                if dp[r] != -1:\n                    new_sum = dp[r] + num\n                    new_r = new_sum % k\n                    if new_sum > dp[new_r]:\n                        dp[new_r] = new_sum\n        # After processing each number, we can have the best sums for each remainder\n        # Now, find the maximum sum for each remainder, but we can only take up to max_take elements\n        # So, for each remainder, we need to track the maximum sum achievable with up to max_take elements\n        # Let's create a new DP for each row\n        row_dp = [ -1 for _ in range(k) ]\n        row_dp[0] = 0\n        for count in range(1, max_take + 1):\n            for r in range(k):\n                if dp[r] != -1:\n                    new_sum = dp[r] + row_dp[r]\n                    new_r = (dp[r] + row_dp[r]) % k\n                    if new_sum > row_dp[new_r]:\n                        row_dp[new_r] = new_sum\n        # Now, for each possible remainder, the maximum sum is the maximum between row_dp[rem] and the previous maximum\n        # But wait, row_dp is for taking up to max_take elements, but we can take less. So, for each remainder, we need to track the best sum for 0,1,...,max_take elements\n        # Maybe the approach is to, for each row, compute for each possible number of elements taken (from 0 to max_take), and for each possible remainder, the maximum sum achievable.\n        # So, for each row, we'll have a 2D array: dp[count][rem] = max_sum\n        # Then, after processing the row, we can combine these to get the best possible sum for each rem.\n        # Let's try this approach.\n        # Initialize for each row\n        row_dp = [ [ -1 for _ in range(k) ] for _ in range(max_take + 1) ]\n        row_dp[0][0] = 0\n        for num in row:\n            # For each number, we can add it to existing subsets\n            # We need to make a copy to avoid overwriting during iteration\n            new_dp = [ [ -1 for _ in range(k) ] for _ in range(max_take + 1) ]\n            for count in range(max_take + 1):\n                for rem in range(k):\n                    if row_dp[count][rem] != -1:\n                        # Try adding this number\n                        new_count = count + 1\n                        if new_count > max_take:\n                            continue\n                        new_sum = row_dp[count][rem] + num\n                        new_rem = new_sum % k\n                        if new_sum > new_dp[new_count][new_rem]:\n                            new_dp[new_count][new_rem] = new_sum\n                        # Also, carry over the existing state\n                        if row_dp[count][rem] > new_dp[count][rem]:\n                            new_dp[count][rem] = row_dp[count][rem]\n            # Update row_dp with new_dp\n            for count in range(max_take + 1):\n                for rem in range(k):\n                    if new_dp[count][rem] > row_dp[count][rem]:\n                        row_dp[count][rem] = new_dp[count][rem]\n        # Now, for each possible count (from 0 to max_take), and for each rem, we have the max sum\n        # So, for each rem, we can take the maximum sum across all possible counts (0 to max_take)\n        max_sums = [ -1 for _ in range(k) ]\n        for rem in range(k):\n            max_sum = 0\n            for count in range(max_take + 1):\n                if row_dp[count][rem] > max_sum:\n                    max_sum = row_dp[count][rem]\n            max_sums[rem] = max_sum\n        # Now, for the row, the best possible sum for each rem is max_sums\n        processed.append(max_sums)\n    \n    # Now, we have for each row, the maximum sum for each remainder. We need to combine them across rows.\n    # The overall problem is to select a remainder for each row such that the sum of the selected remainders is 0 mod k, and the total sum is maximized.\n    # This is similar to a knapsack problem where each item is a row, and each item has k possible choices (the remainder), and we need the sum of their remainders to be 0 mod k.\n    # So, the state can be a DP where dp[i][j] represents the maximum total sum achievable after processing the first i rows, with a total remainder j.\n    # The initial state is dp[0][0] = 0, and others are -infinity or something.\n    # For each row, we can update the dp by considering all possible remainders for that row and adding them to the current state.\n    # Let's initialize the overall DP\n    overall_dp = [ -1 for _ in range(k) ]\n    overall_dp[0] = 0\n    for row in processed:\n        new_dp = [ -1 for _ in range(k) ]\n        for current_rem in range(k):\n            if overall_dp[current_rem] == -1:\n                continue\n            for row_rem in range(k):\n                if row[row_rem] == -1:\n                    continue\n                total_rem = (current_rem + row_rem) % k\n                total_sum = overall_dp[current_rem] + row[row_rem]\n                if total_sum > new_dp[total_rem]:\n                    new_dp[total_rem] = total_sum\n        # Update overall_dp with new_dp\n        for rem in range(k):\n            if new_dp[rem] > overall_dp[rem]:\n                overall_dp[rem] = new_dp[rem]\n    # The answer is the maximum sum where the total remainder is 0.\n    print(overall_dp[0] if overall_dp[0] != -1 else 0)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "13 3 30\n46 43 49\n21 14 15\n68 49 13\n23 29 14\n34 24 17\n42 12 43\n55 46 14\n29 34 17\n45 13 46\n67 21 49\n32 14 23\n48 15 24\n18 29 42",
+                "standard_solution_output": "540",
+                "model_output": "547",
+                "error": null
+            },
+            {
+                "input": "13 44 25\n39 14 23\n48 16 31\n34 43 27\n11 27 29",
+                "standard_solution_output": "300",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpk9f7sc9a.py\", line 112, in <module>\n    main()\n  File \"/tmp/tmpk9f7sc9a.py\", line 6, in main\n    row = list(map(int, input().split()))\nEOFError: EOF when reading a line\n"
+            },
+            {
+                "input": "14 5 32\n18 47 28 49 27\n39 46 31 1 31\n34 16 11 34 48\n44 23 4 18 33\n32 28 35 4 4\n19 46 35 23 15\n24 26 34 29 17\n38 16 47 14 45\n43 34 17 13 10\n30 25 33 48 32\n36 49 1 17 11\n20 34 24 23 46\n42 48 38 16 29\n31 10 15 19 41",
+                "standard_solution_output": "1120",
+                "model_output": "1120",
+                "error": null
+            },
+            {
+                "input": "4 5 2\n14 68 46 31 21\n16 1 64 66 46\n4 65 14 13 29\n21 2 4 16 13",
+                "standard_solution_output": "372",
+                "model_output": "372",
+                "error": null
+            },
+            {
+                "input": "3 4 2\n13 49 14 11\n67 35 28 22\n18 42 17 15",
+                "standard_solution_output": "224",
+                "model_output": "224",
+                "error": null
+            },
+            {
+                "input": "5 3 6\n49 13 14\n23 22 25\n31 18 16\n46 41 51\n28 14 35",
+                "standard_solution_output": "186",
+                "model_output": "186",
+                "error": null
+            },
+            {
+                "input": "7 4 3\n68 41 52 14\n29 55 18 35\n34 31 46 20\n3 49 1 23\n24 42 16 11\n58 25 38 48\n19 13 6 22",
+                "standard_solution_output": "567",
+                "model_output": "567",
+                "error": null
+            },
+            {
+                "input": "5 3 2\n49 66 30\n15 35 35\n25 14 29\n19 28 22\n42 18 66",
+                "standard_solution_output": "224",
+                "model_output": "224",
+                "error": null
+            },
+            {
+                "input": "7 5 6\n59 34 39 29 44\n62 21 55 25 11\n17 49 46 14 23\n19 35 31 58 42\n36 13 22 48 16\n51 38 18 26 20",
+                "standard_solution_output": "588",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpk9ghej0f.py\", line 112, in <module>\n    main()\n  File \"/tmp/tmpk9ghej0f.py\", line 6, in main\n    row = list(map(int, input().split()))\nEOFError: EOF when reading a line\n"
+            },
+            {
+                "input": "1 5 2\n49 11 46 44 48",
+                "standard_solution_output": "94",
+                "model_output": "94",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 3,
+        "code": "def main():\n    n, m, k = map(int, input().split())\n    a = []\n    for _ in range(n):\n        row = list(map(int, input().split()))\n        a.append(row)\n    \n    # Precompute for each row the possible sums and their counts modulo k\n    # For each row, we can take 0 to floor(m/2) elements, and for each possible count, track the sum mod k\n    # Then, combine the rows' information to find the maximum sum that is 0 mod k\n\n    # Preprocessing each row\n    row_info = []\n    for row in a:\n        max_take = (m + 1) // 2  # floor(m/2)\n        # For each possible count of elements taken (from 0 to max_take)\n        # and for each possible sum mod k, track the maximum sum achievable\n        row_dp = [{} for _ in range(max_take + 1)]\n        for cnt in range(max_take + 1):\n            if cnt == 0:\n                row_dp[cnt] = {0: 0}\n                continue\n            # For each possible count, we can take one more element\n            # So for each possible previous count (cnt-1), and each mod value, we add the new element\n            # and update the current count's mod value if the sum is higher\n            prev_dp = row_dp[cnt - 1]\n            for mod_val in prev_dp:\n                current_sum = prev_dp[mod_val]\n                # Try adding the next element\n                for i in range(len(row)):\n                    if i >= cnt:  # because we can't take more than 'cnt' elements\n                        break\n                    new_sum = current_sum + row[i]\n                    new_mod = new_sum % k\n                    if new_mod in row_dp[cnt]:\n                        if new_sum > row_dp[cnt][new_mod]:\n                            row_dp[cnt][new_mod] = new_sum\n                    else:\n                        row_dp[cnt][new_mod] = new_sum\n        row_info.append(row_dp)\n    \n    # Now, we need to combine the rows. The total sum mod k must be 0.\n    # So for each row, we have a list of possible (count, mod) pairs, but we need to track the sum.\n    # The DP approach for combining rows is as follows:\n    # We'll have a global DP where dp[i][j] represents the maximum sum achievable after processing the first i rows, with a total sum mod k equal to j.\n    # For each row, we can choose a count (from 0 to max_take) and a mod value, and update the global DP accordingly.\n    # The initial state is dp[0][0] = 0, and others are -infinity or not set.\n    # After processing all rows, the maximum sum is the value in dp[n][0], but we need to consider all possible counts across all rows.\n\n    # Initialize the global DP\n    global_dp = [-1 for _ in range(k)]\n    global_dp[0] = 0  # Starting with 0 sum, mod 0\n\n    for row_dp in row_info:\n        new_dp = [-1 for _ in range(k)]\n        for current_mod in range(k):\n            if global_dp[current_mod] == -1:\n                continue\n            for cnt in range(len(row_dp)):\n                if cnt == 0:\n                    mod = 0\n                    sum_val = 0\n                    if mod == 0:\n                        if sum_val > new_dp[mod]:\n                            new_dp[mod] = sum_val\n                else:\n                    for mod_val in row_dp[cnt]:\n                        sum_val = row_dp[cnt][mod_val]\n                        total_mod = (current_mod + mod_val) % k\n                        if sum_val > new_dp[total_mod]:\n                            new_dp[total_mod] = sum_val\n        global_dp = new_dp\n\n    # The maximum sum is the maximum value in global_dp[0]\n    max_sum = global_dp[0]\n    print(max_sum if max_sum != -1 else 0)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "13 3 30\n46 43 49\n21 14 15\n68 49 13\n23 29 14\n34 24 17\n42 12 43\n55 46 14\n29 34 17\n45 13 46\n67 21 49\n32 14 23\n48 15 24\n18 29 42",
+                "standard_solution_output": "540",
+                "model_output": "47",
+                "error": null
+            },
+            {
+                "input": "13 44 25\n39 14 23\n48 16 31\n34 43 27\n11 27 29",
+                "standard_solution_output": "300",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpo4ysjf2o.py\", line 79, in <module>\n    main()\n  File \"/tmp/tmpo4ysjf2o.py\", line 5, in main\n    row = list(map(int, input().split()))\nEOFError: EOF when reading a line\n"
+            },
+            {
+                "input": "14 5 32\n18 47 28 49 27\n39 46 31 1 31\n34 16 11 34 48\n44 23 4 18 33\n32 28 35 4 4\n19 46 35 23 15\n24 26 34 29 17\n38 16 47 14 45\n43 34 17 13 10\n30 25 33 48 32\n36 49 1 17 11\n20 34 24 23 46\n42 48 38 16 29\n31 10 15 19 41",
+                "standard_solution_output": "1120",
+                "model_output": "93",
+                "error": null
+            },
+            {
+                "input": "4 5 2\n14 68 46 31 21\n16 1 64 66 46\n4 65 14 13 29\n21 2 4 16 13",
+                "standard_solution_output": "372",
+                "model_output": "63",
+                "error": null
+            },
+            {
+                "input": "3 4 2\n13 49 14 11\n67 35 28 22\n18 42 17 15",
+                "standard_solution_output": "224",
+                "model_output": "60",
+                "error": null
+            },
+            {
+                "input": "5 3 6\n49 13 14\n23 22 25\n31 18 16\n46 41 51\n28 14 35",
+                "standard_solution_output": "186",
+                "model_output": "56",
+                "error": null
+            },
+            {
+                "input": "7 4 3\n68 41 52 14\n29 55 18 35\n34 31 46 20\n3 49 1 23\n24 42 16 11\n58 25 38 48\n19 13 6 22",
+                "standard_solution_output": "567",
+                "model_output": "38",
+                "error": null
+            },
+            {
+                "input": "5 3 2\n49 66 30\n15 35 35\n25 14 29\n19 28 22\n42 18 66",
+                "standard_solution_output": "224",
+                "model_output": "84",
+                "error": null
+            },
+            {
+                "input": "7 5 6\n59 34 39 29 44\n62 21 55 25 11\n17 49 46 14 23\n19 35 31 58 42\n36 13 22 48 16\n51 38 18 26 20",
+                "standard_solution_output": "588",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpog9j83jy.py\", line 79, in <module>\n    main()\n  File \"/tmp/tmpog9j83jy.py\", line 5, in main\n    row = list(map(int, input().split()))\nEOFError: EOF when reading a line\n"
+            },
+            {
+                "input": "1 5 2\n49 11 46 44 48",
+                "standard_solution_output": "94",
+                "model_output": "144",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 4,
+        "code": "def max_sum_divisible_k(n, m, k, matrix):\n    # Implement your solution here\n    return 0\n\ndef main():\n    import sys\n    input = sys.stdin.read().split()\n    idx = 0\n    n = int(input[idx]); idx +=1\n    m = int(input[idx]); idx +=1\n    k = int(input[idx]); idx +=1\n    matrix = []\n    for _ in range(n):\n        row = list(map(int, input[idx:idx+m]))\n        idx += m\n        matrix.append(row)\n    # Call the function\n    result = max_sum_divisible_k(n, m, k, matrix)\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "13 3 30\n46 43 49\n21 14 15\n68 49 13\n23 29 14\n34 24 17\n42 12 43\n55 46 14\n29 34 17\n45 13 46\n67 21 49\n32 14 23\n48 15 24\n18 29 42",
+                "standard_solution_output": "540",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "13 44 25\n39 14 23\n48 16 31\n34 43 27\n11 27 29",
+                "standard_solution_output": "300",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "14 5 32\n18 47 28 49 27\n39 46 31 1 31\n34 16 11 34 48\n44 23 4 18 33\n32 28 35 4 4\n19 46 35 23 15\n24 26 34 29 17\n38 16 47 14 45\n43 34 17 13 10\n30 25 33 48 32\n36 49 1 17 11\n20 34 24 23 46\n42 48 38 16 29\n31 10 15 19 41",
+                "standard_solution_output": "1120",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "4 5 2\n14 68 46 31 21\n16 1 64 66 46\n4 65 14 13 29\n21 2 4 16 13",
+                "standard_solution_output": "372",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "3 4 2\n13 49 14 11\n67 35 28 22\n18 42 17 15",
+                "standard_solution_output": "224",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5 3 6\n49 13 14\n23 22 25\n31 18 16\n46 41 51\n28 14 35",
+                "standard_solution_output": "186",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "7 4 3\n68 41 52 14\n29 55 18 35\n34 31 46 20\n3 49 1 23\n24 42 16 11\n58 25 38 48\n19 13 6 22",
+                "standard_solution_output": "567",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5 3 2\n49 66 30\n15 35 35\n25 14 29\n19 28 22\n42 18 66",
+                "standard_solution_output": "224",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "7 5 6\n59 34 39 29 44\n62 21 55 25 11\n17 49 46 14 23\n19 35 31 58 42\n36 13 22 48 16\n51 38 18 26 20",
+                "standard_solution_output": "588",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "1 5 2\n49 11 46 44 48",
+                "standard_solution_output": "94",
+                "model_output": "0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 5,
+        "code": "def main():\n    import sys\n    n, m, k = map(int, sys.stdin.readline().split())\n    a = []\n    for _ in range(n):\n        row = list(map(int, sys.stdin.readline().split()))\n        a.append(row)\n    \n    # Precompute the possible sums for each row\n    row_sums = []\n    for row in a:\n        # For each row, compute all possible sums when choosing up to m//2 elements\n        # We can use dynamic programming for this\n        max_take = m // 2\n        dp = [0] * (max_take + 1)\n        for i in range(1, max_take + 1):\n            for j in range(i):\n                if j < len(row):\n                    dp[i] = max(dp[i], dp[j] + row[j])\n        row_sums.append(dp)\n    \n    # Now, for each row, we have the possible sums, and we need to choose one sum from each row such that the total is divisible by k and maximum.\n    \n    # To compute the maximum sum, we can use dynamic programming again, keeping track of the remainder modulo k.\n    \n    # Initialize the DP array\n    dp = [ -1 ] * k\n    dp[0] = 0  # base case: take 0 elements from all rows, sum is 0\n    \n    for row_dp in row_sums:\n        # For each possible remainder, we consider adding a new row's possible sums\n        new_dp = [-1] * k\n        for curr_remainder in range(k):\n            if dp[curr_remainder] == -1:\n                continue\n            for take in range(len(row_dp)):\n                sum_add = row_dp[take]\n                new_remainder = (curr_remainder + sum_add) % k\n                if new_dp[new_remainder] < dp[curr_remainder] + sum_add:\n                    new_dp[new_remainder] = dp[curr_remainder] + sum_add\n        dp = new_dp\n    \n    # The maximum sum is the maximum value in dp, but only if it's not -1\n    max_sum = max([x for x in dp if x != -1])\n    print(max_sum)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "13 3 30\n46 43 49\n21 14 15\n68 49 13\n23 29 14\n34 24 17\n42 12 43\n55 46 14\n29 34 17\n45 13 46\n67 21 49\n32 14 23\n48 15 24\n18 29 42",
+                "standard_solution_output": "540",
+                "model_output": "528",
+                "error": null
+            },
+            {
+                "input": "13 44 25\n39 14 23\n48 16 31\n34 43 27\n11 27 29",
+                "standard_solution_output": "300",
+                "model_output": "342",
+                "error": null
+            },
+            {
+                "input": "14 5 32\n18 47 28 49 27\n39 46 31 1 31\n34 16 11 34 48\n44 23 4 18 33\n32 28 35 4 4\n19 46 35 23 15\n24 26 34 29 17\n38 16 47 14 45\n43 34 17 13 10\n30 25 33 48 32\n36 49 1 17 11\n20 34 24 23 46\n42 48 38 16 29\n31 10 15 19 41",
+                "standard_solution_output": "1120",
+                "model_output": "898",
+                "error": null
+            },
+            {
+                "input": "4 5 2\n14 68 46 31 21\n16 1 64 66 46\n4 65 14 13 29\n21 2 4 16 13",
+                "standard_solution_output": "372",
+                "model_output": "191",
+                "error": null
+            },
+            {
+                "input": "3 4 2\n13 49 14 11\n67 35 28 22\n18 42 17 15",
+                "standard_solution_output": "224",
+                "model_output": "224",
+                "error": null
+            },
+            {
+                "input": "5 3 6\n49 13 14\n23 22 25\n31 18 16\n46 41 51\n28 14 35",
+                "standard_solution_output": "186",
+                "model_output": "177",
+                "error": null
+            },
+            {
+                "input": "7 4 3\n68 41 52 14\n29 55 18 35\n34 31 46 20\n3 49 1 23\n24 42 16 11\n58 25 38 48\n19 13 6 22",
+                "standard_solution_output": "567",
+                "model_output": "491",
+                "error": null
+            },
+            {
+                "input": "5 3 2\n49 66 30\n15 35 35\n25 14 29\n19 28 22\n42 18 66",
+                "standard_solution_output": "224",
+                "model_output": "150",
+                "error": null
+            },
+            {
+                "input": "7 5 6\n59 34 39 29 44\n62 21 55 25 11\n17 49 46 14 23\n19 35 31 58 42\n36 13 22 48 16\n51 38 18 26 20",
+                "standard_solution_output": "588",
+                "model_output": "434",
+                "error": null
+            },
+            {
+                "input": "1 5 2\n49 11 46 44 48",
+                "standard_solution_output": "94",
+                "model_output": "60",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 6,
+        "code": "def main():\n    n, m, k = map(int, input().split())\n    a = []\n    for _ in range(n):\n        row = list(map(int, input().split()))\n        a.append(row)\n    \n    # Preprocessing each row to find possible sums\n    row_sums = []\n    for row in a:\n        # For each row, generate all possible sums when selecting up to m//2 elements\n        max_take = m // 2\n        current_row_sums = set()\n        current_row_sums.add(0)\n        for i in range(len(row)):\n            for j in range(i+1, len(row)+1):\n                if j - i > max_take:\n                    break\n                s = sum(row[i:j])\n                current_row_sums.add(s)\n        row_sums.append(current_row_sums)\n    \n    # Now, for each row, we have all possible sums of selecting up to m//2 elements\n    # We need to find a combination of one sum from each row's set such that the total is divisible by k\n    # and the total is maximum.\n    \n    # The approach is to use dynamic programming.\n    # We'll keep track of possible remainders modulo k for each row.\n    \n    # Initialize the DP table\n    dp = [ [ -1 for _ in range(k) ] for _ in range(n+1) ]\n    dp[0] = [0]\n    \n    for i in range(n):\n        current_row = row_sums[i]\n        for r in dp[i]:\n            if r == -1:\n                continue\n            for s in current_row:\n                total = r + s\n                mod = total % k\n                if mod < 0:\n                    mod += k\n                if mod < k:\n                    dp[i+1][mod] = max(dp[i+1][mod], total)\n    \n    max_sum = 0\n    for r in dp[n]:\n        if r != -1:\n            if r % k == 0 and r > max_sum:\n                max_sum = r\n    print(max_sum)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "13 3 30\n46 43 49\n21 14 15\n68 49 13\n23 29 14\n34 24 17\n42 12 43\n55 46 14\n29 34 17\n45 13 46\n67 21 49\n32 14 23\n48 15 24\n18 29 42",
+                "standard_solution_output": "540",
+                "model_output": "540",
+                "error": null
+            },
+            {
+                "input": "13 44 25\n39 14 23\n48 16 31\n34 43 27\n11 27 29",
+                "standard_solution_output": "300",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpbvk8jvse.py\", line 55, in <module>\n    main()\n  File \"/tmp/tmpbvk8jvse.py\", line 5, in main\n    row = list(map(int, input().split()))\nEOFError: EOF when reading a line\n"
+            },
+            {
+                "input": "14 5 32\n18 47 28 49 27\n39 46 31 1 31\n34 16 11 34 48\n44 23 4 18 33\n32 28 35 4 4\n19 46 35 23 15\n24 26 34 29 17\n38 16 47 14 45\n43 34 17 13 10\n30 25 33 48 32\n36 49 1 17 11\n20 34 24 23 46\n42 48 38 16 29\n31 10 15 19 41",
+                "standard_solution_output": "1120",
+                "model_output": "1024",
+                "error": null
+            },
+            {
+                "input": "4 5 2\n14 68 46 31 21\n16 1 64 66 46\n4 65 14 13 29\n21 2 4 16 13",
+                "standard_solution_output": "372",
+                "model_output": "352",
+                "error": null
+            },
+            {
+                "input": "3 4 2\n13 49 14 11\n67 35 28 22\n18 42 17 15",
+                "standard_solution_output": "224",
+                "model_output": "224",
+                "error": null
+            },
+            {
+                "input": "5 3 6\n49 13 14\n23 22 25\n31 18 16\n46 41 51\n28 14 35",
+                "standard_solution_output": "186",
+                "model_output": "186",
+                "error": null
+            },
+            {
+                "input": "7 4 3\n68 41 52 14\n29 55 18 35\n34 31 46 20\n3 49 1 23\n24 42 16 11\n58 25 38 48\n19 13 6 22",
+                "standard_solution_output": "567",
+                "model_output": "504",
+                "error": null
+            },
+            {
+                "input": "5 3 2\n49 66 30\n15 35 35\n25 14 29\n19 28 22\n42 18 66",
+                "standard_solution_output": "224",
+                "model_output": "224",
+                "error": null
+            },
+            {
+                "input": "7 5 6\n59 34 39 29 44\n62 21 55 25 11\n17 49 46 14 23\n19 35 31 58 42\n36 13 22 48 16\n51 38 18 26 20",
+                "standard_solution_output": "588",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpdmkcaog0.py\", line 55, in <module>\n    main()\n  File \"/tmp/tmpdmkcaog0.py\", line 5, in main\n    row = list(map(int, input().split()))\nEOFError: EOF when reading a line\n"
+            },
+            {
+                "input": "1 5 2\n49 11 46 44 48",
+                "standard_solution_output": "94",
+                "model_output": "92",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 7,
+        "code": "def main():\n    n, m, k = map(int, input().split())\n    a = []\n    for _ in range(n):\n        row = list(map(int, input().split()))\n        a.append(row)\n    \n    # For each row, compute the maximum sum for choosing up to m//2 elements, and track the maximum sum mod k\n    # We need to find the maximum sum that is divisible by k, considering all possible choices across rows.\n\n    # Precompute for each row the possible sums and their mod k values\n    # Then, for each row, find the best possible mod that can be combined with previous rows.\n\n    # Initialize the total mod as 0\n    total_mod = 0\n    best_sum = 0\n\n    for row in a:\n        # For this row, compute all possible sums and their mod k\n        row_sums = []\n        # We can take up to t elements in each row, where t = m//2\n        t = m // 2\n        # For each possible number of elements taken from the row, from 0 to t\n        for take in range(0, t + 1):\n            # Generate all possible sums for taking 'take' elements\n            # This can be done using a dynamic programming approach\n            # We'll track the possible mod values and the sum\n            dp = {}\n            for i in range(m):\n                # For each element in the row, decide whether to take it or not\n                # If we take it, we add its value to the sum, and update the mod\n                # If we don't take it, we carry forward the previous states\n                new_dp = {}\n                for mod in dp:\n                    new_mod = (mod + a[row][i]) % k\n                    new_sum = dp[mod] + a[row][i]\n                    if new_mod not in new_dp or new_sum > new_dp[new_mod]:\n                        new_dp[new_mod] = new_sum\n                # Also consider not taking the current element\n                for mod in dp:\n                    if mod not in new_dp or dp[mod] > new_dp.get(mod, -1):\n                        new_dp[mod] = dp[mod]\n                dp = new_dp\n            # After processing all elements in the row, collect the possible sums for each mod\n            # We want to keep the maximum sum for each mod value\n            # So for each mod, we only keep the maximum sum achieved\n            # This will be used to update the total mod and sum\n            # Create a dictionary to hold the best sum for each mod in this row\n            row_mod_sums = {}\n            for mod in dp:\n                if mod not in row_mod_sums or dp[mod] > row_mod_sums[mod]:\n                    row_mod_sums[mod] = dp[mod]\n            # Now, for each possible mod in this row, we can try to combine it with the previous total mod\n            # We need to find the best combination that gives a total mod of 0\n            # So for each mod_r in row_mod_sums, we look for a mod_prev such that (mod_r + mod_prev) % k == 0\n            # The total sum would be row_mod_sums[mod_r] + best_sum[mod_prev]\n            # We need to track the best_sum for each mod_prev before this row\n            # So, let's create a temporary dictionary to hold the best sums up to this row\n            temp = {}\n            for mod_r in row_mod_sums:\n                for mod_p in [total_mod]:\n                    if (mod_r + mod_p) % k == 0:\n                        current_sum = row_mod_sums[mod_r] + best_sum.get(mod_p, 0)\n                        if current_sum > best_sum.get((mod_r + mod_p) % k, 0):\n                            best_sum[(mod_r + mod_p) % k] = current_sum\n            # Also, consider taking nothing from this row, which is equivalent to mod_r = 0\n            if 0 in row_mod_sums:\n                if (0 + total_mod) % k == 0:\n                    current_sum = row_mod_sums[0] + best_sum.get(total_mod, 0)\n                    if current_sum > best_sum.get(total_mod, 0):\n                        best_sum[total_mod] = current_sum\n            # Update the total_mod to the current best_mod\n            # We need to track the best_mod so far\n            # The best_mod is the mod that gives the maximum sum\n            # So, after each row, we check all possible mod values and keep the best\n            # Also, we can track the best_sum for each mod\n            # Initialize the new best_sum as the previous best_sum plus the current row's best for each mod\n            # But this might not be the correct approach\n            # Instead, after processing each row, we need to update the best_sum based on the current row's mod_sums and the previous best_sum\n            # So, create a new dictionary for the current best_sum\n            new_best_sum = {}\n            for mod_r in row_mod_sums:\n                for mod_p in temp:\n                    if (mod_r + mod_p) % k == 0:\n                        current_sum = row_mod_sums[mod_r] + best_sum.get(mod_p, 0)\n                        if current_sum > new_best_sum.get((mod_r + mod_p) % k, 0):\n                            new_best_sum[(mod_r + mod_p) % k] = current_sum\n            # Also, consider taking nothing from this row\n            if 0 in row_mod_sums:\n                if total_mod in new_best_sum:\n                    if row_mod_sums[0] + best_sum.get(total_mod, 0) > new_best_sum[total_mod]:\n                        new_best_sum[total_mod] = row_mod_sums[0] + best_sum.get(total_mod, 0)\n                else:\n                    new_best_sum[total_mod] = row_mod_sums[0] + best_sum.get(total_mod, 0)\n            # Now, update the best_sum to be the new_best_sum\n            best_sum = new_best_sum.copy()\n            # Also, track the total_mod for the next iteration\n            # The total_mod is the mod that gives the best_sum so far\n            # So, find all mod values in best_sum and see which one gives the maximum sum\n            # If multiple mod values have the same maximum sum, we can choose any\n            # But since we are looking for the maximum sum divisible by k, the mod should be 0\n            # Wait, no. The sum can have any mod, but we need the sum to be as large as possible and divisible by k.\n            # So, after each row, we need to track the best_sum and the corresponding mod.\n            # So, after processing each row, we should look for the maximum sum in best_sum, and the corresponding mod.\n            # Then, the total_mod becomes that mod for the next row.\n            # Also, we need to track the maximum sum so far across all possible mods.\n            # So, after each row, we find the maximum sum in best_sum, and the corresponding mod.\n            # If the maximum sum is greater than the current best_sum, update it.\n            # Also, the total_mod should be the mod of that maximum sum.\n            max_sum = 0\n            max_mod = 0\n            for mod in best_sum:\n                if best_sum[mod] > max_sum:\n                    max_sum = best_sum[mod]\n                    max_mod = mod\n                elif best_sum[mod] == max_sum:\n                    # In case of tie, we can choose any mod, but since we are looking for the maximum sum divisible by k, we prefer mod 0\n                    if mod < max_mod:\n                        max_mod = mod\n            total_mod = max_mod\n            best_sum = max_sum\n    # After processing all rows, the best_sum is the maximum sum divisible by k\n    print(best_sum)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "13 3 30\n46 43 49\n21 14 15\n68 49 13\n23 29 14\n34 24 17\n42 12 43\n55 46 14\n29 34 17\n45 13 46\n67 21 49\n32 14 23\n48 15 24\n18 29 42",
+                "standard_solution_output": "540",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "13 44 25\n39 14 23\n48 16 31\n34 43 27\n11 27 29",
+                "standard_solution_output": "300",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpp9kbhvuy.py\", line 126, in <module>\n    main()\n  File \"/tmp/tmpp9kbhvuy.py\", line 5, in main\n    row = list(map(int, input().split()))\nEOFError: EOF when reading a line\n"
+            },
+            {
+                "input": "14 5 32\n18 47 28 49 27\n39 46 31 1 31\n34 16 11 34 48\n44 23 4 18 33\n32 28 35 4 4\n19 46 35 23 15\n24 26 34 29 17\n38 16 47 14 45\n43 34 17 13 10\n30 25 33 48 32\n36 49 1 17 11\n20 34 24 23 46\n42 48 38 16 29\n31 10 15 19 41",
+                "standard_solution_output": "1120",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "4 5 2\n14 68 46 31 21\n16 1 64 66 46\n4 65 14 13 29\n21 2 4 16 13",
+                "standard_solution_output": "372",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "3 4 2\n13 49 14 11\n67 35 28 22\n18 42 17 15",
+                "standard_solution_output": "224",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5 3 6\n49 13 14\n23 22 25\n31 18 16\n46 41 51\n28 14 35",
+                "standard_solution_output": "186",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "7 4 3\n68 41 52 14\n29 55 18 35\n34 31 46 20\n3 49 1 23\n24 42 16 11\n58 25 38 48\n19 13 6 22",
+                "standard_solution_output": "567",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5 3 2\n49 66 30\n15 35 35\n25 14 29\n19 28 22\n42 18 66",
+                "standard_solution_output": "224",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "7 5 6\n59 34 39 29 44\n62 21 55 25 11\n17 49 46 14 23\n19 35 31 58 42\n36 13 22 48 16\n51 38 18 26 20",
+                "standard_solution_output": "588",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp0p0vwh80.py\", line 126, in <module>\n    main()\n  File \"/tmp/tmp0p0vwh80.py\", line 5, in main\n    row = list(map(int, input().split()))\nEOFError: EOF when reading a line\n"
+            },
+            {
+                "input": "1 5 2\n49 11 46 44 48",
+                "standard_solution_output": "94",
+                "model_output": "0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 8,
+        "code": "def max_sum_divisible_k(n, m, k, matrix):\n    # Your code here\n    return 0\n\ndef main():\n    import sys\n    n, m, k = map(int, sys.stdin.readline().split())\n    matrix = []\n    for _ in range(n):\n        row = list(map(int, sys.stdin.readline().split()))\n        matrix.append(row)\n    # Call the function\n    result = max_sum_divisible_k(n, m, k, matrix)\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "13 3 30\n46 43 49\n21 14 15\n68 49 13\n23 29 14\n34 24 17\n42 12 43\n55 46 14\n29 34 17\n45 13 46\n67 21 49\n32 14 23\n48 15 24\n18 29 42",
+                "standard_solution_output": "540",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "13 44 25\n39 14 23\n48 16 31\n34 43 27\n11 27 29",
+                "standard_solution_output": "300",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "14 5 32\n18 47 28 49 27\n39 46 31 1 31\n34 16 11 34 48\n44 23 4 18 33\n32 28 35 4 4\n19 46 35 23 15\n24 26 34 29 17\n38 16 47 14 45\n43 34 17 13 10\n30 25 33 48 32\n36 49 1 17 11\n20 34 24 23 46\n42 48 38 16 29\n31 10 15 19 41",
+                "standard_solution_output": "1120",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "4 5 2\n14 68 46 31 21\n16 1 64 66 46\n4 65 14 13 29\n21 2 4 16 13",
+                "standard_solution_output": "372",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "3 4 2\n13 49 14 11\n67 35 28 22\n18 42 17 15",
+                "standard_solution_output": "224",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5 3 6\n49 13 14\n23 22 25\n31 18 16\n46 41 51\n28 14 35",
+                "standard_solution_output": "186",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "7 4 3\n68 41 52 14\n29 55 18 35\n34 31 46 20\n3 49 1 23\n24 42 16 11\n58 25 38 48\n19 13 6 22",
+                "standard_solution_output": "567",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "5 3 2\n49 66 30\n15 35 35\n25 14 29\n19 28 22\n42 18 66",
+                "standard_solution_output": "224",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "7 5 6\n59 34 39 29 44\n62 21 55 25 11\n17 49 46 14 23\n19 35 31 58 42\n36 13 22 48 16\n51 38 18 26 20",
+                "standard_solution_output": "588",
+                "model_output": "0",
+                "error": null
+            },
+            {
+                "input": "1 5 2\n49 11 46 44 48",
+                "standard_solution_output": "94",
+                "model_output": "0",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 9,
+        "code": "def main():\n    # Read input\n    n, m, k = map(int, input().split())\n    matrix = []\n    for _ in range(n):\n        row = list(map(int, input().split()))\n        matrix.append(row)\n    \n    # Precompute prefix sums for each row\n    row_prefix = []\n    for row in matrix:\n        prefix = [0]\n        current_sum = 0\n        for num in row:\n            current_sum += num\n            prefix.append(current_sum)\n        row_prefix.append(prefix)\n    \n    # Now, for each row, we can choose up to m//2 elements\n    # We need to find the maximum sum divisible by k by choosing elements from each row\n    # Let's model this as a dynamic programming problem\n    # dp[i][j] represents the maximum sum after processing i rows, with a sum modulo k equal to j\n    # The maximum sum for each state will be tracked\n    MOD = k\n    dp = [[-1 for _ in range(MOD)] for _ in range(n+1)]\n    dp[0][0] = 0\n    for i in range(1, n+1):\n        row = row_prefix[i-1]\n        max_take = min(m//2, len(row)-1)\n        for j in range(MOD):\n            if dp[i-1][j] == -1:\n                continue\n            for t in range(0, max_take+1):\n                current_mod = (j + row[t]) % MOD\n                new_sum = dp[i-1][j] + row[t]\n                if new_sum > dp[i][current_mod]:\n                    dp[i][current_mod] = new_sum\n    # Find the maximum sum where mod is 0\n    result = dp[n][0]\n    print(result)\n\nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "13 3 30\n46 43 49\n21 14 15\n68 49 13\n23 29 14\n34 24 17\n42 12 43\n55 46 14\n29 34 17\n45 13 46\n67 21 49\n32 14 23\n48 15 24\n18 29 42",
+                "standard_solution_output": "540",
+                "model_output": "510",
+                "error": null
+            },
+            {
+                "input": "13 44 25\n39 14 23\n48 16 31\n34 43 27\n11 27 29",
+                "standard_solution_output": "300",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp124w7y_y.py\", line 43, in <module>\n    main()\n  File \"/tmp/tmp124w7y_y.py\", line 6, in main\n    row = list(map(int, input().split()))\nEOFError: EOF when reading a line\n"
+            },
+            {
+                "input": "14 5 32\n18 47 28 49 27\n39 46 31 1 31\n34 16 11 34 48\n44 23 4 18 33\n32 28 35 4 4\n19 46 35 23 15\n24 26 34 29 17\n38 16 47 14 45\n43 34 17 13 10\n30 25 33 48 32\n36 49 1 17 11\n20 34 24 23 46\n42 48 38 16 29\n31 10 15 19 41",
+                "standard_solution_output": "1120",
+                "model_output": "864",
+                "error": null
+            },
+            {
+                "input": "4 5 2\n14 68 46 31 21\n16 1 64 66 46\n4 65 14 13 29\n21 2 4 16 13",
+                "standard_solution_output": "372",
+                "model_output": "190",
+                "error": null
+            },
+            {
+                "input": "3 4 2\n13 49 14 11\n67 35 28 22\n18 42 17 15",
+                "standard_solution_output": "224",
+                "model_output": "224",
+                "error": null
+            },
+            {
+                "input": "5 3 6\n49 13 14\n23 22 25\n31 18 16\n46 41 51\n28 14 35",
+                "standard_solution_output": "186",
+                "model_output": "126",
+                "error": null
+            },
+            {
+                "input": "7 4 3\n68 41 52 14\n29 55 18 35\n34 31 46 20\n3 49 1 23\n24 42 16 11\n58 25 38 48\n19 13 6 22",
+                "standard_solution_output": "567",
+                "model_output": "459",
+                "error": null
+            },
+            {
+                "input": "5 3 2\n49 66 30\n15 35 35\n25 14 29\n19 28 22\n42 18 66",
+                "standard_solution_output": "224",
+                "model_output": "150",
+                "error": null
+            },
+            {
+                "input": "7 5 6\n59 34 39 29 44\n62 21 55 25 11\n17 49 46 14 23\n19 35 31 58 42\n36 13 22 48 16\n51 38 18 26 20",
+                "standard_solution_output": "588",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpia35uqfo.py\", line 43, in <module>\n    main()\n  File \"/tmp/tmpia35uqfo.py\", line 6, in main\n    row = list(map(int, input().split()))\nEOFError: EOF when reading a line\n"
+            },
+            {
+                "input": "1 5 2\n49 11 46 44 48",
+                "standard_solution_output": "94",
+                "model_output": "60",
+                "error": null
+            }
+        ]
+    },
+    {
+        "code_index": 10,
+        "code": "def main():\n    # Read input\n    n, m, k = map(int, input().split())\n    matrix = []\n    for _ in range(n):\n        row = list(map(int, input().split()))\n        matrix.append(row)\n    \n    # Precompute the possible sums for each row\n    row_sums = []\n    for row in matrix:\n        # For each row, find all possible sums of choosing t elements, t from 0 to m//2\n        # We can use dynamic programming for each row\n        # Initialize dp array\n        dp = [0] * (m + 1)\n        for i in range(1, m + 1):\n            for j in range(i):\n                if j > i // 2:\n                    continue\n                dp[i] = max(dp[i], dp[i - j] + row[j])\n        # Now, find the maximum sum in dp that is divisible by k\n        max_sum_row = 0\n        for s in dp:\n            if s % k == 0 and s > max_sum_row:\n                max_sum_row = s\n        row_sums.append(max_sum_row)\n    \n    # Now, combine the row sums with the same modulo k\n    total_mods = [0] * k\n    for s in row_sums:\n        mod = s % k\n        total_mods[mod] = max(total_mods[mod], s)\n    \n    # Now, find the maximum total sum that is divisible by k\n    max_total = 0\n    for mod in range(k):\n        if total_mods[mod] != 0:\n            continue\n        current_max = total_mods[mod]\n        for i in range(1, n):\n            if (total_mods[mod] + total_mods[(mod + i) % k]) % k == 0:\n                current_max += total_mods[(mod + i) % k]\n        max_total = max(max_total, current_max)\n    \n    print(max_total)\n    \nif __name__ == \"__main__\":\n    main()",
+        "test_results": [
+            {
+                "input": "13 3 30\n46 43 49\n21 14 15\n68 49 13\n23 29 14\n34 24 17\n42 12 43\n55 46 14\n29 34 17\n45 13 46\n67 21 49\n32 14 23\n48 15 24\n18 29 42",
+                "standard_solution_output": "540",
+                "model_output": "60",
+                "error": null
+            },
+            {
+                "input": "13 44 25\n39 14 23\n48 16 31\n34 43 27\n11 27 29",
+                "standard_solution_output": "300",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmpeze9my7s.py\", line 48, in <module>\n    main()\n  File \"/tmp/tmpeze9my7s.py\", line 6, in main\n    row = list(map(int, input().split()))\nEOFError: EOF when reading a line\n"
+            },
+            {
+                "input": "14 5 32\n18 47 28 49 27\n39 46 31 1 31\n34 16 11 34 48\n44 23 4 18 33\n32 28 35 4 4\n19 46 35 23 15\n24 26 34 29 17\n38 16 47 14 45\n43 34 17 13 10\n30 25 33 48 32\n36 49 1 17 11\n20 34 24 23 46\n42 48 38 16 29\n31 10 15 19 41",
+                "standard_solution_output": "1120",
+                "model_output": "128",
+                "error": null
+            },
+            {
+                "input": "4 5 2\n14 68 46 31 21\n16 1 64 66 46\n4 65 14 13 29\n21 2 4 16 13",
+                "standard_solution_output": "372",
+                "model_output": "572",
+                "error": null
+            },
+            {
+                "input": "3 4 2\n13 49 14 11\n67 35 28 22\n18 42 17 15",
+                "standard_solution_output": "224",
+                "model_output": "172",
+                "error": null
+            },
+            {
+                "input": "5 3 6\n49 13 14\n23 22 25\n31 18 16\n46 41 51\n28 14 35",
+                "standard_solution_output": "186",
+                "model_output": "42",
+                "error": null
+            },
+            {
+                "input": "7 4 3\n68 41 52 14\n29 55 18 35\n34 31 46 20\n3 49 1 23\n24 42 16 11\n58 25 38 48\n19 13 6 22",
+                "standard_solution_output": "567",
+                "model_output": "300",
+                "error": null
+            },
+            {
+                "input": "5 3 2\n49 66 30\n15 35 35\n25 14 29\n19 28 22\n42 18 66",
+                "standard_solution_output": "224",
+                "model_output": "156",
+                "error": null
+            },
+            {
+                "input": "7 5 6\n59 34 39 29 44\n62 21 55 25 11\n17 49 46 14 23\n19 35 31 58 42\n36 13 22 48 16\n51 38 18 26 20",
+                "standard_solution_output": "588",
+                "model_output": "",
+                "error": "Traceback (most recent call last):\n  File \"/tmp/tmp4k04ka0n.py\", line 48, in <module>\n    main()\n  File \"/tmp/tmp4k04ka0n.py\", line 6, in main\n    row = list(map(int, input().split()))\nEOFError: EOF when reading a line\n"
+            },
+            {
+                "input": "1 5 2\n49 11 46 44 48",
+                "standard_solution_output": "94",
+                "model_output": "0",
+                "error": null
+            }
+        ]
+    }
+]
