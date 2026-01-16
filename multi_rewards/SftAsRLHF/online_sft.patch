@@ -1,0 +1,337 @@
+--- a/verl/workers/config/actor.py
++++ b/verl/workers/config/actor.py
+@@ -70,6 +70,11 @@
+         clip_cov_ub (float): Upper bound for clip-cov loss.
+         kl_cov_ratio (float): Ratio of tokens to be applied KL penalty for kl-cov loss.
+         ppo_kl_coef (float): KL divergence penalty coefficient.
++        online_sft_beta (float): β coefficient for the Online SFT loss.
++        online_sft_denom_eps (float): ε for stabilizing division by log-probability.
++        online_sft_clip_weight_value (Optional[float]): Optional symmetric clip for the Online SFT weight.
++        online_sft_clip_logprob_min (Optional[float]): Optional clamp lower bound for s=logπ in the Online SFT loss.
++        online_sft_normalize_logprob_by_length (bool): If True, normalize sequence log-probabilities by length.
+     """
+ 
+     loss_mode: str = "vanilla"
+@@ -80,6 +85,24 @@
+     ppo_kl_coef: float = 0.1
+ 
+ 
++    # --- Online SFT ("Online SFT = RLHF") ---
++    # Weight coefficient β for KL(π||π_ref) inside the Online SFT weight definition.
++    online_sft_beta: float = 0.1
++
++    # Small constant ε for stabilizing division by log-probability.
++    online_sft_denom_eps: float = 1e-8
++
++    # Optional symmetric clip for the Online SFT weight w. Set to None to disable.
++    online_sft_clip_weight_value: float | None = 1.0
++
++    # Optional lower bound clamp for s = log πθ(y|x) used in the Online SFT loss.
++    # Since log-probabilities are negative, this typically clamps very negative values (e.g., < -10) up to -10.
++    online_sft_clip_logprob_min: float | None = -500.0
++
++    # If True, normalize sequence log-probabilities by completion length.
++    online_sft_normalize_logprob_by_length: bool = False
++
++
+ @dataclass
+ class ActorConfig(BaseConfig):
+     """Configuration for actor model training.
+--- a/verl/trainer/ppo/core_algos.py
++++ b/verl/trainer/ppo/core_algos.py
+@@ -997,6 +997,164 @@
+     return pg_loss, pg_metrics
+ 
+ 
++
++
++@register_policy_loss("online_sft")
++def compute_policy_loss_online_sft(
++    old_log_prob: torch.Tensor,
++    log_prob: torch.Tensor,
++    advantages: torch.Tensor,
++    response_mask: torch.Tensor,
++    loss_agg_mode: str = "token-mean",
++    config: Optional[ActorConfig] = None,
++    rollout_is_weights: torch.Tensor | None = None,
++    ref_log_prob: torch.Tensor | None = None,
++) -> tuple[torch.Tensor, dict[str, Any]]:
++    """Compute the Online SFT policy loss ("Online SFT = RLHF").
++
++    This implements the unbiased gradient estimator described in Proposition 3
++    of the attached paper. The per-sample loss is:
++
++        L_hat = -[ w * s + 0.5 * stop_grad(w) * s^2 ]
++
++    where:
++        s = log πθ(y|x)  (sequence log-prob; optionally length-normalized and clamped)
++        w = (r - β * (s - s_ref)) / (sign(s) * clamp(|s|, min=ε))
++
++    Notes:
++    - `r` is taken from `advantages` by default. For GRPO/DAPO-style outcome
++      advantages, this is constant within each sequence; we recover a scalar
++      reward by masked-mean over tokens.
++    - If `ref_log_prob` is provided and β != 0, we include the reference
++      log-ratio term (s - s_ref). If it's missing, the KL term is treated as 0.
++    - `rollout_is_weights` (if provided) is applied at sequence level via a
++      masked mean, for rollout-correction compatibility.
++
++    Args:
++        old_log_prob: Unused (kept for interface compatibility).
++        log_prob: Per-token log-probs under current policy, (B, T).
++        advantages: Per-token advantage estimates, (B, T).
++        response_mask: Mask for response tokens, (B, T).
++        loss_agg_mode: Loss aggregation mode used by `agg_loss`.
++        config: Actor config (required for online_sft hyperparameters).
++        rollout_is_weights: Optional IS weights, (B, T).
++        ref_log_prob: Optional per-token log-probs under reference policy, (B, T).
++
++    Returns:
++        (pg_loss, metrics)
++    """
++
++    assert config is not None
++    assert not isinstance(config, AlgoConfig), "passing AlgoConfig is not supported for policy losses"
++    assert config.policy_loss is not None
++
++    # Hyperparameters
++    beta = config.policy_loss.get("online_sft_beta", 0.0)
++    denom_eps = config.policy_loss.get("online_sft_denom_eps", 1e-8)
++    clip_w = config.policy_loss.get("online_sft_clip_weight_value", 1.0)
++    clip_logp_min = config.policy_loss.get("online_sft_clip_logprob_min", -500.0)
++    normalize_by_len = config.policy_loss.get("online_sft_normalize_logprob_by_length", False)
++
++    mask = response_mask
++
++    # Sequence-level log probability: s = Σ_t log πθ(a_t|...)
++    seq_logp = verl_F.masked_sum(log_prob, mask, axis=-1)  # (B,)
++    seq_len = torch.sum(mask, dim=-1).clamp(min=1.0).to(seq_logp.dtype)  # (B,)
++
++    if normalize_by_len:
++        s = seq_logp / seq_len
++    else:
++        s = seq_logp
++
++    # Reference log-prob for KL term
++    if beta != 0.0 and ref_log_prob is not None:
++        ref_seq_logp = verl_F.masked_sum(ref_log_prob, mask, axis=-1)
++        if normalize_by_len:
++            ref_seq_logp = ref_seq_logp / seq_len
++        kl_term = s - ref_seq_logp
++    else:
++        kl_term = torch.zeros_like(s)
++
++    # Reward (scalar per sequence) from advantages
++    r = verl_F.masked_mean(advantages, mask, axis=-1)
++
++    numerator = r - beta * kl_term
++
++    # Denominator: sign(s) * clamp(|s|, min=ε)
++    sign = torch.sign(s)
++    sign = torch.where(sign == 0, torch.full_like(sign, -1.0), sign)  # log-probs should be negative
++    denom = sign * torch.clamp(torch.abs(s), min=denom_eps)
++
++    w = numerator / denom
++
++    if clip_w is not None:
++        # clip_w can be float or int; cast to float for torch.clamp
++        clip_w_f = float(clip_w)
++        w = torch.clamp(w, min=-clip_w_f, max=clip_w_f)
++
++    # Clamp s in the loss for stability (optional)
++    if clip_logp_min is not None:
++        clip_logp_min_f = float(clip_logp_min)
++        s_clamped = torch.clamp(s, min=clip_logp_min_f)
++        num_clamped = torch.sum((s < clip_logp_min_f).to(torch.int64)).item()
++    else:
++        s_clamped = s
++        num_clamped = 0
++
++    # Per-sequence Online SFT loss
++    seq_loss = -(w * s_clamped + 0.5 * w.detach() * (s_clamped**2))
++
++    # Apply rollout correction weights at sequence level if provided
++    if rollout_is_weights is not None:
++        seq_is_w = verl_F.masked_mean(rollout_is_weights, mask, axis=-1)
++        seq_loss = seq_loss * seq_is_w
++
++    # Aggregate to a scalar using agg_loss for DP-size invariance when available.
++    # We construct a token-level loss matrix by broadcasting sequence losses.
++    if loss_agg_mode in ("seq-mean-token-sum", "seq-mean-token-sum-norm"):
++        # Distribute the sequence loss equally over tokens so token-sum == seq_loss
++        per_token = (seq_loss / seq_len).unsqueeze(-1).expand_as(log_prob)
++    else:
++        # Repeat the full seq_loss on every token (token-mean will weight by length)
++        per_token = seq_loss.unsqueeze(-1).expand_as(log_prob)
++
++    global_batch_info = getattr(config, "global_batch_info", {})
++    pg_loss = agg_loss(loss_mat=per_token, loss_mask=mask, loss_agg_mode=loss_agg_mode, **global_batch_info)
++
++    # Metrics (nan/inf safe)
++    w_det = w.detach()
++    w_finite = w_det[torch.isfinite(w_det)]
++    if w_finite.numel() > 0:
++        w_mean = w_finite.mean().item()
++        w_min = w_finite.min().item()
++        w_max = w_finite.max().item()
++        w_std = w_finite.std(unbiased=False).item() if w_finite.numel() > 1 else 0.0
++    else:
++        w_mean = w_min = w_max = w_std = 0.0
++
++    s_det = s.detach()
++    s_finite = s_det[torch.isfinite(s_det)]
++    s_mean = s_finite.mean().item() if s_finite.numel() > 0 else 0.0
++
++    metrics: dict[str, Any] = {
++        "actor/online_sft_beta": float(beta),
++        "actor/online_sft_weight_mean": w_mean,
++        "actor/online_sft_weight_std": w_std,
++        "actor/online_sft_weight_min": w_min,
++        "actor/online_sft_weight_max": w_max,
++        "actor/online_sft_s_mean": s_mean,
++    }
++
++    if beta != 0.0 and ref_log_prob is not None:
++        kl_det = kl_term.detach()
++        kl_finite = kl_det[torch.isfinite(kl_det)]
++        metrics["actor/online_sft_kl_mean"] = kl_finite.mean().item() if kl_finite.numel() > 0 else 0.0
++
++    if clip_logp_min is not None:
++        metrics["actor/online_sft_logp_clamped_frac"] = float(num_clamped) / float(max(1, w_det.numel()))
++
++    return pg_loss, metrics
++
+ @register_policy_loss("gspo")
+ def compute_policy_loss_gspo(
+     old_log_prob: torch.Tensor,
+--- a/verl/workers/actor/dp_actor.py
++++ b/verl/workers/actor/dp_actor.py
+@@ -356,6 +356,7 @@
+ 
+         micro_batch_size = data.meta_info["micro_batch_size"]
+         temperature = data.meta_info["temperature"]  # temperature must be in the data.meta_info to avoid silent error
++
+         use_dynamic_bsz = data.meta_info["use_dynamic_bsz"]
+         has_multi_modal_inputs = "multi_modal_inputs" in data.non_tensor_batch.keys()
+         select_keys = ["responses", "input_ids", "attention_mask", "position_ids"]
+@@ -401,6 +402,8 @@
+ 
+         temperature = data.meta_info["temperature"]  # temperature must be in the data.meta_info to avoid silent error
+ 
++        loss_mode = self.config.policy_loss.get("loss_mode", "vanilla")
++
+         select_keys = [
+             "responses",
+             "response_mask",
+@@ -410,7 +413,8 @@
+             "old_log_probs",
+             "advantages",
+         ]
+-        if self.config.use_kl_loss:
++        # For Online SFT, ref_log_prob may be needed for the weight's KL term even if we don't add a separate kl_loss.
++        if self.config.use_kl_loss or (loss_mode == "online_sft" and "ref_log_prob" in data.batch.keys()):
+             select_keys.append("ref_log_prob")
+         # Include pre-computed IS weights if present in batch
+         # Weights are computed centrally in trainer and added to batch when algorithm.rollout_is=True
+@@ -477,7 +481,6 @@
+                         else:
+                             old_log_prob = model_inputs["old_log_probs"]
+ 
+-                    loss_mode = self.config.policy_loss.get("loss_mode", "vanilla")
+                     # vanilla -> verl.trainer.ppo.core_algos.compute_policy_loss_vanilla
+ 
+                     # Extract pre-computed rollout correction weights if present
+@@ -489,15 +492,27 @@
+                     policy_loss_fn = get_policy_loss_fn(loss_mode)
+ 
+                     # Compute policy loss (any function is expected to return 2 values)
+-                    pg_loss, pg_metrics = policy_loss_fn(
+-                        old_log_prob=old_log_prob,
+-                        log_prob=log_prob,
+-                        advantages=advantages,
+-                        response_mask=response_mask,
+-                        loss_agg_mode=loss_agg_mode,
+-                        config=self.config,
+-                        rollout_is_weights=rollout_is_weights,
+-                    )
++                    if loss_mode == "online_sft":
++                        pg_loss, pg_metrics = policy_loss_fn(
++                            old_log_prob=old_log_prob,
++                            log_prob=log_prob,
++                            advantages=advantages,
++                            response_mask=response_mask,
++                            loss_agg_mode=loss_agg_mode,
++                            config=self.config,
++                            rollout_is_weights=rollout_is_weights,
++                            ref_log_prob=model_inputs.get("ref_log_prob", None),
++                        )
++                    else:
++                        pg_loss, pg_metrics = policy_loss_fn(
++                            old_log_prob=old_log_prob,
++                            log_prob=log_prob,
++                            advantages=advantages,
++                            response_mask=response_mask,
++                            loss_agg_mode=loss_agg_mode,
++                            config=self.config,
++                            rollout_is_weights=rollout_is_weights,
++                        )
+                     micro_batch_metrics.update(pg_metrics)
+ 
+                     # Skip if using bypass_mode loss (metrics already computed in pg_metrics)
+@@ -521,7 +536,7 @@
+                         if entropy_coeff != 0:
+                             policy_loss -= entropy_agg * entropy_coeff
+ 
+-                    if self.config.use_kl_loss:
++                    if self.config.use_kl_loss and loss_mode != "online_sft":
+                         ref_log_prob = model_inputs["ref_log_prob"]
+                         # compute kl loss
+                         kld = kl_penalty(
+--- a/verl/workers/utils/losses.py
++++ b/verl/workers/utils/losses.py
+@@ -117,15 +117,27 @@
+     loss_mode = config.policy_loss.get("loss_mode", "vanilla")
+ 
+     policy_loss_fn = get_policy_loss_fn(loss_mode)
+-    pg_loss, pg_metrics = policy_loss_fn(
+-        old_log_prob=old_log_prob,
+-        log_prob=log_prob,
+-        advantages=advantages,
+-        response_mask=response_mask,
+-        loss_agg_mode=loss_agg_mode,
+-        config=config,
+-        rollout_is_weights=rollout_is_weights,
+-    )
++    if loss_mode == "online_sft":
++        pg_loss, pg_metrics = policy_loss_fn(
++            old_log_prob=old_log_prob,
++            log_prob=log_prob,
++            advantages=advantages,
++            response_mask=response_mask,
++            loss_agg_mode=loss_agg_mode,
++            config=config,
++            rollout_is_weights=rollout_is_weights,
++            ref_log_prob=data.get("ref_log_prob", None),
++        )
++    else:
++        pg_loss, pg_metrics = policy_loss_fn(
++            old_log_prob=old_log_prob,
++            log_prob=log_prob,
++            advantages=advantages,
++            response_mask=response_mask,
++            loss_agg_mode=loss_agg_mode,
++            config=config,
++            rollout_is_weights=rollout_is_weights,
++        )
+ 
+     metrics.update(pg_metrics)
+     metrics["actor/pg_loss"] = pg_loss.detach().item()
+@@ -140,7 +152,7 @@
+         policy_loss -= entropy_coeff * entropy_loss
+ 
+     # add kl loss
+-    if config.use_kl_loss:
++    if config.use_kl_loss and loss_mode != "online_sft":
+         ref_log_prob = data["ref_log_prob"]
+         # compute kl loss
+         kld = kl_penalty(logprob=log_prob, ref_logprob=ref_log_prob, kl_penalty=config.kl_loss_type)

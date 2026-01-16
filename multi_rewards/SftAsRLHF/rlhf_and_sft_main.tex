@@ -1,0 +1,578 @@
+\documentclass{article}
+\usepackage{amssymb,amsmath,amsthm}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{xcolor,xspace}
+\usepackage{algorithm,algpseudocode}
+\usepackage{comment}
+
+\newtheorem{observation}{Observation}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{example}{Example}
+\newtheorem{assumption}{Assumption}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
+
+\newcommand{\gt}[1]{{\color{blue} [GT: {#1}]}} 
+\newcommand{\kr}[1]{{\color{purple} [KR: {#1}]}} 
+
+\title{Proposal Abstract}
+\author{Kyung Rok Kim}
+\date{}
+
+
+
+\begin{document}
+\begin{comment}
+\section{Preliminaries}
+Let $\mathcal{X}$ denote the prompt space and $\mathcal{Y}$ denote the response space. $(x,y) \in \mathcal{X} \times \mathcal{Y}$ is a prompt-response pair. Let $\mathcal{D}$ denote training data and $\pi_\theta$ denote the target policy. SFT aims to maximize the log likelihood of the training data, that is, to minimize the following SFT loss:
+\begin{align*}
+\mathcal{L}_{SFT} (\pi_\theta) = \mathbb{E}_{(x,y) \sim \mathcal{D}} \left[ -\log{\pi_\theta (y | x) } \right].
+\end{align*}
+
+RLHF assumes a reward model $r : \mathcal{X} \times \mathcal{Y} \rightarrow [0,1]$, and seeks to maximize the reward. As solely pursuing the reward leads the model to  staying close to some reference policy $\pi_{ref}$. The RLHF loss is 
+\begin{align*}
+\mathcal{L}_{RLHF}(\pi_\theta) = \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ - \mathbb{E}_{y \sim \pi_\theta (\cdot | x)} \left[ r(x,y) \right] + \beta KL \left( \pi_\theta(\cdot | x) || \pi_{ref}(\cdot | x) \right) \right]
+\end{align*}
+where $\mathcal{D}_\mathcal{X}$ is the marginal distribution over prompts from the training data.
+
+\section{Gradient Analysis}
+The gradient of the SFT loss is 
+\begin{align*}
+\nabla_\theta \mathcal{L}_{SFT} = \mathbb{E}_{(x,y) \sim \mathcal{D}} \left[ - \nabla_\theta \log{\pi_\theta (y | x)} \right].
+\end{align*}
+
+The gradient of RLHF loss is 
+\begin{align*}
+\nabla_\theta \mathcal{L}_{RLHF} = \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \mathbb{E}_{y \sim \pi_\theta(\cdot | x)} \left[ \left\{ -r(x,y) + \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} + \beta \right\} \nabla_\theta \log{\pi_\theta(y|x)} \right] \right]
+\end{align*}
+\begin{proof}
+The RLHF loss can be rewritten as
+% \begin{align*}
+% \mathcal{L}_{RLHF}(\pi_\theta) &= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ - \mathbb{E}_{y \sim \pi_\theta (\cdot | x)} \left[ r(x,y) \right] + \beta KL \left( \pi_\theta(\cdot | x) || \pi_{ref}(\cdot | x) \right) \right] \\
+% &= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ - \mathbb{E}_{y \sim \pi_\theta (\cdot | x)} \left[ r(x,y) \right] + \beta \mathbb{E}_{y \sim \pi_\theta(\cdot | x)} \left[ \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right] \right] \\
+% &= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \mathbb{E}_{y \sim \pi_\theta (\cdot | x)} \left[ -r(x,y) + \beta \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right] \right].
+% \end{align*}
+\begin{align*}
+\mathcal{L}_{RLHF}(\pi_\theta) &= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ - \mathbb{E}_{y \sim \pi_\theta (\cdot | x)} \left[ r(x,y) \right] + \beta KL \left( \pi_\theta(\cdot | x) || \pi_{ref}(\cdot | x) \right) \right] \\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ - \mathbb{E}_{y \sim \pi_\theta (\cdot | x)} \left[ r(x,y) \right] + \beta \mathbb{E}_{y \sim \pi_\theta(\cdot | x)} \left[ 
+\log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right] \right] \\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \mathbb{E}_{y \sim \pi_\theta (\cdot | x)} \left[ -r(x,y) + \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right] \right].
+\end{align*}
+The gradient is 
+% \begin{align*}
+% \nabla_\theta \mathcal{L}_{RLHF}(\pi_\theta) &= \nabla_\theta \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X} }\left[ \int \left( -r(x,y)  + \beta \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right) \pi_\theta(y|x) dy\right] \\
+% &= \nabla_\theta \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X} }\left[ \int \left( -r(x,y) \pi_\theta(y|x)  + \beta \frac{\pi_\theta(y|x)^2}{\pi_{ref}(y|x)}\right)  dy\right] \\
+% &= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \int\left( -r(x,y) \nabla_\theta \pi_\theta(y|x) + \beta \frac{2\pi_\theta(y|x)}{\pi_{ref}(y|x) }\nabla_\theta \pi_\theta(y|x) \right) dy \right] \\
+% &= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \int\left( -r(x,y) + \beta \frac{2\pi_\theta(y|x)}{\pi_{ref}(y|x)} \right) \frac{\nabla_\theta \pi_\theta(y|x)}{\pi(y|x)} \pi(y|x) dy \right] \\
+% &= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \int\left( -r(x,y) + \beta \frac{2\pi_\theta(y|x)}{\pi_{ref}(y|x)} \right) \pi(y|x) \nabla_\theta \log \pi_\theta(y|x) dy \right] \\
+% &= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \mathbb{E}_{y \sim \pi_\theta(\cdot|x)}\left[\left( -r(x,y) + \beta \frac{2\pi_\theta(y|x)}{\pi_{ref}(y|x)} \right) \nabla_\theta \log \pi_\theta(y|x) \right] \right]
+% \end{align*}
+\begin{align*}
+\nabla_\theta \mathcal{L}_{RLHF}(\pi_\theta) &= \nabla_\theta \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X} }\left[ \int \left( -r(x,y)  + \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right) \pi_\theta(y|x) dy\right] \\
+&= \nabla_\theta \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X} }\left[ \int \left( -r(x,y) \pi_\theta(y|x)  + \beta \pi_\theta(y|x) \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right)  dy\right] \\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \int\left( -r(x,y) \nabla_\theta \pi_\theta(y|x) + \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} \nabla_\theta \pi_\theta(y|x) + \beta \pi_\theta(y|x) \nabla_\theta \log \pi_\theta(y|x) \right) dy \right] \\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \int \left\{\left( -r(x,y) + \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} \right) \frac{\nabla_\theta \pi_\theta(y|x)}{\pi_\theta(y|x)} \pi_\theta(y|x) + \beta \pi_\theta(y|x) \nabla_\theta \log \pi_\theta (y|x) \right\} dy \right] \\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \int\left( -r(x,y) + \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} +\beta \right) \pi_\theta(y|x) \nabla_\theta \log \pi_\theta(y|x) dy \right] \\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \mathbb{E}_{y \sim \pi_\theta(\cdot|x)}\left[\left( -r(x,y) + \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} + \beta \right) \nabla_\theta \log \pi_\theta(y|x)  \right] \right]
+\end{align*}
+\end{proof}
+
+To compare the two gradients, modify the gradient of the SFT loss as
+\begin{align*}
+\nabla_\theta \mathcal{L}_{SFT} = \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}, y \sim \pi_\theta(\cdot | x)} \left[ - \frac{\mathcal{D}_{\mathcal{Y} | \mathcal{X}} (y|x) }{\pi_\theta(y|x)} \nabla_\theta \log{\pi_\theta (y|x)} \right]
+\end{align*}
+where $\mathcal{D}_{\mathcal{Y} | \mathcal{X}} (\cdot | x)$ denotes the distirbution of responses from the training data given the prompt $x$. 
+\begin{proof}
+The SFT loss is 
+\begin{align*}
+\mathcal{L}_{SFT} (\pi_\theta) = \mathbb{E}_{(x,y) \sim \mathcal{D}} \left[ -\log{\pi_\theta (y | x) } \right]
+\end{align*}
+The gradient is 
+\begin{align*}
+\nabla_\theta \mathcal{L}_{SFT} &= \mathbb{E}_{(x,y) \sim \mathcal{D}} \left[ - \nabla_\theta \log{\pi_\theta (y | x)} \right] \\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \mathbb{E}_{y \sim \mathcal{D}_{\mathcal{Y} | \mathcal{X}}(\cdot | x)} \left[ \left[ - \nabla_\theta \log{\pi_\theta (y | x)} \right] \right]\\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \int- \nabla_\theta \log{\pi_\theta (y | x)} \cdot \mathcal{D}_{\mathcal{Y} | \mathcal{X}}(y | x) dy \right]\\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \int- \nabla_\theta \log{\pi_\theta (y | x)} \cdot\frac{\mathcal{D}_{\mathcal{Y} | \mathcal{X}}(y | x)}{\pi_\theta(y|x)} \pi_\theta(y|x) dy \right]\\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}}  \left[ \mathbb{E}_{y \sim \pi_\theta(\cdot|x)}  \left[- \nabla_\theta \log{\pi_\theta (y | x)} \cdot \frac{\mathcal{D}_{\mathcal{Y} | \mathcal{X}}(y | x)}{\pi_\theta(y|x)} \right]\right].
+\end{align*}
+\end{proof}
+
+Hence RLHF with the choice of reward model as 
+\begin{align*}
+r(x,y) = \beta + \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} + \frac{\mathcal{D}_{\mathcal{Y} | \mathcal{X}} (y|x) }{\pi_\theta(y|x)} 
+\end{align*}
+has the exact same dynamics as SFT. Namely, SFT is an instance of RLHF.
+
+\section{Goal}
+As SFT is easier to implement in practice compared to RLHF, it would be desirable to establish the opposite relationship, that is, formulating RLHF into an instance of SFT. However, SFT is strictly narrower than RLHF from the previous analysis as choice of $r$ need not be the one as given in the previous equation. 
+
+\subsection{Primary Approach}
+
+A primary approach would be considering a weighted SFT loss:
+\begin{align*}
+\mathcal{L}_{weighted \ SFT} (\pi_\theta) = \mathbb{E}_{(x,y) \sim \mathcal{D}} \left[-w(x,y) \log{\pi_\theta(y|x)} \right]
+\end{align*}
+where the prompt-response pairs are no longer treated equally but with weights $w(x,y)$.
+The gradient is
+\begin{align*}
+\nabla_\theta \mathcal{L}_{weighted \ SFT} (\pi_\theta) = \mathbb{E}_{(x,y) \sim \mathcal{D}} \left[ -w(x,y) \nabla_\theta \log{\pi_\theta(y|x)} \right]
+\end{align*}
+\begin{proof}
+The proof is essentially the same as computing the gradient of $\mathcal{L}_{SFT}$. The only difference is $w(x,y)$, which does not depend on $\theta$, hence the gradient is not affected by the weight.
+\end{proof}
+If 
+\begin{align*}
+w(x,y) \frac{\mathcal{D}_{\mathcal{Y} | \mathcal{X}} (y|x)}{ \pi_\theta (y|x)} &= r(x,y) - \beta - \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\\
+w(x,y) & =  \frac{\pi_\theta(y|x)}{\mathcal{D}_{\mathcal{Y} | \mathcal{X}} (y|x)}\left(r(x,y) -\beta -  \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right)
+\end{align*}
+holds, then RLHF is indeed an instance of the weighted SFT. 
+
+However, given a prompt $x$, the distribution $\mathcal{D}_{\mathcal{Y} | \mathcal{X}}$ is discrete as it is coming from the training dataset, while RLHF samples the response by $y \sim \pi_\theta(\cdot | x)$. Unless $\mathcal{D}$ contains all prompt-response pairs that $\pi_\theta$ could generate, the above relationship would not hold.
+
+Moreover, the weight $w$ depends on $\theta$ in this relationship. If this is the case, then the gradient of the weight should have also been considered: $\nabla_\theta w(x,y) \neq 0$.
+
+\gt{I think computational wise it is doable. Since if you want to write a implementable algorithm, we just need to compute a value for $w(x,y)$ given every $x$-$y$ pair, we kinda just need to ``parametrize'' the distribution or use some sort of importance sampling (only if the formula allows) to make the formula work}
+
+\begin{itemize}
+\item Is there a way that could approximate an expectation with a discrete distribution? For instance, importance sampling? \gt{I think this might be the first thing to think about}
+
+\item Or think about another variation of SFT, possibly involving the model parameter $\theta$, so that the gradient has a different form. \gt{As long as it is as computationally similar as SFT, the whole point is that we can get similar effect as RLHF without doing the messy computational steps as in RLHF}
+\end{itemize}
+
+\subsection{Another approach}
+
+\subsection{Weighted online SFT: weight independent of the model parameters}
+
+Consider the weighted SFT loss once again, but the model is now trained on self-generated data:
+\begin{align*}
+    \mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) = \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}, y \sim \pi_\theta(\cdot | x) } \left[ -w(x,y) \log \pi_\theta (y|x) \right] .
+\end{align*}
+
+The gradient is 
+\begin{align*}
+    \nabla_\theta \mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) = \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}, y \sim \pi_\theta(\cdot | x)} \left[-w(x,y) \left(1 + \log \pi_\theta (y|x) \right) \nabla_\theta \log \pi_\theta (y|x) \right] .
+\end{align*}
+\begin{proof}
+The weighted online SFT loss can be rewritten as 
+\begin{align*}
+\mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) &= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}, y \sim \pi_\theta(\cdot | x) } \left[ -w(x,y) \log \pi_\theta (y|x) \right] \\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \int -w(x,y) \log \pi_\theta (y|x) \cdot \pi_\theta (y|x) dy\right].
+\end{align*}
+Hence 
+\begin{align*}
+\nabla_\theta \mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) &= \nabla_\theta \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \int -w(x,y) \log \pi_\theta (y|x) \cdot \pi_\theta (y|x) dy\right] \\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \int -w(x,y) \left\{\left(\nabla_\theta \log \pi_\theta (y|x) \right)\cdot \pi_\theta (y|x) + \log \pi_\theta (y|x) \nabla_\theta \pi_\theta(y|x) \right\} dy\right] \\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \int -w(x,y) \left\{\left(\nabla_\theta \log \pi_\theta (y|x) \right)\cdot \pi_\theta (y|x) + \log \pi_\theta (y|x) \frac{\nabla_\theta \pi_\theta(y|x)}{\pi_\theta(y|x)} \pi_\theta(y|x) \right\} dy\right] \\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \int -w(x,y) \left\{1 + \log \pi_\theta (y|x)\right\} \pi_\theta(y|x) \nabla_\theta \log \pi_\theta(y|x) dy\right] \\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \mathbb{E}_{y \sim \pi_\theta(\cdot|x)} \left[-w(x,y) \left\{1 + \log \pi_\theta (y|x)\right\}  \nabla_\theta \log \pi_\theta(y|x) \right]\right] \\
+\end{align*}
+\end{proof}
+If 
+\begin{align*}
+    w(x,y) \left(1 + \log\pi_\theta(y|x)\right) = r(x,y) - \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} - \beta
+\end{align*}
+holds, then the RLHF and the weighted online SFT have the exact same dynamics. Unfortunately, $w$ here also depends on $\theta$.
+
+\subsection{Weighted online SFT: weight depending on the model parameters}
+
+Consider the weighted online SFT loss once again. Now, the weight $w_\theta$ also depends on the model parameters:
+\begin{align*}
+    \mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) = \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}, y \sim \pi_\theta(\cdot | x) } \left[ -w_\theta(x,y) \log \pi_\theta (y|x) \right] .
+\end{align*}
+The gradient is 
+\begin{align*}
+    \nabla_\theta & \mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) \\
+    & = \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}, y \sim \pi_\theta(\cdot | x)} \left[-\log \pi_\theta (y|x) \nabla_\theta w_\theta(x,y) -w(x,y) \left(1 + \log \pi_\theta (y|x) \right) \nabla_\theta \log \pi_\theta (y|x) \right] .
+\end{align*}
+\begin{proof}
+    As 
+    \begin{align*}
+        \mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) = \mathbb{E}_{x \sim \mathcal{D_X}}\left[-\int w_\theta(x,y) \log\pi_\theta(y|x) \pi_\theta(y|x) dy \right],
+    \end{align*}
+    it follows that
+    \begin{align*}
+        \nabla_\theta & \mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) \\
+        &= \mathbb{E}_{x \sim \mathcal{D_X}} \bigg[-\int \big(\nabla_\theta w_\theta(x,y) \cdot \log\pi_\theta(y|x) \cdot \pi_\theta(y|x) + w_\theta(x,y) \nabla_\theta \log \pi_\theta(y|x) \cdot \pi_\theta(y|x) \\
+        &\quad + w_\theta(x,y) \log\pi_\theta(y|x) \nabla_\theta \pi_\theta(y|x) \big) dy\bigg] \\
+        &= \mathbb{E}_{x \sim \mathcal{D_X}} \bigg[-\int \big(\nabla_\theta w_\theta(x,y) \cdot \log\pi_\theta(y|x) + w_\theta(x,y) \nabla_\theta \log \pi_\theta(y|x)  \\
+        &\quad + w_\theta(x,y) \log\pi_\theta(y|x) \frac{\nabla_\theta \pi_\theta(y|x)}{\pi_\theta(y|x)} \big) \pi_\theta(y|x) dy\bigg] \\
+        &= \mathbb{E}_{x \sim \mathcal{D_X}, y \sim \pi_\theta(\cdot | x)} \bigg[- \big(\nabla_\theta w_\theta(x,y) \cdot \log\pi_\theta(y|x) + w_\theta(x,y) \nabla_\theta \log \pi_\theta(y|x)  \\
+        &\quad + w_\theta(x,y) \log\pi_\theta(y|x) \nabla_\theta \log \pi_\theta(y|x) \big) \bigg] \\
+        &= \mathbb{E}_{x \sim \mathcal{D_X}, y \sim \pi_\theta(\cdot | x)} \bigg[- \big(\nabla_\theta w_\theta(x,y) \cdot \log\pi_\theta(y|x) + w_\theta(x,y) (1+\log\pi_\theta(y|x))\nabla_\theta \log \pi_\theta(y|x)  \big) \bigg] \\
+    \end{align*}
+\end{proof}
+
+Setting 
+\begin{align*}
+    w_\theta(x,y) = \frac{1}{\log \pi_\theta(y|x)} \left(r(x,y) - \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right)
+\end{align*}
+leads to the same gradients of $\mathcal{L}_{weighted \ online \ SFT}(\pi_\theta)$ and $\mathcal{L}_{RLHF}(\pi_\theta)$.
+
+\begin{proof}
+    The gradient of $w_\theta(x,y)$ is 
+    \begin{align*}
+        \nabla_\theta w_\theta(x,y) &= -\frac{1}{\left( \log \pi_\theta(y|x) \right)^2} r(x,y) \nabla_\theta \log \pi_\theta(y|x) + \frac{\beta}{\left(\log\pi_\theta(y|x)\right)^2} \log\frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} \nabla_\theta \log\pi_\theta(y|x) \\
+        &\quad -\frac{\beta}{\log\pi_\theta(y|x)} \nabla_\theta \log\pi_\theta(y|x).
+    \end{align*}
+    Plugging in the weight and the gradient of $w_\theta$ to the gradient of the weighted online SFT leads to
+    \begin{align*}
+        \nabla_\theta &\mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) 
+        = \mathbb{E}_{x \sim \mathcal{D_X}, y \sim \pi_\theta(\cdot | x)} \big[ - \nabla_\theta w_\theta(x,y) \cdot \log\pi_\theta(y|x) \\
+        &\quad - w_\theta(x,y) (1+\log\pi_\theta(y|x))\nabla_\theta \log \pi_\theta(y|x) \big] \\
+        &= \mathbb{E}_{x \sim \mathcal{D_X}, y \sim \pi_\theta(\cdot | x)} \bigg[ \frac{1}{\log\pi_\theta(y|x)}r(x,y) \nabla_\theta \log\pi_\theta(y|x) - \frac{\beta}{\log\pi_\theta(y|x)} \log\frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} \nabla_\theta \log\pi_\theta(y|x) \\
+        &\quad + \beta \nabla_\theta \log\pi_\theta (y|x) - \bigg(1+ \frac{1}{\log\pi_\theta(y|x)} \bigg) \bigg(r(x,y)-\beta \log\frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} \bigg)\nabla_\theta \log \pi_\theta(y|x) \bigg] \\
+        &= \mathbb{E}_{x \sim \mathcal{D_X}, y \sim \pi_\theta(\cdot | x)} \bigg[ \beta \nabla_\theta \log\pi_\theta (y|x) - \bigg(r(x,y)-\beta \log\frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} \bigg)\nabla_\theta \log \pi_\theta(y|x) \bigg] \\
+        & \nabla_\theta \mathcal{L}_{RLHF}(\pi_\theta),
+    \end{align*}
+    which concludes the proof.
+\end{proof}
+
+The above analysis proves that RLHF is an instance of the weighted online SFT. Combined with the previous result, RLHF and SFT are equivalent.
+
+In practice, RLHF is optimized by PPO, which entails several issues. The use of PPO requires careful engineering details. It is well known that PPO is sensitive to hyperparameters, like the clipping threshold $\epsilon$ or GAE $\lambda$. The value function or the gradients are commonly clipped, and the advantage is normalized. Orchestrating all these details complicates the implementation of PPO. Also, PPO optimizes a proxy of the desired loss. A method that directly optimizes the quantity of interest would be preferable to the current indirect approach.
+
+In contrast, SFT is oftern favored for its straightforward and simple methodology. Its implementation is relatively simple compared to RLHF. More importantly, SFT directly manipulates the target loss.
+
+Therefore, it is preferable to optimize the RLHF objective using the SFT framework rather than PPO. The established equivalence between these methods makes this possible. Specifically, by appropriately reweighting the data, the RLHF objective can be optimized using the SFT pipeline. The following algorithm outlines this procedure.
+
+\begin{algorithm}[ht!]
+%\caption{caption}
+%\label{label}
+\begin{algorithmic}[1]
+\Statex Input: Prompt dataset $\mathcal{D_X}$, target model $\pi_{\theta_{old}}$, reference model $\pi_{ref}$, reward model $r$
+\State Sample a prompt $x$
+\State Generate a response $y$ from the target model $\pi_{\theta_{old}}$ given $x$
+\State Compute the weight of the prompt-response pair 
+\Statex $w_\theta(x,y) = \frac{1}{\log \pi_\theta(y|x)} \left(r(x,y) - \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right)$
+\State Compute the weighted online SFT loss 
+\Statex $\mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) = \mathbb{E}_{x \sim \mathcal{D_X}, y \sim \pi_\theta(\cdot|x)}[-w_\theta(x,y) \log\pi_\theta(y|x)]$ 
+\Statex and its gradient
+\State Update $\theta_{old}$ to $\theta_{new}$ with gradient descent
+% \For{$t < T$}
+% \State step
+% \EndFor
+\Statex Output: Trained policy $\pi_{\theta_{new}}$
+\end{algorithmic}
+\end{algorithm}
+
+\kr{Maybe generating multiple responses would be better}
+\end{comment}
+
+
+
+\newpage
+
+\section{Problem Description}
+
+Post-training large language models (LLMs) is a multistage process that begins with supervised finetuning (SFT). In this initial phase, a pretrained base model is trained on a high quality dataset of prompt-response pairs to follow instructions. An LLM is finetuned by directly maximizing the log likelihood of the training data.
+
+Following SFT, the model undergoes reinforcement learning with human feedback (RLHF) to further refine its behavior regarding helpfulness and harmlessness. Typically, RLHF proceeds in two stages. First, a reward model is trained on a preference dataset, which consists of ranking of multiple responses on the same prompt, to predict human preference of prompt-response pairs. Second, the SFT model is optimized with RLHF. Most often, PPO is used in this loop. The target policy generates a response to a prompt, the reward model assigns a score, and PPO uses this signal to update the policy to maximize the score while keeping the target model close to a reference model.
+
+Although PPO has led to great advances in LLMs, it also introduces significant issues into the alignment pipeline. It is extremely sensitive to a wide array of hyperparameters that must be meticulously tuned. Small changes in learning rate, clipping range, bias-variance tradeoff in advantage estimation, or KL divergence coefficient can lead to unstable training or policy collapse. In addition, the actual implementation of PPO requires several critical details for stability. Missing details such as clipping of value function, normalization of reward and advantage, or initialization of network may result in policy failing to learn. Most importantly, PPO indirectly optimizes the target objective by forming a proxy objective. Consequently, this inherently results in a different outcome than optimizing the actual objective would yield. 
+
+Given the complexities of PPO, there is a clear and pressing need for a method that can achieve the same alignment goals but with the efficiency and clarity of SFT. The appeal of this approach lies in the fundamental simplicity of SFT. In SFT, the original objective, the log likelihood of the training data, is directly optimized. This is typically achieved by using standard gradient descent-type optimization, enabling a stable and easy implementation. It would be highly beneficial if RLHF can be performed in SFT-like style. Therefore, we explore a reformulation of the RLHF problem that allows it to be optimized directly within an SFT framework.
+
+
+
+\section{Theoretical Analysis}
+
+Let $\mathcal{X}$ and $\mathcal{Y}$ denote the prompt space and the response space, respectively, in which a prompt-response pair $(x,y) \in \mathcal{X} \times \mathcal{Y}$ is. Let $\mathcal{D}$ denote training data and $\pi_\theta$ denote the target policy. 
+
+SFT aims to maximize the likelihood of the training data, or equivalently, to minimize the following SFT loss:
+\begin{align*}
+\mathcal{L}_{SFT} (\pi_\theta) = \mathbb{E}_{(x,y) \sim \mathcal{D}} \left[ -\log{\pi_\theta (y | x) } \right].
+\end{align*}
+
+Given a reward model $r : \mathcal{X} \times \mathcal{Y} \rightarrow [0,1]$, RLHF seeks to maximize the reward of a response generated by the target policy to a prompt, while keeping the target policy close to a reference policy $\pi_{ref}$. The RLHF loss is 
+\begin{align*}
+\mathcal{L}_{RLHF}(\pi_\theta) = \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ - \mathbb{E}_{y \sim \pi_\theta (\cdot | x)} \left[ r(x,y) \right] + \beta KL \left( \pi_\theta(\cdot | x) || \pi_{ref}(\cdot | x) \right) \right]
+\end{align*}
+where $\mathcal{D}_\mathcal{X}$ is the marginal distribution over the prompts in the training data.
+
+Although the two regimes appear to be uncorrelated, they actually have a close relationship. First, SFT and RLHF share some similarities, if one considers the gradients of both losses. The gradients of the SFT loss and the RLHF loss are 
+\begin{align*}
+\nabla_\theta \mathcal{L}_{SFT} &= \mathbb{E}_{(x,y) \sim \mathcal{D}} \left[ - \nabla_\theta \log{\pi_\theta (y | x)} \right]
+\end{align*}
+and
+\begin{align*}
+\nabla_\theta \mathcal{L}_{RLHF} &= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \mathbb{E}_{y \sim \pi_\theta(\cdot | x)} \left[ \left\{ -r(x,y) + \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} + \beta \right\} \nabla_\theta \log{\pi_\theta(y|x)} \right] \right],
+\end{align*}
+respectively. 
+\begin{proposition}
+With appropriate choice of the reward model
+\begin{align*}
+r(x,y) = \beta + \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} + \frac{\mathcal{D}_{\mathcal{Y} | \mathcal{X}} (y|x) }{\pi_\theta(y|x)} ,
+\end{align*}
+RLHF has the exact same dynamics as SFT. 
+    \end{proposition}
+
+To argue to converse, let us first introduce weighted online SFT, a new paradigm on SFT. The weighted online SFT fundamentally has the same objective as SFT, which is to maximize the log likelihood of prompt-response pairs $(x,y)$, with two modifications. 
+\begin{itemize}
+    \item First, the weighted online SFT assigns different weights $w(x,y)$ to each response pair. It is less likely that all prompt-response pairs have the same importance, and the weighted online SFT takes this observation into account. 
+    \item  Second, it generates the response $y$ to a prompt from the target policy $\pi_{\theta}$, instead of using a fixed dataset. If the base model is well trained on pretraining stage, then it is expected to be already capable to generate high quality responses, even when compared to the given dataset. As the target policy may evolve as training proceeds, it is reasonable to consider the response generated by the policy itself which is kept updated.
+\end{itemize}
+ Formally, the weighted online SFT loss is defined as
+\begin{align} \label{eq:weighted_online_SFT_loss}
+    \mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) = \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}, y \sim \pi_\theta(\cdot | x) } \left[ -w_\theta(x,y) \log \pi_\theta (y|x) \right] 
+\end{align}
+with gradient  
+\begin{align*}
+    \nabla_\theta & \mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) \\
+    & = \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}, y \sim \pi_\theta(\cdot | x)} \left[-\log \pi_\theta (y|x) \nabla_\theta w_\theta(x,y) -w(x,y) \left(1 + \log \pi_\theta (y|x) \right) \nabla_\theta \log \pi_\theta (y|x) \right] .
+\end{align*}
+By the same line of reasoning as before, 
+\begin{proposition}
+RLHF is an instance of the weighted online SFT, with appropriate choice of the weight
+\begin{align} \label{eq:weight}
+    w_\theta(x,y) = \frac{1}{\log \pi_\theta(y|x)} \left(r(x,y) - \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right) .
+\end{align}
+\end{proposition}
+Therefore, RLHF and SFT are equivalent. 
+
+
+
+\section{Algorithm}
+\paragraph{Motivation.}
+Current RLHF and PPO or GRPO framework has sever drawbacks.
+\begin{itemize}
+    \item The RLHF and PPO formulation is an instance of Minorize Maximization Algorithm, which approximates the object because the object function is hard to compute
+    \begin{align*}
+\mathcal{L}_{RLHF}(\pi_\theta) = \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ - \mathbb{E}_{y \sim \pi_\theta (\cdot | x)} \left[ r(x,y) \right] + \beta KL \left( \pi_\theta(\cdot | x) || \pi_{ref}(\cdot | x) \right) \right]
+\end{align*}
+    \item Secondly, for the PPO-Clip and GRPO algorithm, they aim to minimize the object
+    \begin{align*} \max_{\theta'}\,\,\, \mathbb{E}_{s,a\sim\rho_{\pi_{\theta}}}\left[\min \left(\frac{\pi_{\theta'}(a|s)}{\pi_{\theta}(a|s)}A^{\pi_\theta}(s,a), clip\left(\frac{\pi_{\theta'}(a|s)}{\pi_{\theta}(a|s)},1-\epsilon,1+\epsilon\right)A^{\pi_\theta}(s,a) \right)\right],
+    \end{align*}
+    which require the estimation of the advantage function.
+\end{itemize}
+
+Indeed, if we can directly compute the gradient of the RLHF loss in an efficient way, we can get away from the complicated PPO/GRPO framework and get a cleaner and potentially faster algorithm.
+
+\paragraph{Proposed Approach.} The equivalence of SFT and RLHF enables a new framework for RLHF in SFT-style without resorting to PPO. Specifically, by reweighting the ratio and use AI-generated data, RLHF can be done with SFT pipeline. Specifically, for a prompt $x$, we first generate a response $y$ from the target model. Once its weight is computed as in \eqref{eq:weight}, the policy is updated simply backpropagating the gradient of the weighted online SFT loss \eqref{eq:weighted_online_SFT_loss}. A pseudocode is given below.
+
+\paragraph{Derivation.} Note that the derivative of the objective 
+
+\begin{align*} \mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) = \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}, y \sim \pi_\theta(\cdot | x) } \left[ -w_\theta(x,y) \log \pi_\theta (y|x) \right] 
+\end{align*}
+is same as the derivative of the RLHF object. However, since the objective, $y$ is generated by $\pi_{\theta}(\cdot|x)$, we cannot just sample $y_i\sim \pi(\cdot|x_i)$ and take gradient with respect to the empirical average risk
+$$\nabla_{\theta} \left(\frac{1}{N}\sum_{i=1}^N -w_{\theta}(x_i,y_i) \log\pi_{\theta}(y_i|x_i)\right).$$
+In short, this means
+$$\mathbb{E}\left[\nabla_{\theta} \left(\frac{1}{N}\sum_{i=1}^N -w_{\theta}(x_i,y_i) \log\pi_{\theta}(y_i|x_i)\right)\right] \neq \nabla_{\theta} \mathbb{E}_{y \sim \pi_\theta(\cdot | x) } \left[ -w_\theta(x,y) \log \pi_\theta (y|x) \right].$$
+
+The correct way of seeing things is that we ``maintain'' two parameters $\theta$ and $\hat{\theta}$, where $\hat{\theta}$ is the distribution generating $y\sim {\pi}_{\hat{\theta}}(\cdot|x)$, and $\theta$ is the parameter of our RLHF policy. 
+We can treat the first generation step as $y_i \sim \pi_{\hat{\theta}}(\cdot|x)$, where $\hat{\theta} = \theta$, and this will decouple the dependency. Then, instead of taking derivative w.r.t. $-w_{\theta}(x_i,y_i) \log\pi_{\theta}(y_i|x_i)$, the results is the following
+\begin{proposition}\label{prop_gradient}
+    We have
+    \begin{align*}
+        \mathbb{E}\left[\frac{1}{N}\sum_{i=1}^N\left(\nabla_{\theta}(w_{\theta}(x_i,y_i))\log\pi_{\theta}(y_i|x_i)+w_{\theta}(x_i,y_i)\nabla_{\theta}(\log\pi_{\theta}(y_i|x_i))(1+\log \pi_{\theta}(y_i|x_i))\right)\right]\\
+        = \nabla_{\theta} \mathbb{E}_{x\sim \mathcal{D}_{\mathcal{X}}, y \sim \pi_\theta(\cdot | x) } \left[ -w_\theta(x,y) \log \pi_\theta (y|x) \right]
+    \end{align*}
+\end{proposition}
+
+From the proposition above, we know that at every gradient descent step, we can directly compute 
+\begin{align}\label{eqn_gradient}
+    G_{\theta,N} =  \frac{1}{N}\sum_{i=1}^N\left(\nabla_{\theta}(w_{\theta}(x_i,y_i))\log\pi_{\theta}(y_i|x_i)+w_{\theta}(x_i,y_i)\nabla_{\theta}(\log\pi_{\theta}(y_i|x_i))(1+\log \pi_{\theta}(y_i|x_i))\right)
+\end{align}
+
+
+\begin{algorithm}[ht!]
+%\caption{caption}
+%\label{label}
+\begin{algorithmic}[1]
+\Statex Input: Prompt dataset $\mathcal{D_X}$, reference model $\pi_{ref}$, reward model $r$
+\State Set $\theta$ to be the parameter of $\pi_{ref}$
+\State Do until convergence or $\pi_{\theta}$ being very good
+\State \hspace{5mm} Sample a batch of prompt $\mathcal{D}_{X\text{ batch}} =  \{x_i\}_{i\in N}$ from $\mathcal{D_X}$ (or some other distribution of prompts, for other tricks see Section 4.1.4. Iterative RL with GRPO in https://arxiv.org/pdf/2402.03300)
+\State \hspace{5mm}  Generate response $\mathcal{D}_{Y\text{ batch}} = \{y_i\}_{i\in N}$ such that $y_i \sim \pi_{\theta}(\cdot|x_i)$ (maybe it makes sense to generate multiple responses per $x_i$ to better represent the expectation like in GRPO)
+%\Statex $w_\theta(x,y) = \frac{1}{\log \pi_\theta(y|x)} \left(r(x,y) - \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right)$
+\State \hspace{5mm} Based on $\mathcal{D}_{X\text{ batch}} \times \mathcal{D}_{Y\text{ batch}}$, compute $\nabla \text{ SFT loss}$, which is \eqref{eqn_gradient} 
+%\Statex $\mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) = \mathbb{E}_{x \sim \mathcal{D_X}, y \sim \pi_\theta(\cdot|x)}[-w_\theta(x,y) \log\pi_\theta(y|x)]$ 
+\State \hspace{5mm}  $\theta \leftarrow \theta + \alpha \cdot \nabla \text{ SFT loss} $ following standard stocahstic gradient descent or Adam
+\State \hspace{5mm}  Go back to Step 3 (I don't know if we should change $\pi_{ref}$ or not for computing $w_{\theta}$ the next round, but for right now let's fix it)
+% \For{$t < T$}
+% \State step
+% \EndFor
+\Statex Output: Trained policy $\pi_{\theta_{new}}$
+\end{algorithmic}
+\end{algorithm}
+
+
+
+\section{Related Work}
+{\bf Policy Optimization for RLHF.}
+RLHF has been a cornerstone of the alignment of LLMs. THe core objective of RLHF is to train a target policy that maximizes the reward of its generated responses defined by a reward model. The most common method used to perform the optimization is PPO, which optimizes a proxy objective through trust region policy optimization along with clipping mechanism on the objective function. While effective, its complexity has spurred research into alternatives. Recently, GRPO has been proposed, which generates a group of responses to a prompt and then computes the advantage as standardized reward relative to the group. Other methods have also been proposed. REINFORCE++ introduces techniques to further normalize the advantages, and DAPO combines elements of both PPO and GRPO with additional modifications to refine the optimization process.
+
+{\bf Alternatives to Policy Optimization.}
+There has also been a line of research to align LLMs by using preference data or making assumptions on reward model. DPO, for instance, cleverly harnesses the relationship between the optimal policy for the RLHF objective and the reward model, allowing it to use pairwise preference data to align LLMs without an explicit reinforcement learning loop. SPIN also uses an objective that resembles DPO, and compares responses from a given dataset and responses generated by the current policy. Building on this, $\Psi$PO proposes a generalization of the RLHF objective and demonstrates an alignment method that also uses preference data. A different approach, KTO, incorporates prospect theory to model human values, relying on an implicit reward model. Other methods like APA and AWR consider the practical case where the target model family might not contain the optimal policy and optimized a projected policy. Despite their innovations, all these approaches either make assumptions about the form of the reward model or depend on preference labeling, which in essence still necessitates a reward model.
+
+{\bf Bridge between SFT and Alignment.}
+Researchers has also explored ways to connect alignment and SFT. LIMA famously proved that alignment of LLMs is possible to significant degree simply by finetuning the model on a small set of curated data. More recent work aims to explicitly merge the two phases. ORPO proposes a joint objective that combines the standard SFT likelihood loss with a preference loss derived from odds ratio. Similarly, SLiC-HF also uses a joint objective to learn from preference data through ranking of multiple responses. These methods aim to combine SFT and alignment into a single, more efficient training process. Meanwhile, VAR proposes to view RLHF as weighted SFT. Despite the novel insight, the method requires explicit computation of the normalizing function, which is cumbersome in practice. IRL, on the other hand, regards SFT as reinforcement learning, claiming that learning a reward model in SFT significantly benefits the target model. 
+
+
+% ? RLHF already uses self generated response.  maybe self play SFT?   however the algo is about RLHF, not SFT
+% <self play / self alignment>
+% constitutional ai : FT / align AI by providing only constitutions; data generated by ai itself without human labels
+% v star : generate training data given a prompt on reasoning task
+% SPPO : generate multiple responses -> pairwise preference by RM
+% SPIN : DPO-like objective; response from data + self play (response from model)
+% https://arxiv.org/pdf/2308.06259 : given a massive response only data, generate prompt -> align
+
+{\bf Novelty.} 
+This work is distinct from the aforementioned literature in several key aspects. First, the new method studies how RLHF is performed. This study does not pursue an alternative objective, which is the focus of many recent works. Rather, it is about the way the standard RLHF objective is optimized. Second, our method directly optimizes the RLHF objective in a simple and direct way. Unlike PPO and its variants, the model does not undergo indirect optimization via a surrogate loss. Also, it does not require the complicated heuristic engineering details and intricate hyperparameter tuning necessary to stabilize the standard PPO-based RLHF pipeline. Finally, the new method does not require preference data, but instead directly uses a reward model. This is a practical departure, as nowadays, pretrained reward models are readily accessible. While other methods claim to be reward model free, they require preference labels, which essentially still requires a reward model.
+
+
+
+%\bibliography{reference}
+
+
+
+\section{Appendix}
+
+\begin{proposition}
+The gradient of RLHF loss is 
+\begin{align*}
+\nabla_\theta \mathcal{L}_{RLHF} = \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \mathbb{E}_{y \sim \pi_\theta(\cdot | x)} \left[ \left\{ -r(x,y) + \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} + \beta \right\} \nabla_\theta \log{\pi_\theta(y|x)} \right] \right]
+\end{align*}
+\end{proposition}
+\begin{proof}
+The RLHF loss can be rewritten as
+\begin{align*}
+\mathcal{L}_{RLHF}(\pi_\theta) &= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ - \mathbb{E}_{y \sim \pi_\theta (\cdot | x)} \left[ r(x,y) \right] + \beta KL \left( \pi_\theta(\cdot | x) || \pi_{ref}(\cdot | x) \right) \right] \\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ - \mathbb{E}_{y \sim \pi_\theta (\cdot | x)} \left[ r(x,y) \right] + \beta \mathbb{E}_{y \sim \pi_\theta(\cdot | x)} \left[ 
+\log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right] \right] \\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \mathbb{E}_{y \sim \pi_\theta (\cdot | x)} \left[ -r(x,y) + \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right] \right].
+\end{align*}
+The gradient is 
+\begin{align*}
+\nabla_\theta \mathcal{L}_{RLHF}(\pi_\theta) &= \nabla_\theta \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X} }\left[ \int \left( -r(x,y)  + \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right) \pi_\theta(y|x) dy\right] \\
+&= \nabla_\theta \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X} }\left[ \int \left( -r(x,y) \pi_\theta(y|x)  + \beta \pi_\theta(y|x) \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right)  dy\right] \\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \int\left( -r(x,y) \nabla_\theta \pi_\theta(y|x) + \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} \nabla_\theta \pi_\theta(y|x) + \beta \pi_\theta(y|x) \nabla_\theta \log \pi_\theta(y|x) \right) dy \right] \\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \int \left\{\left( -r(x,y) + \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} \right) \frac{\nabla_\theta \pi_\theta(y|x)}{\pi_\theta(y|x)} \pi_\theta(y|x) + \beta \pi_\theta(y|x) \nabla_\theta \log \pi_\theta (y|x) \right\} dy \right] \\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \int\left( -r(x,y) + \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} +\beta \right) \pi_\theta(y|x) \nabla_\theta \log \pi_\theta(y|x) dy \right] \\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \mathbb{E}_{y \sim \pi_\theta(\cdot|x)}\left[\left( -r(x,y) + \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} + \beta \right) \nabla_\theta \log \pi_\theta(y|x)  \right] \right]
+\end{align*}
+\end{proof}
+
+\begin{proposition}
+The gradient of the SFT loss can be expressed as
+\begin{align*}
+\nabla_\theta \mathcal{L}_{SFT} = \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}, y \sim \pi_\theta(\cdot | x)} \left[ - \frac{\mathcal{D}_{\mathcal{Y} | \mathcal{X}} (y|x) }{\pi_\theta(y|x)} \nabla_\theta \log{\pi_\theta (y|x)} \right]
+\end{align*}
+where $\mathcal{D}_{\mathcal{Y} | \mathcal{X}} (\cdot | x)$ denotes the distribution of responses from the training data given the prompt $x$. 
+\end{proposition}
+\begin{proof}
+The SFT loss is 
+\begin{align*}
+\mathcal{L}_{SFT} (\pi_\theta) = \mathbb{E}_{(x,y) \sim \mathcal{D}} \left[ -\log{\pi_\theta (y | x) } \right]
+\end{align*}
+The gradient is 
+\begin{align*}
+\nabla_\theta \mathcal{L}_{SFT} &= \mathbb{E}_{(x,y) \sim \mathcal{D}} \left[ - \nabla_\theta \log{\pi_\theta (y | x)} \right] \\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \mathbb{E}_{y \sim \mathcal{D}_{\mathcal{Y} | \mathcal{X}}(\cdot | x)} \left[ \left[ - \nabla_\theta \log{\pi_\theta (y | x)} \right] \right]\\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \int- \nabla_\theta \log{\pi_\theta (y | x)} \cdot \mathcal{D}_{\mathcal{Y} | \mathcal{X}}(y | x) dy \right]\\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}} \left[ \int- \nabla_\theta \log{\pi_\theta (y | x)} \cdot\frac{\mathcal{D}_{\mathcal{Y} | \mathcal{X}}(y | x)}{\pi_\theta(y|x)} \pi_\theta(y|x) dy \right]\\
+&= \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}}  \left[ \mathbb{E}_{y \sim \pi_\theta(\cdot|x)}  \left[- \nabla_\theta \log{\pi_\theta (y | x)} \cdot \frac{\mathcal{D}_{\mathcal{Y} | \mathcal{X}}(y | x)}{\pi_\theta(y|x)} \right]\right].
+\end{align*}
+\end{proof}
+
+\begin{corollary}
+SFT is an instance of RLHF.
+\end{corollary}
+\begin{proof}
+RLHF with the choice of reward model as 
+\begin{align*}
+r(x,y) = \beta + \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} + \frac{\mathcal{D}_{\mathcal{Y} | \mathcal{X}} (y|x) }{\pi_\theta(y|x)} 
+\end{align*}
+has the exact same dynamics as SFT.
+\end{proof}
+
+
+
+\begin{proposition}
+The gradient of the weighted online SFT loss
+    \begin{align*}
+    \mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) = \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}, y \sim \pi_\theta(\cdot | x) } \left[ -w_\theta(x,y) \log \pi_\theta (y|x) \right] 
+\end{align*}
+is
+\begin{align*}
+    \nabla_\theta & \mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) \\
+    & = \mathbb{E}_{x \sim \mathcal{D}_\mathcal{X}, y \sim \pi_\theta(\cdot | x)} \left[-\log \pi_\theta (y|x) \nabla_\theta w_\theta(x,y) -w(x,y) \left(1 + \log \pi_\theta (y|x) \right) \nabla_\theta \log \pi_\theta (y|x) \right] .
+\end{align*}
+\end{proposition}
+\begin{proof}
+    As 
+    \begin{align*}
+        \mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) = \mathbb{E}_{x \sim \mathcal{D_X}}\left[-\int w_\theta(x,y) \log\pi_\theta(y|x) \pi_\theta(y|x) dy \right],
+    \end{align*}
+    it follows that
+    \begin{align*}
+        \nabla_\theta & \mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) \\
+        &= \mathbb{E}_{x \sim \mathcal{D_X}} \bigg[-\int \big(\nabla_\theta w_\theta(x,y) \cdot \log\pi_\theta(y|x) \cdot \pi_\theta(y|x) + w_\theta(x,y) \nabla_\theta \log \pi_\theta(y|x) \cdot \pi_\theta(y|x) \\
+        &\quad + w_\theta(x,y) \log\pi_\theta(y|x) \nabla_\theta \pi_\theta(y|x) \big) dy\bigg] \\
+        &= \mathbb{E}_{x \sim \mathcal{D_X}} \bigg[-\int \big(\nabla_\theta w_\theta(x,y) \cdot \log\pi_\theta(y|x) + w_\theta(x,y) \nabla_\theta \log \pi_\theta(y|x)  \\
+        &\quad + w_\theta(x,y) \log\pi_\theta(y|x) \frac{\nabla_\theta \pi_\theta(y|x)}{\pi_\theta(y|x)} \big) \pi_\theta(y|x) dy\bigg] \\
+        &= \mathbb{E}_{x \sim \mathcal{D_X}, y \sim \pi_\theta(\cdot | x)} \bigg[- \big(\nabla_\theta w_\theta(x,y) \cdot \log\pi_\theta(y|x) + w_\theta(x,y) \nabla_\theta \log \pi_\theta(y|x)  \\
+        &\quad + w_\theta(x,y) \log\pi_\theta(y|x) \nabla_\theta \log \pi_\theta(y|x) \big) \bigg] \\
+        &= \mathbb{E}_{x \sim \mathcal{D_X}, y \sim \pi_\theta(\cdot | x)} \bigg[- \big(\nabla_\theta w_\theta(x,y) \cdot \log\pi_\theta(y|x) + w_\theta(x,y) (1+\log\pi_\theta(y|x))\nabla_\theta \log \pi_\theta(y|x)  \big) \bigg] \\
+    \end{align*}
+\end{proof}
+
+\begin{proposition}
+    Setting 
+\begin{align*}
+    w_\theta(x,y) = \frac{1}{\log \pi_\theta(y|x)} \left(r(x,y) - \beta \log \frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right)
+\end{align*}
+leads to the same gradients of $\mathcal{L}_{weighted \ online \ SFT}(\pi_\theta)$ and $\mathcal{L}_{RLHF}(\pi_\theta)$.
+\end{proposition}
+\begin{proof}
+    The gradient of $w_\theta(x,y)$ is 
+    \begin{align*}
+        \nabla_\theta w_\theta(x,y) &= -\frac{1}{\left( \log \pi_\theta(y|x) \right)^2} r(x,y) \nabla_\theta \log \pi_\theta(y|x) + \frac{\beta}{\left(\log\pi_\theta(y|x)\right)^2} \log\frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} \nabla_\theta \log\pi_\theta(y|x) \\
+        &\quad -\frac{\beta}{\log\pi_\theta(y|x)} \nabla_\theta \log\pi_\theta(y|x).
+    \end{align*}
+    Plugging in the weight and the gradient of $w_\theta$ to the gradient of the weighted online SFT leads to
+    \begin{align*}
+        \nabla_\theta &\mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) 
+        = \mathbb{E}_{x \sim \mathcal{D_X}, y \sim \pi_\theta(\cdot | x)} \big[ - \nabla_\theta w_\theta(x,y) \cdot \log\pi_\theta(y|x) \\
+        &\quad - w_\theta(x,y) (1+\log\pi_\theta(y|x))\nabla_\theta \log \pi_\theta(y|x) \big] \\
+        &= \mathbb{E}_{x \sim \mathcal{D_X}, y \sim \pi_\theta(\cdot | x)} \bigg[ \frac{1}{\log\pi_\theta(y|x)}r(x,y) \nabla_\theta \log\pi_\theta(y|x) - \frac{\beta}{\log\pi_\theta(y|x)} \log\frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} \nabla_\theta \log\pi_\theta(y|x) \\
+        &\quad + \beta \nabla_\theta \log\pi_\theta (y|x) - \bigg(1+ \frac{1}{\log\pi_\theta(y|x)} \bigg) \bigg(r(x,y)-\beta \log\frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} \bigg)\nabla_\theta \log \pi_\theta(y|x) \bigg] \\
+        &= \mathbb{E}_{x \sim \mathcal{D_X}, y \sim \pi_\theta(\cdot | x)} \bigg[ \beta \nabla_\theta \log\pi_\theta (y|x) - \bigg(r(x,y)-\beta \log\frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} \bigg)\nabla_\theta \log \pi_\theta(y|x) \bigg] \\
+        & \nabla_\theta \mathcal{L}_{RLHF}(\pi_\theta),
+    \end{align*}
+    which concludes the proof. 
+\end{proof}
+
+
+\subsection{Proof of Proposition \ref{prop_gradient}}
+
+As
+    \begin{align*}
+        \mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) = \mathbb{E}_{x \sim \mathcal{D_X}}\left[-\int w_\theta(x,y) \log\pi_\theta(y|x) \pi_\theta(y|x) dy \right],
+    \end{align*}
+    it follows that
+    \begin{align*}
+        \nabla_\theta & \mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) \\
+        &= \mathbb{E}_{x \sim \mathcal{D_X}} \bigg[-\int \big(\nabla_\theta w_\theta(x,y) \cdot \log\pi_\theta(y|x) \cdot \pi_\theta(y|x) + w_\theta(x,y) \nabla_\theta \log \pi_\theta(y|x) \cdot \pi_\theta(y|x) \\
+        &\quad + w_\theta(x,y) \log\pi_\theta(y|x) \nabla_\theta \pi_\theta(y|x) \big) dy\bigg]
+    \end{align*}
+Notice that 
+
+\begin{align*}
+w_\theta(x,y) \log\pi_\theta(y|x) \nabla_\theta \pi_\theta(y|x) = w_\theta(x,y) \log\pi_\theta(y|x) \frac{\nabla_\theta \pi_\theta(y|x)}{\pi_{\theta}(y|x)}\pi_{\theta}(y|x) \\
+= w_\theta(x,y) \log\pi_\theta(y|x) \nabla_{\theta}\log(\pi_{\theta}(y|x)) \pi_{\theta}(y|x)
+\end{align*}
+
+Then,
+\begin{align*}
+    \nabla_\theta & \mathcal{L}_{weighted \ online \ SFT}(\pi_\theta) \\
+    &= \mathbb{E}_{x \sim \mathcal{D_X}} \bigg[\bigg(-\int \big(\nabla_\theta w_\theta(x,y) \cdot \log\pi_\theta(y|x)  + w_\theta(x,y) \nabla_\theta \log \pi_\theta(y|x)  \\
+    &\quad +w_\theta(x,y) \log\pi_\theta(y|x) \nabla_{\theta}\log(\pi_{\theta}(y|x))\bigg)\pi_\theta(y|x) dy\bigg]\\
+    &= \mathbb{E}_{x \sim \mathcal{D_X},y\sim \pi_{\theta}(\cdot|x)} \bigg[\big(\nabla_\theta w_\theta(x,y) \cdot \log\pi_\theta(y|x)  + w_\theta(x,y) \nabla_\theta \log \pi_\theta(y|x)  \\
+    &\quad +w_\theta(x,y) \log\pi_\theta(y|x) \nabla_{\theta}\log(\pi_{\theta}(y|x))\bigg]\\
+\end{align*}
+
+
+\end{document}
