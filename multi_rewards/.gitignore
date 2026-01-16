@@ -7,3 +7,7 @@ outputs/
 # Generated datasets
 data/*.parquet
 data/*.jsonl
+
+# Python bytecode
+__pycache__/
+*.pyc
