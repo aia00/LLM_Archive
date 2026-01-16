@@ -1,0 +1,9 @@
+# Local paths/config
+mycode/paths.env
+
+# Run outputs
+outputs/
+
+# Generated datasets
+data/*.parquet
+data/*.jsonl

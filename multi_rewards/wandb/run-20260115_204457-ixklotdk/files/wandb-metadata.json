@@ -1,0 +1,79 @@
+{
+  "os":  "Linux-5.15.0-164-generic-x86_64-with-glibc2.35",
+  "python":  "CPython 3.10.19",
+  "startedAt":  "2026-01-16T01:44:57.386356Z",
+  "args":  [
+    "--node-ip-address=172.22.3.232",
+    "--node-manager-port=45501",
+    "--object-store-name=/home/ykwang/mtdata2/ray_tmp/ray/session_2026-01-15_20-42-50_914656_123993/sockets/plasma_store",
+    "--raylet-name=/home/ykwang/mtdata2/ray_tmp/ray/session_2026-01-15_20-42-50_914656_123993/sockets/raylet",
+    "--redis-address=None",
+    "--metrics-agent-port=59109",
+    "--logging-rotate-bytes=536870912",
+    "--logging-rotate-backup-count=5",
+    "--runtime-env-agent-port=64669",
+    "--gcs-address=172.22.3.232:61214",
+    "--session-name=session_2026-01-15_20-42-50_914656_123993",
+    "--temp-dir=/home/ykwang/mtdata2/ray_tmp/ray",
+    "--webui=127.0.0.1:8265",
+    "--cluster-id=47306bebe6098ba7712d97ed14b986e31584607bdda7236512dd38b2",
+    "--startup-token=128",
+    "--worker-launch-time-ms=1768527776220",
+    "--node-id=541ee934d3b05c3c305bc5735c78bfee52cf1f820f83b76884ee685d",
+    "--runtime-env-hash=-1580796864"
+  ],
+  "program":  "/home/ykwang/.conda/envs/verl_vllm/lib/python3.10/site-packages/ray/_private/workers/default_worker.py",
+  "git":  {
+    "remote":  "https://github.com/aia00/LLM_Archive.git",
+    "commit":  "5f32daa1bc1e2c96d3289a1b3da6953ebc04662f"
+  },
+  "email":  "ykwang@unc.edu",
+  "root":  "/home/ykwang/projects/LLM_Archive/multi_rewards",
+  "host":  "cas-polaris.oasis.unc.edu",
+  "executable":  "/home/ykwang/.conda/envs/verl_vllm/bin/python",
+  "cpu_count":  64,
+  "cpu_count_logical":  128,
+  "gpu":  "NVIDIA RTX A6000",
+  "gpu_count":  4,
+  "disk":  {
+    "/":  {
+      "total":  "931099369472",
+      "used":  "849714057216"
+    }
+  },
+  "memory":  {
+    "total":  "270277296128"
+  },
+  "gpu_nvidia":  [
+    {
+      "name":  "NVIDIA RTX A6000",
+      "memoryTotal":  "51527024640",
+      "cudaCores":  10752,
+      "architecture":  "Ampere",
+      "uuid":  "GPU-269cac1b-3873-fd7d-426e-fd38f1569dd8"
+    },
+    {
+      "name":  "NVIDIA RTX A6000",
+      "memoryTotal":  "51527024640",
+      "cudaCores":  10752,
+      "architecture":  "Ampere",
+      "uuid":  "GPU-91800741-cd5b-dc52-e0fa-fbf401af8987"
+    },
+    {
+      "name":  "NVIDIA RTX A6000",
+      "memoryTotal":  "51527024640",
+      "cudaCores":  10752,
+      "architecture":  "Ampere",
+      "uuid":  "GPU-a3b6a9cf-b249-9032-06b6-13c13adc2841"
+    },
+    {
+      "name":  "NVIDIA RTX A6000",
+      "memoryTotal":  "51527024640",
+      "cudaCores":  10752,
+      "architecture":  "Ampere",
+      "uuid":  "GPU-c0e04735-9141-2808-2c6c-9b4cd4cdc239"
+    }
+  ],
+  "cudaVersion":  "12.2",
+  "writerId":  "az3nuj0s40xi9p0g3cbv15qsmoxj6ae9"
+}

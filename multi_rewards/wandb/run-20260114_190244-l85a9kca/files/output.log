@@ -1,0 +1,37 @@
+wandb: Detected [openai] in use.
+wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+wandb: For more information, check out the docs at: https://weave-docs.wandb.ai/
+Checkpoint tracker file does not exist: /home/ykwang/mtdata2/multi_rewards/outputs/checkpoints/static_balanced_20260114_185950/latest_checkpointed_iteration.txt
+Training from scratch
+test_gen_batch meta info: {'eos_token_id': 151645, 'pad_token_id': 151643, 'recompute_log_prob': False, 'do_sample': False, 'validate': True, 'global_steps': 0}
+Unhandled error (suppress with 'RAY_IGNORE_UNHANDLED_ERRORS=1'): [36mray::AgentLoopWorker.generate_sequences()[39m (pid=3735005, ip=172.22.3.232, actor_id=3499257e4c48546d6b64f5c201000000, repr=<verl.experimental.agent_loop.agent_loop.AgentLoopWorker object at 0x7fbeebc597b0>)
+  File "/home/ykwang/.conda/envs/verl_vllm/lib/python3.10/concurrent/futures/_base.py", line 451, in result
+    return self.__get_result()
+  File "/home/ykwang/.conda/envs/verl_vllm/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
+    raise self._exception
+  File "/home/ykwang/projects/LLM_Archive/multi_rewards/verl/verl/utils/transferqueue_utils.py", line 319, in dummy_async_inner
+    output = await func(*args, **kwargs)
+  File "/home/ykwang/projects/LLM_Archive/multi_rewards/verl/verl/experimental/agent_loop/agent_loop.py", line 478, in generate_sequences
+    outputs = await asyncio.gather(*tasks)
+  File "/home/ykwang/projects/LLM_Archive/multi_rewards/verl/verl/experimental/agent_loop/agent_loop.py", line 516, in _run_agent_loop
+    return await self._agent_loop_postprocess(output, **kwargs)
+  File "/home/ykwang/projects/LLM_Archive/multi_rewards/verl/verl/experimental/agent_loop/agent_loop.py", line 612, in _agent_loop_postprocess
+    await self._compute_score(
+  File "/home/ykwang/projects/LLM_Archive/multi_rewards/verl/verl/experimental/agent_loop/agent_loop.py", line 725, in _compute_score
+    result = await self.reward_loop_worker.compute_score.remote(data)
+ray.exceptions.RayTaskError(TypeError): [36mray::RewardLoopWorker.compute_score()[39m (pid=3736825, ip=172.22.3.232, actor_id=4d121ab6c7141427e99d473c01000000, repr=<verl.experimental.reward_loop.reward_loop.RewardLoopWorker object at 0x7fd661a2ca90>)
+  File "/home/ykwang/.conda/envs/verl_vllm/lib/python3.10/concurrent/futures/_base.py", line 451, in result
+    return self.__get_result()
+  File "/home/ykwang/.conda/envs/verl_vllm/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
+    raise self._exception
+  File "/home/ykwang/projects/LLM_Archive/multi_rewards/verl/verl/experimental/reward_loop/reward_loop.py", line 115, in compute_score
+    return await self.reward_loop.run_single(data)
+  File "/home/ykwang/projects/LLM_Archive/multi_rewards/verl/verl/experimental/reward_loop/reward_manager/naive.py", line 75, in run_single
+    result = await self.loop.run_in_executor(
+  File "/home/ykwang/.conda/envs/verl_vllm/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/home/ykwang/projects/LLM_Archive/multi_rewards/verl/verl/experimental/reward_loop/reward_manager/naive.py", line 77, in <lambda>
+    lambda: self.compute_score(
+  File "/home/ykwang/projects/LLM_Archive/multi_rewards/verl/verl/trainer/ppo/reward.py", line 48, in _call_with_kwargs
+    return raw_fn(*args, **merged_kwargs)
+TypeError: compute_score() got an unexpected keyword argument 'data_source'
