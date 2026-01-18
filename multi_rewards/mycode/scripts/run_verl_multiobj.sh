@@ -90,6 +90,8 @@ RUN_TAG=${RUN_TAG:-"$(date +%Y%m%d_%H%M%S)"}
 EXPERIMENT_NAME=${EXPERIMENT_NAME:-"${METHOD}_${WEIGHT_PRESET}_${RUN_TAG}"}
 ROLLOUT_DATA_DIR=${ROLLOUT_DATA_DIR:-"${OUTPUT_ROOT}/rollouts/${EXPERIMENT_NAME}"}
 VALIDATION_DATA_DIR=${VALIDATION_DATA_DIR:-"${OUTPUT_ROOT}/val_generations/${EXPERIMENT_NAME}"}
+TOTAL_EPOCHS=${TOTAL_EPOCHS:-3}
+TEST_FREQ=${TEST_FREQ:-5}
 
 if [ -n "${PYTORCH_CUDA_ALLOC_CONF}" ]; then
   export PYTORCH_CUDA_ALLOC_CONF
@@ -167,5 +169,5 @@ ${PYTHON_BIN} -m verl.trainer.main_ppo \
   trainer.validation_data_dir="${VALIDATION_DATA_DIR}" \
   trainer.n_gpus_per_node=${N_GPUS_PER_NODE} \
   trainer.nnodes=1 \
-  trainer.total_epochs=1 \
-  trainer.test_freq=10
+  trainer.total_epochs=${TOTAL_EPOCHS} \
+  trainer.test_freq=${TEST_FREQ}
