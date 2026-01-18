@@ -12,6 +12,10 @@ if [ -f "${CONFIG_PATH}" ]; then
   source "${CONFIG_PATH}"
 fi
 
+if [ -n "${WANDB_API_KEY:-}" ]; then
+  export WANDB_API_KEY
+fi
+
 if [ -n "${GPU_IDS:-}" ]; then
   export CUDA_VISIBLE_DEVICES="${GPU_IDS}"
 fi
@@ -23,13 +27,25 @@ fi
 
 CONDA_ENV_PATH=${CONDA_ENV_PATH:-""}
 CONDA_ENV_NAME=${CONDA_ENV_NAME:-""}
-CONDA_SH=${CONDA_SH:-"${HOME}/.conda/etc/profile.d/conda.sh"}
+if [ -n "${CONDA_SH:-}" ]; then
+  CONDA_SH="${CONDA_SH}"
+elif [ -f "${HOME}/miniconda3/etc/profile.d/conda.sh" ]; then
+  CONDA_SH="${HOME}/miniconda3/etc/profile.d/conda.sh"
+else
+  CONDA_SH="${HOME}/.conda/etc/profile.d/conda.sh"
+fi
 PYTHON_BIN="python"
 if [ -n "${CONDA_ENV_NAME}" ]; then
-  # Prefer the exact activation pattern that works in this environment.
-  set +u
-  source activate "${CONDA_ENV_NAME}" || conda activate "${CONDA_ENV_NAME}"
-  set -u
+  if [ -f "${CONDA_SH}" ]; then
+    # Activate env so VERL deps resolve consistently.
+    set +u
+    source "${CONDA_SH}"
+    conda activate "${CONDA_ENV_NAME}"
+    set -u
+  else
+    echo "Conda activation script not found at ${CONDA_SH}" >&2
+    exit 1
+  fi
 elif [ -n "${CONDA_ENV_PATH}" ]; then
   if [ -f "${CONDA_SH}" ]; then
     # Activate env so VERL deps resolve consistently.
