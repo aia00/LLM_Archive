@@ -1,0 +1,19 @@
+wandb: Detected [openai] in use.
+wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+wandb: For more information, check out the docs at: https://weave-docs.wandb.ai/
+Checkpoint tracker file does not exist: /home/ykwang/mtdata2/multi_rewards/outputs/checkpoints/static_balanced_20260116_155552/latest_checkpointed_iteration.txt
+Training from scratch
+test_gen_batch meta info: {'eos_token_id': 151645, 'pad_token_id': 151643, 'recompute_log_prob': False, 'do_sample': False, 'validate': True, 'global_steps': 0}
+validation generation end
+Dumped generations to /home/ykwang/mtdata2/multi_rewards/outputs/val_generations/static_balanced_20260116_155552/0.jsonl
+("Initial validation metrics: {'val-core/math_multiobj/reward/mean@1': "
+ "0.4775220061540604, 'val-aux/math_multiobj/score/mean@1': "
+ "0.47752200000000006, 'val-aux/math_multiobj/reward_acc/mean@1': 0.0, "
+ "'val-aux/math_multiobj/reward_conc/mean@1': 0.482, "
+ "'val-aux/math_multiobj/reward_clar/mean@1': 0.952, 'val-aux/num_turns/min': "
+ "2, 'val-aux/num_turns/max': 2, 'val-aux/num_turns/mean': 2.0, "
+ "'val/reward_acc_mean': 0.0, 'val/reward_conc_mean': 0.482, "
+ "'val/reward_clar_mean': 0.952}")
+step:0 - val-core/math_multiobj/reward/mean@1:0.4775220061540604 - val-aux/math_multiobj/score/mean@1:0.47752200000000006 - val-aux/math_multiobj/reward_acc/mean@1:0.0 - val-aux/math_multiobj/reward_conc/mean@1:0.482 - val-aux/math_multiobj/reward_clar/mean@1:0.952 - val-aux/num_turns/min:2 - val-aux/num_turns/max:2 - val-aux/num_turns/mean:2.0 - val/reward_acc_mean:0.0 - val/reward_conc_mean:0.482 - val/reward_clar_mean:0.952
+Training Progress:   0%|          | 0/31 [00:00<?, ?it/s]
+Dumped generations to /home/ykwang/mtdata2/multi_rewards/outputs/rollouts/static_balanced_20260116_155552/1.jsonl

@@ -66,6 +66,8 @@ REMOVED_EXPRESSIONS = [
     "{,}",
     '"',
     "\\dots",
+    "\\left",
+    "\\right",
 ]
 
 
@@ -100,6 +102,39 @@ def remove_boxed(s: str) -> str:
     return s[len(left) : -1]
 
 
+def extract_final_answer(solution_str: str, answer_pattern: str) -> str:
+    """Extract a final answer string from a completion."""
+    def _clean_answer_fragment(text: str) -> str:
+        text = text.strip()
+        text = re.sub(
+            r"(?i)^(final\s*answer|answer|the\s+answer|therefore|thus|so|hence)\s*[:=\-]*\s*",
+            "",
+            text,
+        )
+        return text.strip().rstrip(".") if text else ""
+
+    match = re.findall(answer_pattern, solution_str)
+    if match:
+        extracted = match[-1]
+    else:
+        match = re.findall(r"(?i)final\s*answer\s*[:=]\s*([^\n]+)", solution_str)
+        if match:
+            extracted = match[-1]
+        else:
+            match = re.findall(r"(?i)answer\s*is\s*([^\n]+)", solution_str)
+            if match:
+                extracted = match[-1]
+            else:
+                boxed = last_boxed_only_string(solution_str)
+                if boxed:
+                    extracted = remove_boxed(boxed)
+                else:
+                    lines = [line.strip() for line in solution_str.splitlines() if line.strip()]
+                    extracted = lines[-1] if lines else ""
+    extracted = _clean_answer_fragment(extracted)
+    return extracted or "[INVALID]"
+
+
 def normalize_final_answer(final_answer: str) -> str:
     """Normalization used by the official math_dapo scorer."""
     final_answer = final_answer.split("=")[-1]
@@ -118,6 +153,10 @@ def normalize_final_answer(final_answer: str) -> str:
     final_answer = re.sub(r"(frac)([^{])(.)", "frac{\\2}{\\3}", final_answer)
     final_answer = re.sub(r"(sqrt)([^{])", "sqrt{\\2}", final_answer)
     final_answer = final_answer.replace("$", "")
+    final_answer = final_answer.replace("\\", "")
+    frac_match = re.fullmatch(r"frac\{([^{}]+)\}\{([^{}]+)\}", final_answer)
+    if frac_match:
+        final_answer = f"{frac_match.group(1)}/{frac_match.group(2)}"
 
     if final_answer.replace(",", "").isdigit():
         final_answer = final_answer.replace(",", "")
@@ -132,8 +171,7 @@ def is_correct_minerva(
     answer_pattern: str = r"(?i)Answer\s*:\s*([^\n]+)",
 ) -> tuple[bool, str]:
     """Minerva-style answer check using a fixed answer regex."""
-    match = re.findall(answer_pattern, solution_str)
-    extracted_answer = match[-1] if match else "[INVALID]"
+    extracted_answer = extract_final_answer(solution_str, answer_pattern)
 
     pred = normalize_final_answer(extracted_answer)
 
@@ -149,13 +187,19 @@ def is_correct_minerva(
     return (pred == gt), pred
 
 
-def compute_math_score(solution_str: str, ground_truth: str) -> dict:
+def compute_math_score(
+    solution_str: str,
+    ground_truth: str,
+    answer_pattern: str = r"(?i)Answer\s*:\s*([^\n]+)",
+) -> dict:
     """Compute reward score for math verification using string match."""
     if not ground_truth or ground_truth == "[INVALID]":
         return {"score": 0.0, "acc": False, "pred": ""}
 
-    solution_str = solution_str[-300:]
-    correct, pred = is_correct_minerva(solution_str, ground_truth)
+    solution_str = solution_str[-600:]
+    correct, pred = is_correct_minerva(
+        solution_str, ground_truth, gt_need_extract=True, answer_pattern=answer_pattern
+    )
 
     reward = 1.0 if correct else 0.0
     return {"score": reward, "acc": correct, "pred": pred}
@@ -170,7 +214,7 @@ class AccuracyReward:
     def __call__(self, completions: List[str], ground_truths: List[str]) -> List[float]:
         rewards: List[float] = []
         for completion, gt in zip(completions, ground_truths):
-            score = compute_math_score(completion, gt)
+            score = compute_math_score(completion, gt, answer_pattern=self.answer_pattern)
             rewards.append(float(score["score"]))
         return rewards
 
@@ -200,6 +244,9 @@ class ConcisenessReward:
         except Exception:
             return len(text)
 
+    def token_length(self, text: str) -> int:
+        return self._token_length(text)
+
     def __call__(self, completions: List[str], update: bool = True) -> List[float]:
         lengths = [self._token_length(text) for text in completions]
         mean_len = sum(lengths) / max(1, len(lengths))
@@ -207,7 +254,7 @@ class ConcisenessReward:
         if self._avg_len is None:
             self._avg_len = mean_len
 
-        rewards = [1.0 if length < self._avg_len else 0.0 for length in lengths]
+        rewards = [1.0 if length <= self._avg_len else 0.0 for length in lengths]
 
         if update:
             if self.use_ema:
@@ -256,6 +303,9 @@ class ClarityReward:
             rewards.append(1.0 if matched else 0.0)
         return rewards
 
+    def count_markers(self, completion: str) -> int:
+        return sum(1 for regex in self._compiled if regex.search(completion))
+
 
 def build_reward_functions(tokenizer: Optional[object] = None):
     """Create reward functions for accuracy, conciseness, and clarity."""
@@ -285,3 +335,55 @@ def build_reward_functions(tokenizer: Optional[object] = None):
         "conciseness": conciseness,
         "clarity": clarity,
     }
+
+
+# -----------------------------------------------------------------------------
+# Answer length reward
+# -----------------------------------------------------------------------------
+
+
+@dataclass
+class AnswerLengthReward:
+    """Reward for shorter-than-average extracted final answers."""
+
+    tokenizer: Optional[object] = None
+    use_ema: bool = True
+    ema_alpha: float = 0.05
+    answer_pattern: str = r"(?i)Answer\s*:\s*([^\n]+)"
+
+    def __post_init__(self):
+        self._avg_len: Optional[float] = None
+        self._count: int = 0
+
+    def _token_length(self, text: str) -> int:
+        if self.tokenizer is None:
+            return len(text)
+        try:
+            return len(self.tokenizer(text, add_special_tokens=False).input_ids)
+        except Exception:
+            return len(text)
+
+    def __call__(self, completions: List[str], update: bool = True) -> List[float]:
+        answers = [extract_final_answer(text, self.answer_pattern) for text in completions]
+        lengths = [self._token_length(ans) for ans in answers]
+        mean_len = sum(lengths) / max(1, len(lengths))
+
+        if self._avg_len is None:
+            self._avg_len = mean_len
+
+        rewards = [1.0 if length < self._avg_len else 0.0 for length in lengths]
+
+        if update:
+            if self.use_ema:
+                self._avg_len = (
+                    (1.0 - self.ema_alpha) * self._avg_len
+                    + self.ema_alpha * mean_len
+                )
+            else:
+                self._count += len(lengths)
+                self._avg_len = (
+                    (self._avg_len * (self._count - len(lengths)) + sum(lengths))
+                    / self._count
+                )
+
+        return rewards

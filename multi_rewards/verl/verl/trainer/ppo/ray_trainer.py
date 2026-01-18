@@ -335,6 +335,8 @@ class RayPPOTrainer:
         self.dynamic_mu = None
         self._pareto_buffer = None
         self._pareto_max_size = 128
+        self._pareto_hv_samples = 2048
+        self._pareto_reward_names = None
         self._last_val_pareto_point = None
 
         reward_cfg = getattr(self.config, "custom_reward_function", {}) or {}
@@ -343,6 +345,8 @@ class RayPPOTrainer:
         self.dynamic_eta = reward_kwargs.get("dynamic_eta")
         self.dynamic_mu = reward_kwargs.get("dynamic_mu")
         self._pareto_max_size = reward_kwargs.get("pareto_max_size", 128)
+        self._pareto_hv_samples = reward_kwargs.get("pareto_hv_samples", 2048)
+        self._pareto_reward_names = reward_kwargs.get("pareto_reward_names")
         self.multi_objective_weights = reward_kwargs.get("weights")
         self.multi_objective_weight_preset = reward_kwargs.get("weight_preset")
 
@@ -350,7 +354,9 @@ class RayPPOTrainer:
             try:
                 from mycode.pareto import ParetoBuffer
 
-                self._pareto_buffer = ParetoBuffer(max_size=self._pareto_max_size)
+                self._pareto_buffer = ParetoBuffer(
+                    max_size=self._pareto_max_size, hv_samples=self._pareto_hv_samples
+                )
             except Exception:
                 self._pareto_buffer = None
 
@@ -397,14 +403,38 @@ class RayPPOTrainer:
         if self.multi_objective_mode is None:
             return None
         try:
-            from mycode.multi_objective_reward import resolve_weights
+            from mycode.multi_objective_reward import resolve_weights_with_names
         except Exception:
             return None
+        reward_names = self._get_reward_names()
         if self.multi_objective_weights is not None:
-            return resolve_weights(None, self.multi_objective_weights)
+            return resolve_weights_with_names(None, self.multi_objective_weights, reward_names)
         if self.multi_objective_weight_preset is not None:
-            return resolve_weights(self.multi_objective_weight_preset, None)
-        return resolve_weights("balanced", None)
+            return resolve_weights_with_names(self.multi_objective_weight_preset, None, reward_names)
+        return resolve_weights_with_names("balanced", None, reward_names)
+
+    @staticmethod
+    def _parse_reward_names(reward_names):
+        default_names = ["reward_acc", "reward_conc", "reward_clar"]
+        try:
+            from mycode.multi_objective_reward import DEFAULT_REWARD_NAMES
+
+            default_names = list(DEFAULT_REWARD_NAMES)
+        except Exception:
+            pass
+        if reward_names is None:
+            return list(default_names)
+        if isinstance(reward_names, str):
+            items = [item.strip() for item in reward_names.split(",") if item.strip()]
+            return items or list(default_names)
+        return [str(item).strip() for item in reward_names if str(item).strip()]
+
+    def _get_reward_names(self):
+        reward_kwargs = getattr(self.reward_fn, "reward_kwargs", None)
+        reward_names = None
+        if isinstance(reward_kwargs, dict):
+            reward_names = reward_kwargs.get("reward_names")
+        return self._parse_reward_names(reward_names)
 
     @staticmethod
     def _build_token_level_scores(
@@ -418,16 +448,17 @@ class RayPPOTrainer:
 
     def _compute_pareto_point(self, reward_extra_infos_dict: dict[str, list]):
         try:
-            acc_vals = reward_extra_infos_dict.get("reward_acc", [])
-            conc_vals = reward_extra_infos_dict.get("reward_conc", [])
-            clar_vals = reward_extra_infos_dict.get("reward_clar", [])
-            if not acc_vals or not conc_vals or not clar_vals:
+            if self._pareto_reward_names is not None:
+                pareto_names = self._parse_reward_names(self._pareto_reward_names)
+            else:
+                pareto_names = self._get_reward_names()
+            pareto_names = [name for name in pareto_names if name in reward_extra_infos_dict]
+            if len(pareto_names) < 2:
                 return None
-            return (
-                float(np.mean(acc_vals)),
-                float(np.mean(conc_vals)),
-                float(np.mean(clar_vals)),
-            )
+            values = [reward_extra_infos_dict.get(name, []) for name in pareto_names]
+            if any(not v for v in values):
+                return None
+            return tuple(float(np.mean(v)) for v in values)
         except Exception:
             return None
 
@@ -846,14 +877,17 @@ class RayPPOTrainer:
             metric_dict["val-aux/num_turns/max"] = sample_turns.max()
             metric_dict["val-aux/num_turns/mean"] = sample_turns.mean()
 
-        for key, metric_name in (
-            ("reward_acc", "val/reward_acc_mean"),
-            ("reward_conc", "val/reward_conc_mean"),
-            ("reward_clar", "val/reward_clar_mean"),
-        ):
+        reward_names = self._get_reward_names()
+        for key in reward_names:
             values = reward_extra_infos_dict.get(key, [])
             if values and not isinstance(values[0], str):
-                metric_dict[metric_name] = float(np.mean(values))
+                metric_dict[f"val/{key}_mean"] = float(np.mean(values))
+
+        scalar_values = reward_extra_infos_dict.get("reward")
+        if scalar_values is None:
+            scalar_values = reward_extra_infos_dict.get("score")
+        if scalar_values and not isinstance(scalar_values[0], str):
+            metric_dict["val/reward_mean"] = float(np.mean(scalar_values))
 
         return metric_dict
 
@@ -1685,8 +1719,9 @@ class RayPPOTrainer:
                                 batch.meta_info["dynamic_mu"] = self.dynamic_mu
 
                             response_mask = batch.batch["response_mask"]
+                            reward_names = self._get_reward_names()
                             reward_components = {}
-                            for key in ("reward_acc", "reward_conc", "reward_clar"):
+                            for key in reward_names:
                                 values = reward_extra_infos_dict.get(key)
                                 if values is None:
                                     continue
@@ -1697,12 +1732,12 @@ class RayPPOTrainer:
                                     reward_values, response_mask
                                 )
 
-                            if len(reward_components) == 3:
+                            if len(reward_components) == len(reward_names):
                                 norm_adv_by_std_in_grpo = self.config.algorithm.get(
                                     "norm_adv_by_std_in_grpo", True
                                 )
                                 advantages_components = []
-                                for key in ("reward_acc", "reward_conc", "reward_clar"):
+                                for key in reward_names:
                                     adv, _ = core_algos.compute_grpo_outcome_advantage(
                                         token_level_rewards=reward_components[key],
                                         response_mask=response_mask,
@@ -1713,6 +1748,7 @@ class RayPPOTrainer:
                                 batch.batch["advantages_components"] = torch.stack(
                                     advantages_components, dim=-1
                                 )
+                                batch.meta_info["dynamic_reward_names"] = reward_names
 
                         # compute rewards. apply_kl_penalty if available
                         if self.config.algorithm.use_kl_in_reward:
@@ -1834,14 +1870,22 @@ class RayPPOTrainer:
                     }
                 )
                 if reward_extra_infos_dict:
-                    for key, metric_name in (
-                        ("reward_acc", "train/reward_acc_mean"),
-                        ("reward_conc", "train/reward_conc_mean"),
-                        ("reward_clar", "train/reward_clar_mean"),
-                    ):
-                        values = reward_extra_infos_dict.get(key, [])
-                        if values:
-                            metrics[metric_name] = float(np.mean(values))
+                    reward_names = self._get_reward_names()
+                    for key in reward_names:
+                        values = reward_extra_infos_dict.get(key)
+                        if values is None:
+                            continue
+                        values_arr = np.asarray(values)
+                        if values_arr.size == 0:
+                            continue
+                        metrics[f"train/{key}_mean"] = float(np.mean(values_arr))
+                    scalar_values = reward_extra_infos_dict.get("reward")
+                    if scalar_values is None:
+                        scalar_values = reward_extra_infos_dict.get("score")
+                    if scalar_values is not None:
+                        values_arr = np.asarray(scalar_values)
+                        if values_arr.size:
+                            metrics["train/reward_mean"] = float(np.mean(values_arr))
                 # collect metrics
                 metrics.update(compute_data_metrics(batch=batch, use_critic=self.use_critic))
                 metrics.update(compute_timing_metrics(batch=batch, timing_raw=timing_raw))

@@ -552,6 +552,7 @@ class DataParallelPPOActor(BasePPOActor):
         dynamic_eta = data.meta_info.get("dynamic_eta")
         dynamic_mu = data.meta_info.get("dynamic_mu")
         dynamic_init_weights = data.meta_info.get("dynamic_init_weights")
+        dynamic_reward_names = data.meta_info.get("dynamic_reward_names")
         use_dynamic_weights = dynamic_eta is not None and dynamic_mu is not None
         if use_dynamic_weights and self.dynamic_reward_weights is None and dynamic_init_weights is not None:
             self.dynamic_reward_weights = torch.tensor(dynamic_init_weights, device=get_device_id())
@@ -673,11 +674,15 @@ class DataParallelPPOActor(BasePPOActor):
                         self.dynamic_reward_weights = weights.detach()
 
                         advantages = (advantages_components * weights.view(1, 1, -1)).sum(dim=-1)
-                        micro_batch_metrics["actor/dynamic_weight_acc"] = weights[0].item()
-                        if weights.numel() > 1:
-                            micro_batch_metrics["actor/dynamic_weight_conc"] = weights[1].item()
-                        if weights.numel() > 2:
-                            micro_batch_metrics["actor/dynamic_weight_clar"] = weights[2].item()
+                        if dynamic_reward_names and len(dynamic_reward_names) == weights.numel():
+                            for name, weight in zip(dynamic_reward_names, weights):
+                                micro_batch_metrics[f"actor/dynamic_weight_{name}"] = weight.item()
+                        else:
+                            micro_batch_metrics["actor/dynamic_weight_acc"] = weights[0].item()
+                            if weights.numel() > 1:
+                                micro_batch_metrics["actor/dynamic_weight_conc"] = weights[1].item()
+                            if weights.numel() > 2:
+                                micro_batch_metrics["actor/dynamic_weight_clar"] = weights[2].item()
 
                     # Compute policy loss (any function is expected to return 2 values)
                     pg_loss, pg_metrics = policy_loss_fn(
