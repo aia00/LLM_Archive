@@ -82,6 +82,7 @@ fi
 MODEL_NAME=${MODEL_NAME:-${MODEL_NAME_DEFAULT:-"Qwen/Qwen2.5-0.5B-Instruct"}}
 METHOD=${METHOD:-"static"}
 WEIGHT_PRESET=${WEIGHT_PRESET:-"balanced"}
+WEIGHTS=${WEIGHTS:-""}
 REWARD_NAMES=${REWARD_NAMES:-"reward_acc,reward_conc,reward_clar,reward_answer_len,reward_answer_found,reward_boxed"}
 TRAIN_BATCH_SIZE=${TRAIN_BATCH_SIZE:-16}
 PPO_MINI_BATCH_SIZE=${PPO_MINI_BATCH_SIZE:-${TRAIN_BATCH_SIZE}}
@@ -106,7 +107,12 @@ RUN_TAG=${RUN_TAG:-"$(date +%Y%m%d_%H%M%S)"}
 MODEL_TAG="${MODEL_NAME//\//-}"
 DATASET_TAG="$(basename "${TRAIN_PARQUET}")"
 DATASET_TAG="${DATASET_TAG%.parquet}"
-EXPERIMENT_NAME=${EXPERIMENT_NAME:-"${MODEL_TAG}_${DATASET_TAG}_${METHOD}_${WEIGHT_PRESET}_${RUN_TAG}"}
+WEIGHT_TAG="${WEIGHT_PRESET}"
+if [ -n "${WEIGHTS}" ]; then
+  WEIGHTS_CLEAN="${WEIGHTS// /}"
+  WEIGHT_TAG="w${WEIGHTS_CLEAN//,/-}"
+fi
+EXPERIMENT_NAME=${EXPERIMENT_NAME:-"${MODEL_TAG}_${DATASET_TAG}_${METHOD}_${WEIGHT_TAG}_${RUN_TAG}"}
 ROLLOUT_DATA_DIR=${ROLLOUT_DATA_DIR:-"${OUTPUT_ROOT}/rollouts/${EXPERIMENT_NAME}"}
 VALIDATION_DATA_DIR=${VALIDATION_DATA_DIR:-"${OUTPUT_ROOT}/val_generations/${EXPERIMENT_NAME}"}
 TOTAL_EPOCHS=${TOTAL_EPOCHS:-3}
@@ -132,6 +138,19 @@ if [[ "${REWARD_NAMES}" != \[* ]]; then
     fi
   done
   REWARD_NAMES_HYDRA="${REWARD_NAMES_HYDRA%,}]"
+fi
+
+WEIGHTS_HYDRA=""
+if [ -n "${WEIGHTS}" ]; then
+  IFS=',' read -r -a _weights_arr <<< "${WEIGHTS}"
+  WEIGHTS_HYDRA="["
+  for _w in "${_weights_arr[@]}"; do
+    _trimmed=$(echo "${_w}" | xargs)
+    if [ -n "${_trimmed}" ]; then
+      WEIGHTS_HYDRA+="${_trimmed},"
+    fi
+  done
+  WEIGHTS_HYDRA="${WEIGHTS_HYDRA%,}]"
 fi
 
 PARETO_REWARD_NAMES_HYDRA="${PARETO_REWARD_NAMES}"
@@ -160,6 +179,7 @@ ${PYTHON_BIN} -m verl.trainer.main_ppo \
   +custom_reward_function.reward_kwargs.multi_objective_mode=${METHOD} \
   +custom_reward_function.reward_kwargs.weight_preset=${WEIGHT_PRESET} \
   +custom_reward_function.reward_kwargs.reward_names="${REWARD_NAMES_HYDRA}" \
+  $(if [ -n "${WEIGHTS_HYDRA}" ]; then echo "+custom_reward_function.reward_kwargs.weights=${WEIGHTS_HYDRA}"; fi) \
   $(if [ -n "${PARETO_REWARD_NAMES_HYDRA}" ]; then echo "+custom_reward_function.reward_kwargs.pareto_reward_names=${PARETO_REWARD_NAMES_HYDRA}"; fi) \
   +custom_reward_function.reward_kwargs.pareto_hv_samples=${PARETO_HV_SAMPLES} \
   +custom_reward_function.reward_kwargs.dynamic_eta=0.5 \

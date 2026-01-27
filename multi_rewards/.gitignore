@@ -1,5 +1,6 @@
 # Local paths/config
 mycode/paths.env
+mycode/scripts/*.slurm
 
 # Run outputs
 outputs/
@@ -7,6 +8,9 @@ outputs/
 # Generated datasets
 data/*.parquet
 data/*.jsonl
+
+# Experiment tracking
+wandb/
 
 # Python bytecode
 __pycache__/

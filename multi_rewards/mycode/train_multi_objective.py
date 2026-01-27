@@ -29,11 +29,14 @@ if str(_SFT_DIR) not in sys.path:
 
 from dynamic_grpo_trainer import DynamicGRPOTrainer  # noqa: E402
 
+from mycode.aggregated_grpo_trainer import AggregatedGRPOTrainer  # noqa: E402
+from mycode.aggregation_factory import build_reward_aggregator  # noqa: E402
 from mycode.callbacks import ParetoMetaRewardCallback  # noqa: E402
 from mycode.dataset_utils import MathDatasetConfig, prepare_math_dataset  # noqa: E402
+from mycode.gradient_aggregation_trainer import GradientAggregationGRPOTrainer  # noqa: E402
 from mycode.multi_objective_reward import (  # noqa: E402
     ParetoMetaReward,
-    resolve_weights,
+    resolve_weights_with_names,
 )
 from mycode.multi_objective_trainer import GradientWeightedGRPOTrainer  # noqa: E402
 from mycode.pareto import ParetoBuffer  # noqa: E402
@@ -92,8 +95,27 @@ def parse_args() -> argparse.Namespace:
         "--method",
         type=str,
         default="static",
-        choices=["static", "hypervolume", "dynamic"],
-        help="Method A=static, B=hypervolume, C=dynamic",
+        choices=[
+            "static",
+            "hypervolume",
+            "dynamic",
+            "constrained",
+            "minimax",
+            "chebyshev",
+            "nash",
+            "cvar",
+            "contextual",
+            "uncertainty",
+            "pcgrad",
+            "mgda",
+            "cagrad",
+            "nash_mtl",
+        ],
+        help=(
+            "Multi-objective method: static/hypervolume/dynamic, "
+            "constraints, minimax, nonlinear scalarization, contextual/uncertainty, "
+            "or gradient aggregation (pcgrad/mgda/cagrad/nash_mtl)."
+        ),
     )
     parser.add_argument(
         "--weight_preset",
@@ -108,6 +130,43 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--pareto_max_size", type=int, default=128)
     parser.add_argument("--dynamic_eta", type=float, default=0.5)
     parser.add_argument("--dynamic_mu", type=float, default=1.0)
+
+    # Constrained RLHF
+    parser.add_argument("--primary_reward", type=str, default="accuracy")
+    parser.add_argument("--constraint_rewards", type=str, default=None)
+    parser.add_argument("--constraint_thresholds", type=str, default=None)
+    parser.add_argument("--constraint_directions", type=str, default=None)
+    parser.add_argument("--constraint_lambda_lr", type=float, default=0.05)
+    parser.add_argument("--constraint_lambda_max", type=float, default=10.0)
+    parser.add_argument("--constraint_disable_ema", action="store_true")
+    parser.add_argument("--constraint_ema_alpha", type=float, default=0.05)
+
+    # Minimax / adversarial weighting
+    parser.add_argument("--minimax_eta", type=float, default=0.5)
+    parser.add_argument("--minimax_min_weight", type=float, default=0.0)
+
+    # Nonlinear scalarizations
+    parser.add_argument("--chebyshev_reference", type=str, default=None)
+    parser.add_argument("--nash_baseline", type=str, default=None)
+    parser.add_argument("--nash_epsilon", type=float, default=1e-3)
+    parser.add_argument("--cvar_alpha", type=float, default=0.2)
+
+    # Contextual weighting
+    parser.add_argument("--context_short_length", type=int, default=120)
+    parser.add_argument("--context_long_length", type=int, default=300)
+    parser.add_argument("--context_short_weights", type=str, default=None)
+    parser.add_argument("--context_long_weights", type=str, default=None)
+    parser.add_argument("--context_clarity_weights", type=str, default=None)
+    parser.add_argument("--context_conciseness_weights", type=str, default=None)
+
+    # Uncertainty-aware weighting
+    parser.add_argument("--uncertainty_ema_alpha", type=float, default=0.05)
+    parser.add_argument("--uncertainty_eps", type=float, default=1e-6)
+
+    # Gradient aggregation
+    parser.add_argument("--pcgrad_shuffle", action="store_true")
+    parser.add_argument("--cagrad_alpha", type=float, default=0.5)
+    parser.add_argument("--mgda_iters", type=int, default=50)
 
     # Training
     parser.add_argument("--output_dir", type=str, default="./multi_objective_output")
@@ -175,6 +234,7 @@ def main() -> None:
     )
 
     reward_funcs, _ = build_reward_functions(tokenizer=tokenizer)
+    reward_names = [getattr(fn, "__name__", f"reward_{idx}") for idx, fn in enumerate(reward_funcs)]
 
     weight_override = None
     if (
@@ -187,7 +247,9 @@ def main() -> None:
             args.weight_conciseness or 0.0,
             args.weight_clarity or 0.0,
         )
-    base_weights = resolve_weights(args.weight_preset, weight_override)
+    base_weights = resolve_weights_with_names(
+        args.weight_preset, weight_override, reward_names
+    )
 
     generation_batch_size = args.generation_batch_size
     training_args = GRPOConfig(
@@ -227,6 +289,40 @@ def main() -> None:
             processing_class=tokenizer,
             dynamic_eta=args.dynamic_eta,
             dynamic_mu=args.dynamic_mu,
+        )
+    elif args.method in {"pcgrad", "mgda", "cagrad", "nash_mtl"}:
+        trainer = GradientAggregationGRPOTrainer(
+            model=model,
+            reward_funcs=reward_funcs,
+            args=training_args,
+            train_dataset=train_dataset,
+            eval_dataset=eval_dataset,
+            processing_class=tokenizer,
+            aggregation_method=("nash" if args.method == "nash_mtl" else args.method),
+            pcgrad_shuffle=args.pcgrad_shuffle,
+            cagrad_alpha=args.cagrad_alpha,
+            mgda_iters=args.mgda_iters,
+        )
+    elif args.method in {
+        "constrained",
+        "minimax",
+        "chebyshev",
+        "nash",
+        "cvar",
+        "contextual",
+        "uncertainty",
+    }:
+        aggregator = build_reward_aggregator(
+            args.method, reward_names, base_weights, args
+        )
+        trainer = AggregatedGRPOTrainer(
+            model=model,
+            reward_funcs=reward_funcs,
+            args=training_args,
+            train_dataset=train_dataset,
+            eval_dataset=eval_dataset,
+            processing_class=tokenizer,
+            reward_aggregator=aggregator,
         )
     else:
         trainer = DynamicGRPOTrainer(

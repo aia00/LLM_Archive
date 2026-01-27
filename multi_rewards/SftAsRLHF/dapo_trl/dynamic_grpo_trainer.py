@@ -271,13 +271,24 @@ class DynamicGRPOTrainer(GRPOTrainer):
                     for prompt, image_list in zip(prompts, images, strict=True)
                 ]
 
-            (
-                prompt_ids_list,
-                completion_ids_list,
-                num_items_in_batch,
-                sampling_per_token_logps_list,
-                extra_fields,
-            ) = self._generate(prompts)
+            generated = self._generate(prompts)
+            if len(generated) == 5:
+                (
+                    prompt_ids_list,
+                    completion_ids_list,
+                    num_items_in_batch,
+                    sampling_per_token_logps_list,
+                    extra_fields,
+                ) = generated
+            else:
+                prompt_ids_list = generated[0]
+                completion_ids_list = generated[1]
+                # TRL returns (prompt_ids, completion_ids, tool_mask, completions, total_tokens, logprobs, extra_fields)
+                num_items_in_batch = generated[4] if len(generated) > 4 else None
+                sampling_per_token_logps_list = (
+                    generated[5] if len(generated) > 5 else None
+                )
+                extra_fields = generated[6] if len(generated) > 6 else None
 
             # Convert lists of token IDs to padded tensors
             prompt_ids = [
